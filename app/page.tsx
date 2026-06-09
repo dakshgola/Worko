@@ -104,6 +104,9 @@ export default function Home() {
                   <button
                     key={label}
                     title={collapsed ? label : undefined}
+                    onClick={() => {
+                      if (label === "Calendar") window.location.href = "/calendar";
+                    }}
                     className={`group relative flex h-9.5 w-full items-center gap-2.5 rounded-[10px] px-2 text-[12px] font-semibold transition-all duration-200 ${
                       active
                         ? "bg-gradient-to-r from-[#eeeaff] to-[#f6f3ff] text-[#5143bd] shadow-[inset_0_0_0_1px_rgba(103,87,220,0.08)]"
