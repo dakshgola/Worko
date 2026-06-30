@@ -12,11 +12,11 @@
 }
 
 :root {
-  --background: #f8f8fb;
-  --foreground: #292832;
-  --border: #e8e7ef;
-  --ring: #6c5ce7;
-  --radius: 1rem;
+  --background: #FAF8F4;
+  --foreground: #2C2A29;
+  --border: #EBE8E2;
+  --ring: #FF5A36;
+  --radius: 1.25rem;
 }
 
 * {
@@ -48,8 +48,8 @@ button {
 }
 
 ::selection {
-  background: #ded9ff;
-  color: #3f3690;
+  background: #FFE8E2;
+  color: #C23B1E;
 }
 
 ::-webkit-scrollbar {
@@ -58,7 +58,7 @@ button {
 
 ::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background: #d7d3e2;
+  background: #E4E0D5;
 }
 
 .calendar-input {

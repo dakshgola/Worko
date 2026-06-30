@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useClerk } from "@clerk/nextjs";
 import {
   LayoutDashboard,
   Bot,
@@ -28,6 +28,7 @@ import {
   ChevronRight,
   Menu,
   PanelLeftClose,
+  LogOut,
 } from "lucide-react";
 import {
   getUserPreferences,
@@ -51,7 +52,9 @@ const sidebarNav = [
 
 export default function SettingsPage() {
   const { user } = useUser();
+  const { signOut } = useClerk();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   // Tabs: profile, preferences, categories, subscription
   const [activeTab, setActiveTab] = useState<"profile" | "preferences" | "categories" | "subscription">("profile");
@@ -234,6 +237,22 @@ export default function SettingsPage() {
                   </div>
                 </div>
               </div>
+
+              <div className="border-t border-[#efedf4] pt-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-xs font-bold text-[#282633]">Manage Account</h4>
+                    <p className="text-[10px] text-[#777281] mt-0.5">Securely sign out of your workspace session.</p>
+                  </div>
+                  <button
+                    onClick={() => setShowLogoutConfirm(true)}
+                    type="button"
+                    className="h-9 px-4 rounded-xl border border-red-200 text-red-500 hover:bg-red-50 font-bold text-xs flex items-center gap-1.5 transition"
+                  >
+                    <LogOut size={13.5} /> Log Out
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
@@ -407,6 +426,42 @@ export default function SettingsPage() {
         </section>
       </main>
       {sidebarOpen && <button aria-label="Close sidebar" onClick={() => setSidebarOpen(false)} className="fixed inset-0 z-30 bg-[#302a3d]/20 backdrop-blur-sm lg:hidden" />}
+
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl border-2 border-red-200 w-full max-w-sm p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b pb-3 border-red-50">
+              <h4 className="font-black text-sm text-[#282633] flex items-center gap-1.5">
+                <LogOut size={16} className="text-red-500" />
+                Confirm Log Out
+              </h4>
+              <button type="button" onClick={() => setShowLogoutConfirm(false)}><X size={15} /></button>
+            </div>
+            <p className="text-xs text-[#777281] leading-relaxed font-semibold">
+              Are you sure you want to sign out of your Worko workspace? You will need to authenticate again to access your dashboard.
+            </p>
+            <div className="flex justify-end gap-2 border-t border-red-50 pt-3">
+              <button
+                type="button"
+                onClick={() => setShowLogoutConfirm(false)}
+                className="h-8.5 px-4 bg-slate-50 border rounded-xl text-xs font-semibold text-[#777281]"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  signOut();
+                  window.location.href = "/";
+                }}
+                className="h-8.5 px-4 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-bold"
+              >
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
