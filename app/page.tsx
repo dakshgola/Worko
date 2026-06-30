@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
+import React, { useState, useEffect, useRef } from "react";
+import { useUser, SignInButton } from "@clerk/nextjs";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Zap,
   LayoutDashboard,
@@ -13,10 +14,6 @@ import {
   PanelTop,
   WandSparkles,
   Settings,
-  CircleHelp,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   Plus,
   Loader2,
   Search,
@@ -25,16 +22,24 @@ import {
   Clock,
   Sparkles,
   ArrowUpRight,
-  MoreHorizontal,
-  FolderOpen,
-  Trash2,
-  Star,
-  Activity,
-  Sliders,
   X,
   Info,
   Flame,
   CheckSquare,
+  Globe,
+  Users,
+  Layers,
+  Sparkle,
+  ArrowRight,
+  ShieldAlert,
+  HelpCircle,
+  Play,
+  Heart,
+  Github,
+  ChevronRight,
+  ChevronLeft,
+  Sliders,
+  Star,
 } from "lucide-react";
 import { getDashboardData } from "@/lib/dashboard/actions";
 import { createNote } from "@/lib/notes/actions";
@@ -54,7 +59,460 @@ const DEFAULT_WIDGETS = [
 ];
 
 export default function Home() {
-  const { user, isLoaded: userLoaded } = useUser();
+  const { isSignedIn, isLoaded: userLoaded } = useUser();
+
+  if (!userLoaded) {
+    return (
+      <div className="min-h-screen bg-[#f8f8fb] flex flex-col items-center justify-center gap-3">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
+          className="text-[#6c5ce7]"
+        >
+          <Zap size={32} fill="currentColor" />
+        </motion.div>
+        <span className="text-xs font-semibold text-[#8b879c] animate-pulse">Initializing Worko...</span>
+      </div>
+    );
+  }
+
+  if (!isSignedIn) {
+    return <LandingPage />;
+  }
+
+  return <DashboardView />;
+}
+
+// ==========================================
+// 1. PUBLIC LANDING PAGE
+// ==========================================
+function LandingPage() {
+  const [demoActiveTab, setDemoActiveTab] = useState<"notes" | "whiteboard" | "kanban">("notes");
+  const [aiChatVal, setAiChatVal] = useState("");
+  const [aiReplies, setAiReplies] = useState<string[]>([
+    "Hello! I can compile today's schedules, refine notes, or generate mini habit tracker apps. Describe your request."
+  ]);
+  const [typing, setTyping] = useState(false);
+
+  const handleDemoAiSubmit = () => {
+    if (!aiChatVal.trim()) return;
+    const userQuery = aiChatVal;
+    setAiReplies((prev) => [...prev, `User: ${userQuery}`]);
+    setAiChatVal("");
+    setTyping(true);
+
+    setTimeout(() => {
+      setTyping(false);
+      setAiReplies((prev) => [
+        ...prev,
+        `AI: Understood! I have processed "${userQuery}" and set up a workspace reflection layout inside your dashboard.`
+      ]);
+    }, 1200);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#fafafc] text-[#292832] font-sans selection:bg-[#ded9ff] selection:text-[#3f3690] overflow-hidden relative">
+      {/* Background Decorative Gradients */}
+      <div className="absolute top-[-10%] left-[-20%] w-[60%] h-[60%] rounded-full bg-gradient-to-br from-[#c7d2fe]/30 to-[#f472b6]/20 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-gradient-to-br from-[#d8b4fe]/25 to-[#818cf8]/25 blur-[120px] pointer-events-none" />
+
+      {/* Navigation header */}
+      <header className="sticky top-0 z-50 border-b border-[#efedf4] bg-white/75 backdrop-blur-md px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-[#6c5ce7] to-[#8b5cf6] text-white shadow-[0_6px_16px_rgba(108,92,231,0.25)]">
+            <Zap size={16} fill="currentColor" />
+          </div>
+          <div>
+            <span className="font-extrabold text-[17px] tracking-tight text-[#282633]">Worko</span>
+            <span className="ml-1.5 px-1.5 py-0.5 rounded-md bg-[#6c5ce7]/10 text-[#6c5ce7] text-[8.5px] font-bold uppercase tracking-wider">AI Hub</span>
+          </div>
+        </div>
+
+        <nav className="hidden md:flex items-center gap-8 text-xs font-bold text-[#716c7d]">
+          <a href="#features" className="hover:text-[#5143bd] transition">Features</a>
+          <a href="#demo" className="hover:text-[#5143bd] transition">Interactive Showcase</a>
+          <a href="#pricing" className="hover:text-[#5143bd] transition">Pricing</a>
+          <a href="https://github.com/dakshgola/Worko" target="_blank" className="hover:text-[#5143bd] transition flex items-center gap-1">
+            <Github size={13} /> GitHub
+          </a>
+        </nav>
+
+        <div className="flex items-center gap-3">
+          <a href="/sign-in" className="text-xs font-extrabold text-[#716c7d] hover:text-[#282633] transition px-3 py-2">
+            Sign In
+          </a>
+          <a
+            href="/sign-up"
+            className="flex items-center gap-1.5 h-9.5 rounded-xl bg-gradient-to-r from-[#6c5ce7] to-[#8b5cf6] px-4.5 text-xs font-bold text-white shadow-[0_6px_16px_rgba(102,87,220,0.22)] transition hover:-translate-y-0.5"
+          >
+            Get Started <ArrowRight size={13} />
+          </a>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="max-w-6xl mx-auto px-6 pt-16 lg:pt-24 text-center space-y-8 relative">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="space-y-4"
+        >
+          <div className="mx-auto max-w-fit rounded-full bg-white border border-[#e8e7ef] px-3.5 py-1 text-[10px] font-extrabold uppercase tracking-widest text-[#6c5ce7] shadow-sm flex items-center gap-1.5 animate-pulse">
+            <Sparkles size={11} fill="currentColor" /> Workspace 2.0 is Live
+          </div>
+
+          <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-[1.08] text-[#282633] max-w-4xl mx-auto">
+            The AI Workspace Built For{" "}
+            <span className="bg-gradient-to-r from-[#6c5ce7] via-[#8b5cf6] to-[#f472b6] bg-clip-text text-transparent">
+              Modern Teams
+            </span>
+          </h1>
+
+          <p className="text-sm md:text-[16px] leading-relaxed text-[#777281] font-semibold max-w-2xl mx-auto">
+            Plan projects, manage tasks, collaborate in real-time, generate AI workflows, take notes, build whiteboards, chat with AI and organize everything in one beautiful workspace.
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+          className="flex flex-wrap justify-center gap-3 pt-2"
+        >
+          <a
+            href="/sign-up"
+            className="h-11 px-7 rounded-xl bg-gradient-to-r from-[#6c5ce7] to-[#8b5cf6] font-extrabold text-xs text-white shadow-lg flex items-center justify-center hover:-translate-y-0.5 transition"
+          >
+            Get Started Free
+          </a>
+          <a
+            href="#demo"
+            className="h-11 px-7 rounded-xl bg-white border border-[#e5e2ed] font-extrabold text-xs text-[#716c7d] flex items-center justify-center gap-1.5 hover:bg-slate-50 transition"
+          >
+            <Play size={12} fill="currentColor" /> Watch Interactive Demo
+          </a>
+        </motion.div>
+
+        {/* Dashboard Preview Mock Container */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
+          className="relative max-w-5xl mx-auto pt-10"
+        >
+          <div className="rounded-2xl border-4 border-white bg-white/40 backdrop-blur-xl shadow-2xl overflow-hidden aspect-[16/10] border-slate-200/50 flex flex-col">
+            {/* Header window control */}
+            <div className="h-8.5 bg-slate-50/80 border-b border-[#efedf4] px-4 flex items-center gap-2">
+              <span className="size-2.5 rounded-full bg-red-400" />
+              <span className="size-2.5 rounded-full bg-yellow-400" />
+              <span className="size-2.5 rounded-full bg-green-400" />
+              <div className="mx-auto text-[9.5px] font-bold text-slate-400 uppercase tracking-widest bg-white border border-slate-100 px-3 py-0.5 rounded-md">
+                preview.worko.app
+              </div>
+            </div>
+            
+            {/* Mock Dashboard Layout */}
+            <div className="flex-1 flex bg-[#f8f8fb]">
+              <aside className="w-40 border-r border-[#efedf4] bg-white p-3 space-y-2 hidden sm:block text-left">
+                <span className="block text-[8px] font-black tracking-widest text-[#aaa6b5] uppercase mb-3">Workspace</span>
+                {["Overview", "AI Assistant", "Calendar", "Notes", "Whiteboard"].map((lnk, i) => (
+                  <div key={lnk} className={`h-8 rounded-lg flex items-center gap-2 px-2 text-[10px] font-extrabold ${i === 0 ? "bg-[#eeeaff] text-[#6c5ce7]" : "text-[#777281]"}`}>
+                    <span className="size-1.5 rounded-full bg-[#6c5ce7]" />
+                    {lnk}
+                  </div>
+                ))}
+              </aside>
+
+              <main className="flex-grow p-4 text-left space-y-4 overflow-y-auto">
+                <div className="flex items-center justify-between border-b pb-2">
+                  <div>
+                    <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">Dashboard preview</span>
+                    <h4 className="text-sm font-black text-[#282633]">Good morning, Team! 👋</h4>
+                  </div>
+                  <span className="text-[10px] bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-0.5 rounded font-extrabold">Active project</span>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-white border border-[#efedf4] p-3 rounded-xl shadow-sm space-y-1">
+                    <span className="text-[9px] font-bold text-slate-400">Total Notes</span>
+                    <p className="text-lg font-black text-[#282633]">12</p>
+                  </div>
+                  <div className="bg-white border border-[#efedf4] p-3 rounded-xl shadow-sm space-y-1">
+                    <span className="text-[9px] font-bold text-slate-400">Whiteboards</span>
+                    <p className="text-lg font-black text-[#282633]">4</p>
+                  </div>
+                  <div className="bg-white border border-[#efedf4] p-3 rounded-xl shadow-sm space-y-1">
+                    <span className="text-[9px] font-bold text-slate-400">Productivity Score</span>
+                    <p className="text-lg font-black text-[#6c5ce7]">84%</p>
+                  </div>
+                </div>
+
+                <div className="bg-white border border-[#efedf4] p-4 rounded-xl shadow-sm space-y-2">
+                  <div className="flex items-center justify-between text-[10px] font-bold text-slate-400">
+                    <span>Weekly activity analytics</span>
+                    <span>Note logs</span>
+                  </div>
+                  <div className="flex items-end justify-between h-20 pt-2">
+                    {[3, 5, 2, 8, 4, 9, 3].map((val, idx) => (
+                      <div key={idx} className="w-6 bg-slate-50 border border-slate-100 rounded-t h-full flex items-end">
+                        <div className="w-full bg-gradient-to-t from-[#6c5ce7] to-[#8b5cf6] rounded-t" style={{ height: `${val * 10}%` }} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </main>
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Badges badges system */}
+      <section className="bg-white border-y border-[#efedf4] py-8 mt-16 text-center">
+        <div className="max-w-6xl mx-auto px-6 space-y-4">
+          <p className="text-[9px] font-extrabold uppercase tracking-[0.2em] text-[#b0a9bd]">
+            Built with modern architecture stack
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            {[
+              "Next.js", "React 19", "TypeScript", "Tailwind CSS", "Clerk Security",
+              "Drizzle ORM", "Liveblocks", "AssemblyAI", "Gemini AI"
+            ].map((tech) => (
+              <span
+                key={tech}
+                className="px-3.5 py-1.5 rounded-xl bg-slate-50 border border-[#e5e2ed] text-[10.5px] font-black text-[#6f6b7b] hover:border-[#6c5ce7] hover:text-[#6c5ce7] hover:bg-[#eeeaff]/30 transition"
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section id="features" className="max-w-6xl mx-auto px-6 py-20 space-y-12">
+        <div className="text-center space-y-2 max-w-xl mx-auto">
+          <span className="text-[10px] font-extrabold text-[#6c5ce7] uppercase tracking-wider">Features grid</span>
+          <h2 className="text-2xl md:text-3xl font-black tracking-tight text-[#282633]">
+            Everything you need in a unified knowledge workspace
+          </h2>
+          <p className="text-xs text-[#777281]">
+            Ditch multiple application subscriptions. Access everything inside Worko.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { title: "AI Assistant", desc: "Streaming conversational answers and instant database actions.", icon: Bot, bg: "bg-amber-500" },
+            { title: "Neon Calendar", desc: "Interactive drag-and-drop agendas synced directly to PostgreSQL.", icon: CalendarDays, bg: "bg-sky-500" },
+            { title: "Kanban Board", desc: "Task tracking, priorities levels, and check-list logs.", icon: SquareKanban, bg: "bg-emerald-500" },
+            { title: "Collab Notes", desc: "TipTap rich text editor with auto-saves, favors and duplication.", icon: StickyNote, bg: "bg-orange-500" },
+            { title: "Whiteboard Canvas", desc: "Interactive SVG vectors drawing tool with templates and layouts.", icon: PenTool, bg: "bg-pink-500" },
+            { title: "Spaces Wiki", desc: "Nest folder-like spaces and sub-pages to build wikis.", icon: PanelTop, bg: "bg-violet-500" },
+            { title: "AI Builder", desc: "Describe custom trackers and generate structural JSON configs.", icon: WandSparkles, bg: "bg-rose-500" },
+            { title: "Global Search", desc: "Instant matching overlay across notes, pages, and checklists.", icon: Search, bg: "bg-indigo-500" },
+          ].map((feat, i) => (
+            <div
+              key={i}
+              className="bg-white border border-[#efedf4] rounded-2xl p-5 shadow-sm hover:shadow-md transition hover:-translate-y-0.5 space-y-3 group"
+            >
+              <div className={`size-10 rounded-xl flex items-center justify-center text-white ${feat.bg} shadow-sm group-hover:scale-105 transition`}>
+                <feat.icon size={18} strokeWidth={2.25} />
+              </div>
+              <h4 className="font-extrabold text-sm text-[#282633]">{feat.title}</h4>
+              <p className="text-[11px] text-[#777281] leading-relaxed font-semibold">{feat.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Interactive Showcase */}
+      <section id="demo" className="max-w-6xl mx-auto px-6 py-16 space-y-8 bg-white border border-[#efedf4] rounded-3xl shadow-sm">
+        <div className="text-center space-y-2 max-w-lg mx-auto">
+          <span className="text-[10px] font-extrabold text-[#6c5ce7] uppercase tracking-wider">Showcase</span>
+          <h3 className="text-2xl font-black tracking-tight text-[#282633]">Try the AI Assistant simulation</h3>
+          <p className="text-xs text-[#777281]">Type query ideas to simulate instant voice translation streams.</p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center max-w-4xl mx-auto pt-4">
+          <div className="space-y-4">
+            <h4 className="text-base font-black text-[#282633]">Unified AI Assistant interface</h4>
+            <p className="text-[11.5px] text-[#6f6b7b] leading-relaxed font-semibold">
+              Speak into your microphone or key in commands. Worko AI Assistant transcribes, processes workspace requests, and generates dynamic confirmations on the fly.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setAiChatVal("Schedule strategic planning tomorrow at 10:00")}
+                className="px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold rounded-lg hover:bg-amber-100 transition"
+              >
+                &quot;Schedule sync&quot;
+              </button>
+              <button
+                onClick={() => setAiChatVal("Create a priority research note draft")}
+                className="px-2.5 py-1 bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] font-bold rounded-lg hover:bg-indigo-100 transition"
+              >
+                &quot;Create note&quot;
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-[#f8f8fb] border border-[#efedf4] rounded-2xl p-4 space-y-3 text-left">
+            <div className="flex items-center gap-2 pb-2 border-b border-[#efedf4]">
+              <span className="grid size-7 place-items-center rounded-lg bg-amber-100 text-amber-600"><Bot size={13} /></span>
+              <span className="text-[10.5px] font-extrabold text-[#282633]">Worko Bot</span>
+            </div>
+            
+            <div className="space-y-2 max-h-48 overflow-y-auto text-[10.5px] leading-relaxed">
+              {aiReplies.map((r, i) => (
+                <div
+                  key={i}
+                  className={`p-2.5 rounded-xl font-semibold ${
+                    r.startsWith("User:") ? "bg-[#6c5ce7] text-white ml-6" : "bg-white border border-[#efedf4] mr-6"
+                  }`}
+                >
+                  {r}
+                </div>
+              ))}
+              {typing && <div className="text-[9.5px] text-slate-400 italic">Gemini is typing...</div>}
+            </div>
+
+            <div className="flex gap-2 border-t border-[#efedf4] pt-2">
+              <input
+                type="text"
+                placeholder="Ask simulator..."
+                value={aiChatVal}
+                onChange={(e) => setAiChatVal(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleDemoAiSubmit()}
+                className="flex-1 bg-white border border-[#e5e2ed] rounded-lg px-2 text-xs outline-none focus:border-[#bdb4f1]"
+              />
+              <button
+                onClick={handleDemoAiSubmit}
+                className="px-3.5 bg-[#6c5ce7] hover:bg-[#5143bd] text-white font-bold rounded-lg text-xs"
+              >
+                Send
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" className="max-w-6xl mx-auto px-6 py-20 space-y-12">
+        <div className="text-center space-y-2 max-w-xl mx-auto">
+          <span className="text-[10px] font-extrabold text-[#6c5ce7] uppercase tracking-wider">Pricing plan</span>
+          <h3 className="text-2xl md:text-3xl font-black tracking-tight text-[#282633]">Pricing plans designed for everyone</h3>
+          <p className="text-xs text-[#777281]">Start free, scale boundaries as your group processes grow.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          {[
+            { plan: "Free Tier", price: "$0", desc: "Perfect to kickstart wiki entries & notes database.", features: ["Unlimited collaborative notes", "Up to 5 Whiteboards", "Postgres Calendar Events"] },
+            { plan: "Pro Plan", price: "$12", desc: "Best for growing teams seeking custom layouts.", features: ["Everything in Free Tier", "Unlimited AI Assist actions", "Uncapped spaces & custom app templates", "Priority support"] },
+            { plan: "Enterprise", price: "Custom", desc: "Tailored to larger collaborative businesses.", features: ["Uncapped usage", "Dedicated account managers", "Custom analytics integrations", "SAML SSO auth configurations"] }
+          ].map((prc, idx) => (
+            <div
+              key={idx}
+              className={`bg-white border rounded-3xl p-6 space-y-6 flex flex-col justify-between hover:shadow-md transition relative ${
+                idx === 1 ? "border-2 border-[#6c5ce7] shadow-sm" : "border-[#efedf4]"
+              }`}
+            >
+              {idx === 1 && (
+                <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-gradient-to-r from-[#6c5ce7] to-[#8b5cf6] text-white text-[8px] font-black uppercase rounded-full tracking-widest">
+                  Popular Choice
+                </span>
+              )}
+              <div className="space-y-4">
+                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">{prc.plan}</span>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-3xl font-black text-[#282633]">{prc.price}</span>
+                  {idx !== 2 && <span className="text-[11px] text-[#777281] font-bold">/ month</span>}
+                </div>
+                <p className="text-[11px] text-[#777281] font-semibold">{prc.desc}</p>
+                <div className="border-t border-[#efedf4]/80 my-3" />
+                <ul className="space-y-2.5 text-[11px] font-semibold text-[#6f6b7b]">
+                  {prc.features.map((feat, fidx) => (
+                    <li key={fidx} className="flex items-center gap-2">
+                      <span className="size-1.5 rounded-full bg-[#6c5ce7]" />
+                      <span>{feat}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <a
+                href="/sign-up"
+                className={`h-9.5 w-full font-extrabold text-xs rounded-xl flex items-center justify-center transition ${
+                  idx === 1 ? "bg-[#6c5ce7] text-white" : "bg-[#f3f1f6] text-[#716c7d] hover:bg-slate-100"
+                }`}
+              >
+                Choose {prc.plan}
+              </a>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="bg-white border-y border-[#efedf4] py-16 text-center space-y-10">
+        <div className="max-w-lg mx-auto space-y-2 px-6">
+          <span className="text-[10px] font-extrabold text-[#6c5ce7] uppercase tracking-wider">Wall of Love</span>
+          <h3 className="text-xl md:text-2xl font-black text-[#282633]">Trusted by developers globally</h3>
+        </div>
+
+        <div className="flex flex-wrap justify-center gap-4 max-w-5xl mx-auto px-6">
+          {[
+            { name: "Jessica Carter", role: "Product Manager, Stripe", text: "The TipTap autosave and Excalidraw whiteboards are flawless. The AI Template builder helps us prototype structures in minutes." },
+            { name: "Marcus Chen", role: "Frontend Architect, Vercel", text: "Worko compiles beautifully on React 19. The PostgreSQL calendar events sync dynamically without sluggish API calls." }
+          ].map((tst, i) => (
+            <div key={i} className="max-w-md bg-[#fafafc] border border-[#efedf4] rounded-2xl p-5 text-left space-y-3 shadow-sm flex-grow">
+              <p className="text-[11px] leading-relaxed text-[#6f6b7b] font-semibold italic">
+                &quot;{tst.text}&quot;
+              </p>
+              <div className="flex items-center gap-2 pt-2 border-t border-[#efedf4]">
+                <div className="size-8 rounded-full bg-[#eeeaff] text-[#6c5ce7] font-bold text-[10px] flex items-center justify-center shrink-0">
+                  {tst.name.substring(0, 2).toUpperCase()}
+                </div>
+                <div>
+                  <h5 className="text-[11px] font-bold text-[#282633]">{tst.name}</h5>
+                  <p className="text-[9px] text-[#aaa6b5] font-semibold">{tst.role}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-[#efedf4] bg-white py-12 px-6">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-[#aaa6b5] font-bold">
+          <div className="flex items-center gap-2.5">
+            <div className="grid size-7 place-items-center rounded-lg bg-[#6c5ce7] text-white">
+              <Zap size={13} fill="currentColor" />
+            </div>
+            <span className="text-[#282633]">Worko</span>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-6">
+            <a href="https://github.com/dakshgola/Worko" target="_blank" className="hover:text-[#6c5ce7] transition">GitHub</a>
+            <a href="#features" className="hover:text-[#6c5ce7] transition">Features</a>
+            <a href="#pricing" className="hover:text-[#6c5ce7] transition">Pricing</a>
+            <a href="/settings" className="hover:text-[#6c5ce7] transition">Settings</a>
+          </div>
+
+          <p className="text-[11px] font-medium text-[#c0bac8]">
+            &copy; {new Date().getFullYear()} Worko Corp. Built with love and cozy gradients.
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+// ==========================================
+// 2. AUTHENTICATED SaaS DASHBOARD VIEW
+// ==========================================
+function DashboardView() {
+  const { user } = useUser();
   const [collapsed, setCollapsed] = useState(false);
 
   // Postgres Database Data
@@ -515,7 +973,7 @@ export default function Home() {
           collapsed ? "w-[68px]" : "w-[224px]"
         }`}
       >
-        <div className="flex h-[68px] items-center border-b border-[#efedf4] px-3.5">
+        <div className="flex h-[64px] items-center border-b border-[#efedf4] px-3.5">
           <div className="flex min-w-0 items-center gap-3">
             <div className="grid size-9 shrink-0 place-items-center rounded-[12px] bg-gradient-to-br from-[#6c5ce7] via-[#6757dc] to-[#8b5cf6] text-white shadow-[0_7px_18px_rgba(102,87,220,0.28)] ring-1 ring-white/30 transition duration-300 hover:scale-105 hover:rotate-[-3deg]">
               <Zap size={17} fill="currentColor" strokeWidth={1.8} />
