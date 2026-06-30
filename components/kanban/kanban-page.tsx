@@ -14,6 +14,7 @@ import { BoardModal } from "./board-modal";
 import { useKanbanStore } from "./store";
 import { TaskModal } from "./task-modal";
 import type { KanbanBoard, KanbanTask, Priority, TaskFormData } from "./types";
+import { WorkspaceSidebar } from "@/components/WorkspaceSidebar";
 
 const iconMap = { Rocket, Sparkles, Briefcase: BriefcaseBusiness, Sun };
 const priorityStyles: Record<Priority, string> = { Low: "bg-[#e9f7ef] text-[#37845a]", Medium: "bg-[#fff3df] text-[#b87322]", High: "bg-[#ffe8ec] text-[#c84c62]" };
@@ -60,9 +61,9 @@ export function KanbanPage() {
 
   return (
     <div className={dark ? "dark" : ""}>
-      <div className="min-h-screen bg-[#f8f8fb] text-[#292832] transition-colors dark:bg-[#18161e] dark:text-[#f1edf6]">
-        <WorkspaceSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} active="Tasks" />
-        <main className="min-h-screen min-w-0 lg:ml-[210px]">
+      <div className="min-h-screen bg-[#f8f8fb] text-[#292832] transition-colors dark:bg-[#18161e] dark:text-[#f1edf6] flex">
+        <WorkspaceSidebar active="Tasks" />
+        <main className="flex-1 min-w-0 min-h-screen">
           <header className="sticky top-0 z-30 flex h-[64px] items-center gap-3 border-b border-[#e9e7ef] bg-[#f8f8fb]/90 px-4 backdrop-blur-xl dark:border-[#302b38] dark:bg-[#18161e]/90 lg:px-6">
             <button onClick={() => setSidebarOpen(true)} className="grid size-9 place-items-center rounded-xl border border-[#e5e2ed] bg-white text-[#777080] dark:border-[#3b3543] dark:bg-[#24212b] lg:hidden"><Menu size={16} /></button>
             <div className="relative hidden max-w-[330px] flex-1 sm:block"><Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#aaa3b1]" /><input value={taskSearch} onChange={(e) => setTaskSearch(e.target.value)} placeholder="Search tasks and labels..." className="kanban-input h-9 pl-9" /></div>
@@ -152,68 +153,7 @@ function TaskCard({ task, board, onEdit }: { task: KanbanTask; board: KanbanBoar
   </article>;
 }
 
-function WorkspaceSidebar({ open, onClose, active }: { open: boolean; onClose: () => void; active: string }) {
-  const items = [
-    { label: "Dashboard", icon: LayoutDashboard, href: "/" },
-    { label: "AI Assistant", icon: Bot, href: "/ai-assistant" },
-    { label: "Calendar", icon: CalendarDays, href: "/calendar" },
-    { label: "Tasks", icon: SquareKanban, href: "/kanban" },
-    { label: "Notes", icon: StickyNote, href: "/notes" },
-    { label: "Whiteboard", icon: PenTool, href: "/whiteboard" },
-    { label: "Spaces", icon: PanelTop, href: "/spaces" },
-    { label: "AI Builder", icon: WandSparkles, href: "/ai-template-builder" },
-    { label: "Settings", icon: Settings, href: "/settings" },
-  ];
 
-  return (
-    <aside className={`fixed inset-y-0 left-0 z-40 w-[210px] border-r border-[#e8e7ef] bg-white transition-transform dark:border-[#302b38] dark:bg-[#1d1a23] lg:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"}`}>
-      <div className="flex h-[64px] items-center gap-3 border-b border-[#efedf4] px-4 dark:border-[#302b38]">
-        <span className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-[#6c5ce7] to-[#8b5cf6] text-white shadow-lg">
-          <Zap size={17} fill="currentColor" />
-        </span>
-        <div>
-          <p className="text-[15px] font-bold tracking-[-0.04em]">Worko</p>
-          <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-[#aaa4b2]">Creative workspace</p>
-        </div>
-        <button onClick={onClose} className="ml-auto lg:hidden">
-          <X size={15} />
-        </button>
-      </div>
-      <nav className="space-y-1 p-3 overflow-y-auto max-h-[calc(100vh-140px)]">
-        <p className="mb-2 px-2 text-[8px] font-bold uppercase tracking-[0.17em] text-[#aaa6b5]">Workspace</p>
-        {items.map(({ label, icon: Icon, href }) => (
-          <a
-            key={label}
-            href={href}
-            className={`relative flex h-10 items-center gap-3 rounded-xl px-2.5 text-[11px] font-bold transition ${
-              label === active ? "bg-[#eeeaff] text-[#5849c6] dark:bg-[#352f4e]" : "text-[#777181] hover:bg-[#f7f5f9] dark:hover:bg-[#28242f]"
-            }`}
-          >
-            <span className={`grid size-7 place-items-center rounded-lg ${
-              label === active ? "bg-white text-[#6556d6] shadow-sm dark:bg-[#463e58]" : "bg-[#f3f1f5] text-[#918a99] dark:bg-[#302b38]"
-            }`}>
-              <Icon size={13} />
-            </span>
-            {label}
-          </a>
-        ))}
-      </nav>
-      <div className="absolute bottom-0 w-full border-t border-[#efedf4] p-3 dark:border-[#302b38]">
-        <button
-          onClick={() => { window.location.href = "/settings"; }}
-          className="flex w-full items-center gap-2 rounded-xl border border-[#ece8f1] bg-[#fcfbfd] p-2 text-left dark:border-[#3c3645] dark:bg-[#29252f]"
-        >
-          <span className="grid size-8 place-items-center rounded-[10px] bg-gradient-to-br from-[#ffad72] to-[#ef6688] text-[9px] font-bold text-white">DG</span>
-          <span className="min-w-0">
-            <span className="block text-[10px] font-bold">Daksh Gola</span>
-            <span className="block text-[8px] text-[#a29ba9]">Personal workspace</span>
-          </span>
-          <Settings size={12} className="ml-auto" />
-        </button>
-      </div>
-    </aside>
-  );
-}
 
 function SelectButton({ icon: Icon, value, options, onChange }: { icon: typeof Filter; value: string; options: string[]; onChange: (value: string) => void }) { return <label className="relative flex h-9 items-center gap-1.5 rounded-xl border border-[#e5e1eb] bg-white px-3 text-[9px] font-bold text-[#756e7e] shadow-sm dark:border-[#3b3543] dark:bg-[#24212b]"><Icon size={12} /><select value={value} onChange={(e) => onChange(e.target.value)} className="appearance-none bg-transparent pr-3 outline-none">{options.map((option) => <option key={option}>{option}</option>)}</select></label>; }
 function Stat({ icon: Icon, value, label, color, progress }: { icon: typeof SquareKanban; value: string | number; label: string; color: string; progress?: number }) { return <div className="flex items-center gap-3 rounded-[16px] border border-[#e7e4ee] bg-white p-3 shadow-[0_6px_20px_rgba(54,48,89,0.04)] dark:border-[#393341] dark:bg-[#24212b]"><span className={`grid size-9 place-items-center rounded-xl ${color}`}><Icon size={15} /></span><span><span className="block text-sm font-bold">{value}</span><span className="text-[8px] font-bold uppercase tracking-[0.1em] text-[#9d96a6]">{label}</span></span>{progress !== undefined && <span className="ml-auto h-8 w-1.5 overflow-hidden rounded-full bg-[#eeeaf1] dark:bg-[#403947]"><span className="block w-full rounded-full bg-[#f0a342]" style={{ height: `${progress}%`, marginTop: `${100 - progress}%` }} /></span>}</div>; }

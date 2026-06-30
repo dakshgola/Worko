@@ -39,6 +39,7 @@ import {
   saveMessage,
   deleteChat,
 } from "@/lib/ai-assistant/actions";
+import { WorkspaceSidebar } from "@/components/WorkspaceSidebar";
 import { createEvent } from "@/lib/calendar/actions";
 import { createNote } from "@/lib/notes/actions";
 
@@ -324,28 +325,9 @@ export default function AiAssistantPage() {
   return (
     <div className="min-h-screen bg-[#f8f8fb] text-[#292832] flex">
       {/* Sidebar Navigation */}
-      <aside className={`fixed inset-y-0 left-0 z-40 w-[210px] border-r border-[#e8e7ef] bg-white transition-transform duration-300 lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
-        <div className="flex h-[64px] items-center gap-3 border-b border-[#efedf4] px-4">
-          <div className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-[#6c5ce7] to-[#8b5cf6] text-white shadow-[0_7px_18px_rgba(102,87,220,0.28)]"><Zap size={17} fill="currentColor" /></div>
-          <div>
-            <p className="text-[15px] font-bold tracking-[-0.04em]">Worko</p>
-            <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-[#aaa4b2]">Creative workspace</p>
-          </div>
-          <button onClick={() => setSidebarOpen(false)} className="ml-auto grid size-8 place-items-center rounded-lg text-[#9d96a6] hover:bg-[#f5f3f7] lg:hidden"><PanelLeftClose size={15} /></button>
-        </div>
-        <nav className="space-y-1 p-3 overflow-y-auto max-h-[calc(100vh-140px)]">
-          <p className="mb-2 px-2 text-[8px] font-bold uppercase tracking-[0.17em] text-[#aaa6b5]">Workspace</p>
-          {sidebarNav.map(({ label, icon: Icon, href, active }) => (
-            <a key={label} href={href} className={`relative flex h-10 items-center gap-3 rounded-xl px-2.5 text-[11px] font-bold transition ${active ? "bg-[#eeeaff] text-[#5849c6]" : "text-[#777181] hover:bg-[#f7f5f9] hover:text-[#3f3948]"}`}>
-              {active && <span className="absolute -left-1 h-5 w-0.5 rounded-full bg-[#6c5ce7]" />}
-              <span className={`grid size-7 place-items-center rounded-lg ${active ? "bg-white text-[#6556d6] shadow-sm" : "bg-[#f3f1f5] text-[#918a99]"}`}><Icon size={13} /></span>
-              {label}
-            </a>
-          ))}
-        </nav>
-      </aside>
+      <WorkspaceSidebar active="AI Assistant" />
 
-      <main className="flex-1 min-w-0 lg:ml-[210px] flex h-screen overflow-hidden">
+      <main className="flex-1 min-w-0 flex h-screen overflow-hidden">
         {/* Chat conversations history list */}
         <section className="w-60 border-r border-[#efedf4] bg-white flex flex-col shrink-0">
           <div className="p-4 border-b border-[#efedf4] flex items-center justify-between">

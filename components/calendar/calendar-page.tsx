@@ -33,6 +33,7 @@ import { TaskDialog } from "./task-dialog";
 import type { CalendarTask, CalendarView, TaskFormData } from "./types";
 import { WeekView } from "./week-view";
 import { listEvents, createEvent, updateEvent, deleteEvent } from "@/lib/calendar/actions";
+import { WorkspaceSidebar } from "@/components/WorkspaceSidebar";
 
 const sidebarNav = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/" },
@@ -162,29 +163,10 @@ export function CalendarPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f8fb] text-[#292832]">
-      <aside className={`fixed inset-y-0 left-0 z-40 w-[210px] border-r border-[#e8e7ef] bg-white transition-transform duration-300 lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
-        <div className="flex h-[64px] items-center gap-3 border-b border-[#efedf4] px-4">
-          <div className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-[#6c5ce7] to-[#8b5cf6] text-white shadow-[0_7px_18px_rgba(102,87,220,0.28)]"><Zap size={17} fill="currentColor" /></div>
-          <div>
-            <p className="text-[15px] font-bold tracking-[-0.04em]">Worko</p>
-            <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-[#aaa4b2]">Creative workspace</p>
-          </div>
-          <button onClick={() => setSidebarOpen(false)} className="ml-auto grid size-8 place-items-center rounded-lg text-[#9d96a6] hover:bg-[#f5f3f7] lg:hidden"><PanelLeftClose size={15} /></button>
-        </div>
-        <nav className="space-y-1 p-3 overflow-y-auto max-h-[calc(100vh-140px)]">
-          <p className="mb-2 px-2 text-[8px] font-bold uppercase tracking-[0.17em] text-[#aaa6b5]">Workspace</p>
-          {sidebarNav.map(({ label, icon: Icon, href, active }) => (
-            <a key={label} href={href} className={`relative flex h-10 items-center gap-3 rounded-xl px-2.5 text-[11px] font-bold transition ${active ? "bg-[#eeeaff] text-[#5849c6]" : "text-[#777181] hover:bg-[#f7f5f9] hover:text-[#3f3948]"}`}>
-              {active && <span className="absolute -left-1 h-5 w-0.5 rounded-full bg-[#6c5ce7]" />}
-              <span className={`grid size-7 place-items-center rounded-lg ${active ? "bg-white text-[#6556d6] shadow-sm" : "bg-[#f3f1f5] text-[#918a99]"}`}><Icon size={13} /></span>
-              {label}
-            </a>
-          ))}
-        </nav>
-      </aside>
+    <div className="min-h-screen bg-[#f8f8fb] text-[#292832] flex">
+      <WorkspaceSidebar active="Calendar" />
 
-      <main className="min-h-screen lg:ml-[210px]">
+      <main className="flex-1 min-w-0 min-h-screen">
         <header className="sticky top-0 z-30 flex h-[64px] items-center gap-3 border-b border-[#e9e7ef] bg-[#f8f8fb]/88 px-4 backdrop-blur-xl lg:px-6">
           <button onClick={() => setSidebarOpen(true)} className="grid size-9 place-items-center rounded-xl border border-[#e5e2ed] bg-white text-[#777080] lg:hidden"><Menu size={16} /></button>
           

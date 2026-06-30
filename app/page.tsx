@@ -46,6 +46,7 @@ import { createNote } from "@/lib/notes/actions";
 import { createWhiteboard } from "@/lib/whiteboard/actions";
 import { createSpace, createPage } from "@/lib/spaces/actions";
 import { createEvent } from "@/lib/calendar/actions";
+import { WorkspaceSidebar } from "@/components/WorkspaceSidebar";
 
 const DEFAULT_WIDGETS = [
   { id: "welcome", name: "Welcome Message Banner", visible: true },
@@ -968,150 +969,11 @@ function DashboardView() {
   return (
     <div className="min-h-screen bg-[#f8f8fb] text-[#292832] flex">
       {/* Sidebar Layout */}
-      <aside
-        className={`fixed inset-y-0 left-0 z-30 flex shrink-0 flex-col border-r border-[#e8e7ef] bg-[linear-gradient(180deg,#ffffff_0%,#fbfaff_52%,#fffaf8_100%)] shadow-[6px_0_30px_rgba(50,46,92,0.035)] transition-all duration-300 ${
-          collapsed ? "w-[68px]" : "w-[224px]"
-        }`}
-      >
-        <div className="flex h-[64px] items-center border-b border-[#efedf4] px-3.5">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="grid size-9 shrink-0 place-items-center rounded-[12px] bg-gradient-to-br from-[#6c5ce7] via-[#6757dc] to-[#8b5cf6] text-white shadow-[0_7px_18px_rgba(102,87,220,0.28)] ring-1 ring-white/30 transition duration-300 hover:scale-105 hover:rotate-[-3deg]">
-              <Zap size={17} fill="currentColor" strokeWidth={1.8} />
-            </div>
-            {!collapsed && (
-              <div className="min-w-0">
-                <p className="truncate text-[16px] font-bold tracking-[-0.045em] text-[#282633]">Worko</p>
-                <p className="truncate text-[9px] font-bold uppercase tracking-[0.15em] text-[#9b97a8]">
-                  Creative workspace
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <nav className="flex-1 overflow-y-auto px-2.5 py-3">
-          {[
-            {
-              label: "Overview",
-              items: [
-                { label: "Dashboard", icon: LayoutDashboard, color: "text-indigo-600", iconBg: "bg-indigo-100", active: true },
-                { label: "AI Assistant", icon: Bot, color: "text-amber-600", iconBg: "bg-amber-100" },
-                { label: "Calendar", icon: CalendarDays, color: "text-sky-600", iconBg: "bg-sky-100" },
-              ],
-            },
-            {
-              label: "Create",
-              items: [
-                { label: "Task / Kanban", icon: SquareKanban, color: "text-emerald-600", iconBg: "bg-emerald-100" },
-                { label: "Notes", icon: StickyNote, color: "text-orange-600", iconBg: "bg-orange-100" },
-                { label: "Whiteboard", icon: PenTool, color: "text-pink-600", iconBg: "bg-pink-100" },
-                { label: "Pages / Spaces", icon: PanelTop, color: "text-violet-600", iconBg: "bg-violet-100" },
-              ],
-            },
-            {
-              label: "Tools",
-              items: [
-                { label: "AI Template Builder", icon: WandSparkles, color: "text-rose-600", iconBg: "bg-rose-100" },
-                { label: "Settings", icon: Settings, color: "text-slate-600", iconBg: "bg-slate-100" },
-              ],
-            },
-          ].map((section, idx) => (
-            <div key={section.label} className={idx === 0 ? "" : "mt-4"}>
-              {!collapsed && (
-                <p className="mb-1.5 px-2.5 text-[9px] font-bold uppercase tracking-[0.17em] text-[#aaa6b5]">
-                  {section.label}
-                </p>
-              )}
-              <div className="space-y-0.5">
-                {section.items.map(({ label, icon: Icon, color, iconBg, active }) => (
-                  <button
-                    key={label}
-                    onClick={() => {
-                      if (label === "Dashboard") window.location.href = "/";
-                      if (label === "AI Assistant") window.location.href = "/ai-assistant";
-                      if (label === "Calendar") window.location.href = "/calendar";
-                      if (label === "Task / Kanban") window.location.href = "/kanban";
-                      if (label === "Notes") window.location.href = "/notes";
-                      if (label === "Whiteboard") window.location.href = "/whiteboard";
-                      if (label === "Pages / Spaces") window.location.href = "/spaces";
-                      if (label === "AI Template Builder") window.location.href = "/ai-template-builder";
-                      if (label === "Settings") window.location.href = "/settings";
-                    }}
-                    className={`group relative flex h-9.5 w-full items-center gap-2.5 rounded-[10px] px-2 text-[12px] font-semibold transition-all duration-200 ${
-                      active
-                        ? "bg-gradient-to-r from-[#eeeaff] to-[#f6f3ff] text-[#5143bd] shadow-[inset_0_0_0_1px_rgba(103,87,220,0.08)]"
-                        : "text-[#6f6b7b] hover:translate-x-0.5 hover:bg-white hover:text-[#302d3a] hover:shadow-[0_4px_14px_rgba(54,48,89,0.06)]"
-                    } ${collapsed ? "justify-center px-0" : ""}`}
-                  >
-                    {active && <span className="absolute left-0 h-4 w-0.5 rounded-full bg-[#6c5ce7]" />}
-                    <span className={`grid size-6 shrink-0 place-items-center rounded-[7px] ${iconBg}`}>
-                      <Icon size={13.5} className={color} />
-                    </span>
-                    {!collapsed && <span>{label}</span>}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
-
-          {/* Render custom template pins in the navigation */}
-          {!collapsed && dbData?.generatedApps && dbData.generatedApps.filter((a: any) => a.isPinned).length > 0 && (
-            <div className="mt-4">
-              <p className="mb-1.5 px-2.5 text-[9px] font-bold uppercase tracking-[0.17em] text-[#aaa6b5]">
-                Custom Apps
-              </p>
-              <div className="space-y-0.5">
-                {dbData.generatedApps.filter((a: any) => a.isPinned).map((app: any) => (
-                  <button
-                    key={app.id}
-                    onClick={() => { window.location.href = `/ai-template-builder`; }}
-                    className="group relative flex h-9.5 w-full items-center gap-2.5 rounded-[10px] px-2 text-[12px] font-semibold text-[#6f6b7b] hover:translate-x-0.5 hover:bg-white hover:text-[#302d3a]"
-                  >
-                    <span className="grid size-6 shrink-0 place-items-center rounded-[7px] text-white" style={{ backgroundColor: app.color }}>
-                      <Zap size={11} fill="currentColor" />
-                    </span>
-                    <span>{app.appName}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </nav>
-
-        <div className="border-t border-[#efedf4] p-2.5">
-          <button
-            onClick={() => { window.location.href = "/settings"; }}
-            className={`mb-1.5 flex h-9 w-full items-center gap-2.5 rounded-[10px] px-2 text-[12px] font-semibold text-[#777281] transition hover:bg-white hover:text-[#5143bd] ${
-              collapsed ? "justify-center" : ""
-            }`}
-          >
-            <span className="grid size-6 place-items-center rounded-[7px] bg-slate-100"><Settings size={13.5} className="text-slate-600" /></span>
-            {!collapsed && <span>Settings</span>}
-          </button>
-          
-          <div className="flex items-center gap-2.5 rounded-xl border border-[#ece9f2] bg-white p-1.5 shadow-[0_4px_14px_rgba(54,48,89,0.045)]">
-            <div className="grid size-8 shrink-0 place-items-center rounded-[10px] bg-gradient-to-br from-[#ffad72] to-[#ef6688] text-[10px] font-bold text-white">
-              {user?.firstName ? user.firstName.substring(0, 2).toUpperCase() : "DG"}
-            </div>
-            {!collapsed && (
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-xs font-semibold">{user?.fullName || "Daksh Gola"}</p>
-                <p className="truncate text-[9px] text-[#aaa6b5] font-bold uppercase tracking-wider">Personal space</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <button
-          onClick={() => setCollapsed((v) => !v)}
-          className="absolute -right-3 top-[78px] grid size-6 place-items-center rounded-full border border-[#e3e0eb] bg-white text-[#858091] shadow-sm hover:scale-105"
-        >
-          {collapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
-        </button>
-      </aside>
+      {/* Sidebar Layout */}
+      <WorkspaceSidebar active="Dashboard" />
 
       {/* Main panel */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden" style={{ paddingLeft: collapsed ? "68px" : "224px" }}>
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         
         {/* Top Header */}
         <header className="flex h-[68px] items-center gap-4 border-b border-[#e9e7ef] bg-[#f8f8fb]/85 px-6 backdrop-blur-xl shrink-0">
