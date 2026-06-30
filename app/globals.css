@@ -88,6 +88,46 @@ button {
   box-shadow: inset 0 0 0 2px #bdb4f1;
 }
 
+.kanban-input {
+  width: 100%;
+  height: 42px;
+  border: 1px solid #e5e1eb;
+  border-radius: 12px;
+  background: #fcfbfd;
+  padding: 0 12px;
+  color: #3c3743;
+  font-size: 11px;
+  outline: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.kanban-input::placeholder {
+  color: #b2abb8;
+}
+
+.kanban-input:focus {
+  border-color: #bdb4f1;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(222, 217, 255, 0.5);
+}
+
+.dark .kanban-input {
+  border-color: #403947;
+  background: #29252f;
+  color: #eee9f3;
+}
+
+.dark .kanban-input:focus {
+  border-color: #8173c9;
+  background: #302b38;
+  box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.18);
+}
+
+.dark select option {
+  background: #29252f;
+  color: #eee9f3;
+}
+
 @media (max-width: 760px) {
   aside {
     width: 68px !important;
