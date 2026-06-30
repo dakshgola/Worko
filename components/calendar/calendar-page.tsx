@@ -35,18 +35,6 @@ import { WeekView } from "./week-view";
 import { listEvents, createEvent, updateEvent, deleteEvent } from "@/lib/calendar/actions";
 import { WorkspaceSidebar } from "@/components/WorkspaceSidebar";
 
-const sidebarNav = [
-  { label: "Dashboard", icon: LayoutDashboard, href: "/" },
-  { label: "AI Assistant", icon: Bot, href: "/ai-assistant" },
-  { label: "Calendar", icon: CalendarDays, href: "/calendar", active: true },
-  { label: "Tasks", icon: SquareKanban, href: "/kanban" },
-  { label: "Notes", icon: StickyNote, href: "/notes" },
-  { label: "Whiteboard", icon: PenTool, href: "/whiteboard" },
-  { label: "Spaces", icon: PanelTop, href: "/spaces" },
-  { label: "AI Builder", icon: WandSparkles, href: "/ai-template-builder" },
-  { label: "Settings", icon: Settings, href: "/settings" },
-];
-
 export function CalendarPage() {
   const [view, setView] = useState<CalendarView>("month");
   const [cursor, setCursor] = useState(new Date());
@@ -78,6 +66,7 @@ export function CalendarPage() {
     } catch (e) {
       console.error("Failed to load events:", e);
     } finally {
+      setView("month"); // wait, let's keep view state as is.
       setLoading(false);
     }
   };
@@ -163,65 +152,63 @@ export function CalendarPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f8fb] text-[#292832] flex">
+    <div className="min-h-screen bg-[#FAF8F4] text-[#2C2A29] flex">
       <WorkspaceSidebar active="Calendar" />
 
       <main className="flex-1 min-w-0 min-h-screen">
-        <header className="sticky top-0 z-30 flex h-[64px] items-center gap-3 border-b border-[#e9e7ef] bg-[#f8f8fb]/88 px-4 backdrop-blur-xl lg:px-6">
-          <button onClick={() => setSidebarOpen(true)} className="grid size-9 place-items-center rounded-xl border border-[#e5e2ed] bg-white text-[#777080] lg:hidden"><Menu size={16} /></button>
-          
+        <header className="sticky top-0 z-30 flex h-[68px] items-center gap-3 border-b border-[#EBE8E2] bg-[#FAF8F4]/80 px-4 backdrop-blur-xl lg:px-6">
           <div className="relative max-w-[330px] flex-1">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#aaa3b1]" />
             <input
               placeholder="Search calendar title..."
               value={searchVal}
               onChange={(e) => setSearchVal(e.target.value)}
-              className="h-9 w-full rounded-xl border border-[#e5e2ed] bg-white/85 pl-9 pr-10 text-[11px] outline-none focus:border-[#bdb4f1]"
+              className="h-10 w-full rounded-xl border border-[#EBE8E2] bg-white pl-9 pr-10 text-input-val outline-none focus:border-[#FF5A36]"
             />
           </div>
 
           <div className="ml-auto flex items-center gap-2">
             <button
               onClick={() => { window.location.href = "/settings"; }}
-              className="grid size-9 place-items-center rounded-xl border border-[#e5e2ed] bg-white text-[#7b7484] shadow-sm"
+              className="grid size-10 place-items-center rounded-xl border border-[#EBE8E2] bg-white text-[#5E5B5A] shadow-sm hover:text-[#FF5A36] transition"
             >
               <Settings size={15} />
             </button>
-            <button onClick={() => openDialog(toDateKey(new Date()))} className="flex h-9 items-center gap-2 rounded-xl bg-gradient-to-r from-[#6556db] to-[#7b5fe7] px-3.5 text-[10px] font-bold text-white shadow-sm"><Plus size={14} /><span className="hidden sm:inline">New task</span></button>
+            <button onClick={() => openDialog(toDateKey(new Date()))} className="flex h-10 items-center gap-2 rounded-xl bg-[#FF5A36] hover:bg-[#ff7d5e] px-4 text-btn text-white shadow-sm transition hover:-translate-y-0.5"><Plus size={14} /><span className="hidden sm:inline">New task</span></button>
           </div>
         </header>
 
         <div className="mx-auto max-w-[1600px] p-4 lg:p-6">
           <section className="mb-5 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="mb-1.5 text-[9px] font-bold uppercase tracking-[0.14em] text-[#9f98a7]">Calendar workspace</p>
-              <h1 className="text-2xl font-bold tracking-[-0.045em] text-[#302d38] sm:text-3xl">Plan with a little breathing room.</h1>
-              <p className="mt-1.5 text-[11px] text-[#918a98]">Schedule key events and let AI manage reminders.</p>
+              <p className="mb-1.5 text-overline text-[#aaa6b5] block">Calendar workspace</p>
+              <h1 className="text-h2 text-[#2C2A29]">Plan with a little breathing room.</h1>
+              <p className="mt-1.5 text-body-sm text-[#5E5B5A] font-semibold">Schedule key events and let AI manage reminders.</p>
             </div>
-            <div className="flex items-center gap-2 rounded-xl border border-[#e5e1eb] bg-white p-1 shadow-sm">
-              <button onClick={() => setView("month")} className={`h-8 rounded-lg px-3 text-[10px] font-bold transition ${view === "month" ? "bg-[#eeeaff] text-[#5b4dcc]" : "text-[#918999] hover:bg-[#f7f5f8]"}`}>Month</button>
-              <button onClick={() => setView("week")} className={`h-8 rounded-lg px-3 text-[10px] font-bold transition ${view === "week" ? "bg-[#eeeaff] text-[#5b4dcc]" : "text-[#918999] hover:bg-[#f7f5f8]"}`}>Week</button>
+            <div className="flex items-center gap-2 rounded-xl border border-[#EBE8E2] bg-white p-1 shadow-sm">
+              <button onClick={() => setView("month")} className={`h-8 rounded-lg px-3 text-btn transition ${view === "month" ? "bg-[#FFE8E2] text-[#FF5A36] border border-[#EBE8E2] shadow-sm" : "text-[#5E5B5A] hover:bg-slate-150"}`}>Month</button>
+              <button onClick={() => setView("week")} className={`h-8 rounded-lg px-3 text-btn transition ${view === "week" ? "bg-[#FFE8E2] text-[#FF5A36] border border-[#EBE8E2] shadow-sm" : "text-[#5E5B5A] hover:bg-slate-150"}`}>Week</button>
             </div>
           </section>
 
           {loading ? (
-            <div className="flex items-center justify-center py-20 gap-2 text-xs font-bold text-[#918a98]">
-              <Loader2 size={16} className="animate-spin text-[#6c5ce7]" />
+            <div className="flex items-center justify-center py-20 gap-2 text-body-sm font-bold text-[#aaa6b5]">
+              <Loader2 size={16} className="animate-spin text-[#FF5A36]" />
               Loading database events...
             </div>
           ) : (
             <section className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_250px]">
-              <div className={`min-w-0 overflow-hidden rounded-[20px] border border-[#e7e4ee] bg-white shadow-sm ${draggingId ? "ring-2 ring-[#d9d2fb]" : ""}`}>
-                <div className="flex flex-wrap items-center gap-2 border-b border-[#ece9f1] px-3 py-3 sm:px-4">
-                  <button onClick={() => setCursor(new Date())} className="h-8 rounded-lg border border-[#e6e2eb] px-3 text-[9px] font-bold text-[#756e7e] hover:bg-[#f8f6fa]">Today</button>
+              <div className={`min-w-0 overflow-hidden rounded-[20px] border border-[#EBE8E2] bg-white shadow-sm ${draggingId ? "ring-2 ring-[#FF5A36]" : ""}`}>
+                <div className="flex flex-wrap items-center gap-2 border-b border-[#EBE8E2] px-3 py-3 sm:px-4">
+                  <button onClick={() => setCursor(new Date())} className="h-8 rounded-lg border border-[#EBE8E2] px-3 text-btn text-[#5E5B5A] hover:bg-[#FAF8F4]">Today</button>
                   <div className="flex gap-1">
-                    <button onClick={() => navigate(-1)} aria-label="Previous period" className="grid size-8 place-items-center rounded-lg border border-[#e6e2eb] text-[#837c8c] hover:bg-[#f8f6fa]"><ChevronLeft size={13} /></button>
-                    <button onClick={() => navigate(1)} aria-label="Next period" className="grid size-8 place-items-center rounded-lg border border-[#e6e2eb] text-[#837c8c] hover:bg-[#f8f6fa]"><ChevronRight size={13} /></button>
+                    <button onClick={() => navigate(-1)} aria-label="Previous period" className="grid size-8 place-items-center rounded-lg border border-[#EBE8E2] text-[#5E5B5A] hover:bg-[#FAF8F4]"><ChevronLeft size={13} /></button>
+                    <button onClick={() => navigate(1)} aria-label="Next period" className="grid size-8 place-items-center rounded-lg border border-[#EBE8E2] text-[#5E5B5A] hover:bg-[#FAF8F4]"><ChevronRight size={13} /></button>
                   </div>
-                  <h2 className="ml-1 text-sm font-bold tracking-[-0.025em] sm:text-base">{formatMonth(cursor)}</h2>
+                  <h2 className="ml-1 text-h3 text-[#2C2A29]">{formatMonth(cursor)}</h2>
                   
                   {/* Delete indicator instruction helper */}
-                  <div className="ml-auto text-[9px] text-[#aaa3b1] font-semibold">
+                  <div className="ml-auto text-caption text-[#aaa3b1] font-semibold">
                     Double-click task cell or click draft garbage to remove events.
                   </div>
                 </div>
@@ -238,11 +225,11 @@ export function CalendarPage() {
                 
                 {/* Draft deletes */}
                 {drafts.length > 0 && (
-                  <div className="bg-white border border-[#e7e4ee] p-3 rounded-2xl">
-                    <p className="text-[10px] font-bold text-[#8f8798] uppercase tracking-wider mb-2">Trash Drafts</p>
+                  <div className="bg-white border border-[#EBE8E2] p-3 rounded-2xl">
+                    <p className="text-overline text-[#aaa6b5] mb-2 block">Trash Drafts</p>
                     <div className="space-y-1">
                       {drafts.map((d) => (
-                        <div key={d.id} className="flex items-center justify-between text-xs p-1.5 hover:bg-[#fff0f3] rounded-lg">
+                        <div key={d.id} className="flex items-center justify-between text-body-sm p-1.5 hover:bg-[#fff0f3] rounded-lg font-semibold">
                           <span className="truncate">{d.title}</span>
                           <button onClick={() => handleRemoveEvent(d.id)} className="text-red-500 hover:text-red-700">
                             <Trash2 size={13} />
@@ -257,7 +244,7 @@ export function CalendarPage() {
           )}
         </div>
       </main>
-      {sidebarOpen && <button aria-label="Close sidebar" onClick={() => setSidebarOpen(false)} className="fixed inset-0 z-30 bg-[#302a3d]/20 backdrop-blur-sm lg:hidden" />}
+
       <TaskDialog open={dialogOpen} initialDate={dialogDate} onClose={() => setDialogOpen(false)} onSave={saveTask} />
     </div>
   );

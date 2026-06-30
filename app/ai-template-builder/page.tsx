@@ -38,18 +38,6 @@ import {
 } from "@/lib/ai-builder/actions";
 import { WorkspaceSidebar } from "@/components/WorkspaceSidebar";
 
-const sidebarNav = [
-  { label: "Dashboard", icon: LayoutDashboard, href: "/" },
-  { label: "AI Assistant", icon: Bot, href: "/ai-assistant" },
-  { label: "Calendar", icon: CalendarDays, href: "/calendar" },
-  { label: "Tasks", icon: SquareKanban, href: "/kanban" },
-  { label: "Notes", icon: StickyNote, href: "/notes" },
-  { label: "Whiteboard", icon: PenTool, href: "/whiteboard" },
-  { label: "Spaces", icon: PanelTop, href: "/spaces" },
-  { label: "AI Builder", icon: WandSparkles, href: "/ai-template-builder", active: true },
-  { label: "Settings", icon: Settings, href: "/settings" },
-];
-
 export default function AiTemplateBuilderPage() {
   const { user } = useUser();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -109,7 +97,7 @@ Output ONLY the raw JSON string. Do not wrap in markdown code blocks.`;
             appName: "Expense Tracker",
             description: "Manage monthly budgets and spend logs",
             icon: "Zap",
-            color: "#6c5ce7",
+            color: "#FF5A36",
             columns: ["Expense Title", "Amount", "Category", "Date"],
             items: [
               { id: "1", values: ["Lunch sync", "$24.00", "Food", "2026-06-27"] },
@@ -199,35 +187,35 @@ Output ONLY the raw JSON string. Do not wrap in markdown code blocks.`;
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f8fb] text-[#292832] flex">
+    <div className="min-h-screen bg-[#FAF8F4] text-[#2C2A29] flex">
       {/* Sidebar Navigation */}
       <WorkspaceSidebar active="AI Builder" />
 
       <main className="flex-grow min-w-0 p-6 lg:p-10 space-y-8 overflow-y-auto max-h-screen">
         <section className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="mb-1.5 text-[9px] font-bold uppercase tracking-[0.14em] text-[#9f98a7]">Workspace generator</p>
-            <h1 className="text-2xl font-bold tracking-[-0.045em] text-[#302d38] sm:text-3xl">AI Custom App Builder</h1>
-            <p className="mt-1.5 text-[11px] text-[#918a98]">Describe a custom tracker or checklist app, and AI will build a single-page config template.</p>
+            <p className="mb-1.5 text-overline text-[#aaa6b5] block">Workspace generator</p>
+            <h1 className="text-h2 text-[#2C2A29]">AI Custom App Builder</h1>
+            <p className="mt-1.5 text-body-sm text-[#5E5B5A] font-semibold">Describe a custom tracker or checklist app, and AI will build a single-page config template.</p>
           </div>
         </section>
 
         {/* Builder Inputs */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-4">
-            <div className="bg-white border border-[#efedf4] p-5 rounded-2xl shadow-sm space-y-3">
-              <label className="block text-[11px] font-extrabold uppercase text-[#b0a9bd] tracking-wider">Describe your App Idea</label>
+            <div className="bg-white border border-[#EBE8E2] p-5 rounded-2xl shadow-sm space-y-3">
+              <label className="block text-label-val uppercase text-[#aaa6b5] mb-1">Describe your App Idea</label>
               <textarea
-                placeholder="e.g. Build a Habit Tracker to track daily runs, hydration, reading sessions andStreaks..."
+                placeholder="e.g. Build a Habit Tracker to track daily runs, hydration, reading sessions and Streaks..."
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                className="w-full h-24 p-3 border border-[#e5e2ed] text-xs rounded-xl outline-none resize-none focus:border-[#bdb4f1]"
+                className="w-full h-24 p-3 border border-[#EBE8E2] text-input-val rounded-xl outline-none resize-none focus:border-[#FF5A36]"
               />
 
               <button
                 onClick={handleGenerateTemplate}
                 disabled={generating || !prompt.trim()}
-                className="h-10 px-6 bg-gradient-to-r from-[#6c5ce7] to-[#8b5cf6] text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition ml-auto shadow-sm"
+                className="h-10 px-6 bg-[#FF5A36] hover:bg-[#ff7d5e] text-white font-bold rounded-xl text-btn flex items-center justify-center gap-1.5 transition ml-auto shadow-sm"
               >
                 {generating ? (
                   <>
@@ -243,46 +231,42 @@ Output ONLY the raw JSON string. Do not wrap in markdown code blocks.`;
 
             {/* Generated template live preview render */}
             {generatedConfig && (
-              <div className="bg-white border-2 border-dashed border-[#6c5ce7] p-6 rounded-2xl shadow-md space-y-5">
+              <div className="bg-white border-2 border-dashed border-[#FF5A36] p-6 rounded-2xl shadow-md space-y-5">
                 <div className="flex items-center justify-between border-b pb-4">
                   <div className="flex items-center gap-3">
                     <span className="grid size-11 place-items-center rounded-xl text-white shadow" style={{ backgroundColor: generatedConfig.color }}>
                       <WandSparkles size={17} />
                     </span>
                     <div>
-                      <h3 className="font-black text-sm text-[#282633]">{generatedConfig.appName}</h3>
-                      <p className="text-[10px] text-[#777281] mt-0.5">{generatedConfig.description}</p>
+                      <h3 className="text-h3 text-[#2C2A29]">{generatedConfig.appName}</h3>
+                      <p className="text-caption text-[#5E5B5A] mt-0.5 font-semibold">{generatedConfig.description}</p>
                     </div>
                   </div>
 
                   <button
                     onClick={handleSaveTemplate}
                     disabled={saving}
-                    className="h-9 px-4 bg-[#6c5ce7] text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-1 shadow"
+                    className="h-9 px-4 bg-[#FF5A36] hover:bg-[#ff7d5e] text-white font-bold rounded-xl text-btn flex items-center justify-center gap-1.5 shadow"
                   >
-                    {saving ? <Loader2 size={12} className="animate-spin" /> : "Save & Pin App"}
+                    {saving ? <Loader2 size={12} className="animate-spin" /> : "Save & Mount App"}
                   </button>
                 </div>
 
-                {/* Render app grid config */}
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
+                {/* Preview columns grid */}
+                <div className="overflow-x-auto border border-[#EBE8E2] rounded-xl bg-[#FAF8F4]/50 p-2">
+                  <table className="w-full text-left text-xs">
                     <thead>
-                      <tr className="border-b border-[#efedf4]">
-                        {(generatedConfig.columns || []).map((col: string, idx: number) => (
-                          <th key={idx} className="py-2.5 text-[10px] font-bold text-[#b0a9bd] uppercase tracking-wider px-2">
-                            {col}
-                          </th>
+                      <tr className="border-b border-[#EBE8E2] text-table-header text-[#aaa6b5]">
+                        {generatedConfig.columns.map((col: string, i: number) => (
+                          <th key={i} className="p-3">{col}</th>
                         ))}
                       </tr>
                     </thead>
-                    <tbody>
-                      {(generatedConfig.items || []).map((item: any, rowIdx: number) => (
-                        <tr key={rowIdx} className="border-b border-[#efedf4]/60">
-                          {item.values.map((val: string, colIdx: number) => (
-                            <td key={colIdx} className="py-2.5 text-xs text-[#282633] px-2 font-semibold">
-                              {val}
-                            </td>
+                    <tbody className="divide-y divide-[#EBE8E2]/50 text-table-cell text-[#2C2A29] font-semibold">
+                      {generatedConfig.items.map((item: any, rowIdx: number) => (
+                        <tr key={rowIdx}>
+                          {item.values.map((val: string, valIdx: number) => (
+                            <td key={valIdx} className="p-3 bg-white font-mono">{val}</td>
                           ))}
                         </tr>
                       ))}
@@ -293,39 +277,37 @@ Output ONLY the raw JSON string. Do not wrap in markdown code blocks.`;
             )}
           </div>
 
-          {/* List of previously generated apps */}
-          <div className="bg-white border border-[#efedf4] p-5 rounded-2xl shadow-sm space-y-4">
-            <div>
-              <h4 className="text-xs font-bold text-[#5143bd] uppercase tracking-wider">Your Custom Apps</h4>
-              <p className="text-[10px] text-[#777281] mt-0.5">Manage previously generated mini apps:</p>
-            </div>
-
-            <div className="space-y-2 max-h-[60vh] overflow-y-auto">
+          {/* Right sidebar saved list */}
+          <div className="bg-white border border-[#EBE8E2] rounded-2xl p-5 shadow-sm space-y-4">
+            <h3 className="text-overline text-[#FF5A36] block">Saved trackers ({savedApps.length})</h3>
+            <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
               {loadingApps ? (
-                <div className="text-center py-6 text-xs text-[#aaa6b5]"><Loader2 size={12} className="animate-spin mr-1 inline" /> Loading...</div>
+                <div className="text-caption font-semibold text-[#aaa6b5] py-4 text-center">Loading trackers...</div>
               ) : savedApps.length === 0 ? (
-                <p className="text-xs text-[#aaa6b5] text-center py-4">0 apps generated.</p>
+                <div className="text-caption font-semibold text-[#aaa6b5] py-4 text-center">0 custom applications built.</div>
               ) : (
                 savedApps.map((app) => (
-                  <div key={app.id} className="p-3 bg-[#f8f8fb] border border-[#efedf4] rounded-xl flex items-center justify-between gap-2">
+                  <div key={app.id} className="p-3 border border-[#EBE8E2] bg-[#FAF8F4] rounded-xl flex items-center justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-bold truncate text-[#282633]">{app.appName}</p>
-                      <p className="text-[9px] text-[#777281] truncate">{app.description}</p>
+                      <div className="flex items-center gap-1.5">
+                        <span className="size-2 rounded-full shrink-0 animate-pulse" style={{ backgroundColor: app.color }} />
+                        <h4 className="text-body-sm font-bold text-[#2C2A29] truncate">{app.appName}</h4>
+                      </div>
+                      <p className="text-caption text-[#5E5B5A] truncate mt-0.5 font-semibold">{app.description}</p>
                     </div>
 
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1 shrink-0">
                       <button
                         onClick={() => handleTogglePin(app.id)}
                         className={`p-1 rounded-lg border transition ${
-                          app.isPinned ? "bg-amber-50 border-amber-100 text-amber-500" : "border-[#e5e2ed] text-slate-400"
+                          app.isPinned ? "border-amber-100 bg-amber-50/20 text-amber-600" : "border-[#EBE8E2] text-slate-400 hover:text-[#2C2A29] bg-white"
                         }`}
-                        title={app.isPinned ? "Unpin app" : "Pin to sidebar"}
                       >
                         <Star size={11} fill={app.isPinned ? "currentColor" : "none"} />
                       </button>
                       <button
                         onClick={() => handleDeleteApp(app.id)}
-                        className="p-1 rounded-lg border border-red-100 text-red-400 hover:bg-red-50"
+                        className="p-1 rounded-lg border border-[#EBE8E2] bg-white text-slate-400 hover:text-red-500 transition"
                       >
                         <Trash2 size={11} />
                       </button>
@@ -337,7 +319,6 @@ Output ONLY the raw JSON string. Do not wrap in markdown code blocks.`;
           </div>
         </section>
       </main>
-      {sidebarOpen && <button aria-label="Close sidebar" onClick={() => setSidebarOpen(false)} className="fixed inset-0 z-30 bg-[#302a3d]/20 backdrop-blur-sm lg:hidden" />}
     </div>
   );
 }

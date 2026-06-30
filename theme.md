@@ -25,11 +25,18 @@ large surfaces neutral and warm.
 
 ## Typography
 
-- Use a clean humanist sans serif.
-- Headings: bold, tight letter spacing, charcoal.
-- Body: regular or medium weight with comfortable line height.
-- Labels: compact, semibold, and muted.
-- Eyebrows: uppercase with generous letter spacing.
+- Pairings: **General Sans / Satoshi** (Preferred Display Headings) & **Inter** (Body/UI)
+- Code blocks: **JetBrains Mono**
+- Display / Headings: bold/black, tight letter-spacing (`tracking-tight`), optimized heights.
+- Body text: balanced line-heights (`1.6`–`1.8`) for readable layouts.
+- Labels & Badges: compact, semibold, and balanced.
+- Eyebrows: uppercase with tracking-widest spacing.
+- Unified Typography Tokens:
+  * `.display-xl` / `.display-lg` (72px–80px / 56px–64px, weight 900)
+  * `.text-h1` / `.text-h2` / `.text-h3` / `.text-h4` (42px–48px / 30px–36px / 22px–24px / 18px)
+  * `.text-subtitle` / `.text-body-lg` / `.text-body` / `.text-body-sm` (16px / 18px / 16px / 14px)
+  * `.text-caption` / `.text-overline` / `.text-btn` (12px / 11px uppercase / 13px semibold)
+  * `.text-sidebar` / `.text-table-header` / `.text-table-cell` (12px / 11px / 13px)
 
 ## Shape, Spacing, and Depth
 

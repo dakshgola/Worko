@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useUser, SignInButton } from "@clerk/nextjs";
+import { useUser, useClerk } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Zap,
@@ -64,15 +64,15 @@ export default function Home() {
 
   if (!userLoaded) {
     return (
-      <div className="min-h-screen bg-[#f8f8fb] flex flex-col items-center justify-center gap-3">
+      <div className="min-h-screen bg-[#FAF8F4] flex flex-col items-center justify-center gap-3">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
-          className="text-[#6c5ce7]"
+          className="text-[#FF5A36]"
         >
           <Zap size={32} fill="currentColor" />
         </motion.div>
-        <span className="text-xs font-semibold text-[#8b879c] animate-pulse">Initializing Worko...</span>
+        <span className="text-overline text-[#aaa6b5] animate-pulse">Worko</span>
       </div>
     );
   }
@@ -112,39 +112,39 @@ function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafc] text-[#292832] font-sans selection:bg-[#ded9ff] selection:text-[#3f3690] overflow-hidden relative">
-      {/* Background Decorative Gradients */}
-      <div className="absolute top-[-10%] left-[-20%] w-[60%] h-[60%] rounded-full bg-gradient-to-br from-[#c7d2fe]/30 to-[#f472b6]/20 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-gradient-to-br from-[#d8b4fe]/25 to-[#818cf8]/25 blur-[120px] pointer-events-none" />
+    <div className="min-h-screen bg-[#FAF8F4] text-[#2C2A29] font-sans selection:bg-[#FFE8E2] selection:text-[#C23B1E] overflow-hidden relative">
+      {/* Layered radial glow backgrounds */}
+      <div className="absolute top-[-10%] left-[-20%] w-[60%] h-[60%] rounded-full bg-gradient-to-br from-[#FF5A36]/10 to-transparent blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-gradient-to-br from-[#6c5ce7]/5 to-transparent blur-[120px] pointer-events-none" />
 
       {/* Navigation header */}
-      <header className="sticky top-0 z-50 border-b border-[#efedf4] bg-white/75 backdrop-blur-md px-6 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-50 border-b border-[#EBE8E2] bg-white/85 backdrop-blur-md px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-[#6c5ce7] to-[#8b5cf6] text-white shadow-[0_6px_16px_rgba(108,92,231,0.25)]">
+          <div className="grid size-9.5 place-items-center rounded-xl bg-gradient-to-br from-[#FF5A36] to-[#ff7d5e] text-white shadow-sm ring-1 ring-white/20">
             <Zap size={16} fill="currentColor" />
           </div>
           <div>
-            <span className="font-extrabold text-[17px] tracking-tight text-[#282633]">Worko</span>
-            <span className="ml-1.5 px-1.5 py-0.5 rounded-md bg-[#6c5ce7]/10 text-[#6c5ce7] text-[8.5px] font-bold uppercase tracking-wider">AI Hub</span>
+            <span className="text-h4 text-[#2C2A29]">Worko</span>
+            <span className="ml-1.5 px-1.5 py-0.5 rounded-md bg-[#FF5A36]/10 text-[#FF5A36] text-badge-val">AI Hub</span>
           </div>
         </div>
 
-        <nav className="hidden md:flex items-center gap-8 text-xs font-bold text-[#716c7d]">
-          <a href="#features" className="hover:text-[#5143bd] transition">Features</a>
-          <a href="#demo" className="hover:text-[#5143bd] transition">Interactive Showcase</a>
-          <a href="#pricing" className="hover:text-[#5143bd] transition">Pricing</a>
-          <a href="https://github.com/dakshgola/Worko" target="_blank" className="hover:text-[#5143bd] transition flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-8 text-nav text-[#5E5B5A]">
+          <a href="#features" className="hover:text-[#FF5A36] transition">Features</a>
+          <a href="#demo" className="hover:text-[#FF5A36] transition">Interactive Showcase</a>
+          <a href="#pricing" className="hover:text-[#FF5A36] transition">Pricing</a>
+          <a href="https://github.com/dakshgola/Worko" target="_blank" className="hover:text-[#FF5A36] transition flex items-center gap-1">
             <Github size={13} /> GitHub
           </a>
         </nav>
 
         <div className="flex items-center gap-3">
-          <a href="/sign-in" className="text-xs font-extrabold text-[#716c7d] hover:text-[#282633] transition px-3 py-2">
+          <a href="/sign-in" className="text-btn text-[#5E5B5A] hover:text-[#2C2A29] transition px-3 py-2">
             Sign In
           </a>
           <a
             href="/sign-up"
-            className="flex items-center gap-1.5 h-9.5 rounded-xl bg-gradient-to-r from-[#6c5ce7] to-[#8b5cf6] px-4.5 text-xs font-bold text-white shadow-[0_6px_16px_rgba(102,87,220,0.22)] transition hover:-translate-y-0.5"
+            className="flex items-center gap-1.5 h-10 rounded-xl bg-[#FF5A36] hover:bg-[#ff7d5e] px-4.5 text-btn text-white shadow-md transition hover:-translate-y-0.5"
           >
             Get Started <ArrowRight size={13} />
           </a>
@@ -152,152 +152,147 @@ function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="max-w-6xl mx-auto px-6 pt-16 lg:pt-24 text-center space-y-8 relative">
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="space-y-4"
-        >
-          <div className="mx-auto max-w-fit rounded-full bg-white border border-[#e8e7ef] px-3.5 py-1 text-[10px] font-extrabold uppercase tracking-widest text-[#6c5ce7] shadow-sm flex items-center gap-1.5 animate-pulse">
-            <Sparkles size={11} fill="currentColor" /> Workspace 2.0 is Live
-          </div>
-
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-[1.08] text-[#282633] max-w-4xl mx-auto">
-            The AI Workspace Built For{" "}
-            <span className="bg-gradient-to-r from-[#6c5ce7] via-[#8b5cf6] to-[#f472b6] bg-clip-text text-transparent">
-              Modern Teams
-            </span>
-          </h1>
-
-          <p className="text-sm md:text-[16px] leading-relaxed text-[#777281] font-semibold max-w-2xl mx-auto">
-            Plan projects, manage tasks, collaborate in real-time, generate AI workflows, take notes, build whiteboards, chat with AI and organize everything in one beautiful workspace.
-          </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-          className="flex flex-wrap justify-center gap-3 pt-2"
-        >
-          <a
-            href="/sign-up"
-            className="h-11 px-7 rounded-xl bg-gradient-to-r from-[#6c5ce7] to-[#8b5cf6] font-extrabold text-xs text-white shadow-lg flex items-center justify-center hover:-translate-y-0.5 transition"
-          >
-            Get Started Free
-          </a>
-          <a
-            href="#demo"
-            className="h-11 px-7 rounded-xl bg-white border border-[#e5e2ed] font-extrabold text-xs text-[#716c7d] flex items-center justify-center gap-1.5 hover:bg-slate-50 transition"
-          >
-            <Play size={12} fill="currentColor" /> Watch Interactive Demo
-          </a>
-        </motion.div>
-
-        {/* Dashboard Preview Mock Container */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-          className="relative max-w-5xl mx-auto pt-10"
-        >
-          <div className="rounded-2xl border-4 border-white bg-white/40 backdrop-blur-xl shadow-2xl overflow-hidden aspect-[16/10] border-slate-200/50 flex flex-col">
-            {/* Header window control */}
-            <div className="h-8.5 bg-slate-50/80 border-b border-[#efedf4] px-4 flex items-center gap-2">
-              <span className="size-2.5 rounded-full bg-red-400" />
-              <span className="size-2.5 rounded-full bg-yellow-400" />
-              <span className="size-2.5 rounded-full bg-green-400" />
-              <div className="mx-auto text-[9.5px] font-bold text-slate-400 uppercase tracking-widest bg-white border border-slate-100 px-3 py-0.5 rounded-md">
-                preview.worko.app
-              </div>
-            </div>
-            
-            {/* Mock Dashboard Layout */}
-            <div className="flex-1 flex bg-[#f8f8fb]">
-              <aside className="w-40 border-r border-[#efedf4] bg-white p-3 space-y-2 hidden sm:block text-left">
-                <span className="block text-[8px] font-black tracking-widest text-[#aaa6b5] uppercase mb-3">Workspace</span>
-                {["Overview", "AI Assistant", "Calendar", "Notes", "Whiteboard"].map((lnk, i) => (
-                  <div key={lnk} className={`h-8 rounded-lg flex items-center gap-2 px-2 text-[10px] font-extrabold ${i === 0 ? "bg-[#eeeaff] text-[#6c5ce7]" : "text-[#777281]"}`}>
-                    <span className="size-1.5 rounded-full bg-[#6c5ce7]" />
-                    {lnk}
-                  </div>
-                ))}
-              </aside>
-
-              <main className="flex-grow p-4 text-left space-y-4 overflow-y-auto">
-                <div className="flex items-center justify-between border-b pb-2">
-                  <div>
-                    <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">Dashboard preview</span>
-                    <h4 className="text-sm font-black text-[#282633]">Good morning, Team! 👋</h4>
-                  </div>
-                  <span className="text-[10px] bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-0.5 rounded font-extrabold">Active project</span>
-                </div>
-
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="bg-white border border-[#efedf4] p-3 rounded-xl shadow-sm space-y-1">
-                    <span className="text-[9px] font-bold text-slate-400">Total Notes</span>
-                    <p className="text-lg font-black text-[#282633]">12</p>
-                  </div>
-                  <div className="bg-white border border-[#efedf4] p-3 rounded-xl shadow-sm space-y-1">
-                    <span className="text-[9px] font-bold text-slate-400">Whiteboards</span>
-                    <p className="text-lg font-black text-[#282633]">4</p>
-                  </div>
-                  <div className="bg-white border border-[#efedf4] p-3 rounded-xl shadow-sm space-y-1">
-                    <span className="text-[9px] font-bold text-slate-400">Productivity Score</span>
-                    <p className="text-lg font-black text-[#6c5ce7]">84%</p>
-                  </div>
-                </div>
-
-                <div className="bg-white border border-[#efedf4] p-4 rounded-xl shadow-sm space-y-2">
-                  <div className="flex items-center justify-between text-[10px] font-bold text-slate-400">
-                    <span>Weekly activity analytics</span>
-                    <span>Note logs</span>
-                  </div>
-                  <div className="flex items-end justify-between h-20 pt-2">
-                    {[3, 5, 2, 8, 4, 9, 3].map((val, idx) => (
-                      <div key={idx} className="w-6 bg-slate-50 border border-slate-100 rounded-t h-full flex items-end">
-                        <div className="w-full bg-gradient-to-t from-[#6c5ce7] to-[#8b5cf6] rounded-t" style={{ height: `${val * 10}%` }} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </main>
-            </div>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* Badges badges system */}
-      <section className="bg-white border-y border-[#efedf4] py-8 mt-16 text-center">
-        <div className="max-w-6xl mx-auto px-6 space-y-4">
-          <p className="text-[9px] font-extrabold uppercase tracking-[0.2em] text-[#b0a9bd]">
-            Built with modern architecture stack
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
+      <section className="max-w-6xl mx-auto px-6 pt-16 lg:pt-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative">
+        <div className="lg:col-span-6 space-y-8 text-left">
+          <div className="flex flex-wrap gap-2 pt-2">
             {[
-              "Next.js", "React 19", "TypeScript", "Tailwind CSS", "Clerk Security",
-              "Drizzle ORM", "Liveblocks", "AssemblyAI", "Gemini AI"
-            ].map((tech) => (
-              <span
-                key={tech}
-                className="px-3.5 py-1.5 rounded-xl bg-slate-50 border border-[#e5e2ed] text-[10.5px] font-black text-[#6f6b7b] hover:border-[#6c5ce7] hover:text-[#6c5ce7] hover:bg-[#eeeaff]/30 transition"
-              >
-                {tech}
+              { label: "AI Assistant", style: "border-[#e0d6ff] text-[#6c5ce7] bg-[#f4f0ff]" },
+              { label: "Real-time Collaboration", style: "border-[#d1fae5] text-emerald-700 bg-[#ecfdf5]" },
+              { label: "Smart Workspace", style: "border-[#ffe4e6] text-rose-700 bg-[#fff1f2]" }
+            ].map((tag) => (
+              <span key={tag.label} className={`px-3 py-1 rounded-full border text-badge-val ${tag.style}`}>
+                {tag.label}
               </span>
             ))}
           </div>
+
+          <h1 className="display-lg text-[#2C2A29]">
+            Your AI-powered workspace for{" "}
+            <span className="bg-gradient-to-r from-[#FF5A36] via-[#ff7d5e] to-pink-500 bg-clip-text text-transparent">
+              notes, tasks, whiteboards,
+            </span>{" "}
+            and team collaboration.
+          </h1>
+
+          <p className="text-body-lg text-[#5E5B5A] max-w-xl">
+            Flowbase combines Notion-style notes, Miro-style whiteboards, Kanban boards, calendar planning, AI assistance, template building, and real-time collaboration in one modern workspace.
+          </p>
+
+          <div className="flex flex-wrap gap-3 pt-2">
+            <a
+              href="/sign-up"
+              className="h-11 px-7 rounded-xl bg-[#FF5A36] hover:bg-[#ff7d5e] text-btn text-white shadow-lg flex items-center justify-center hover:-translate-y-0.5 transition"
+            >
+              Get Started <ArrowRight size={14} className="ml-1" />
+            </a>
+            <a
+              href="#demo"
+              className="h-11 px-7 rounded-xl bg-white border border-[#EBE8E2] text-btn text-[#5E5B5A] flex items-center justify-center gap-1.5 hover:bg-slate-50 transition"
+            >
+              <Play size={12} fill="currentColor" /> Watch Demo
+            </a>
+          </div>
+        </div>
+
+        {/* Mock Flowbase Showcase Card (matches screenshot) */}
+        <div className="lg:col-span-6">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="rounded-[24px] border border-[#EBE8E2] bg-white p-6 shadow-xl space-y-6 relative overflow-hidden"
+          >
+            {/* Command center header */}
+            <div className="flex items-center justify-between border-b border-[#FAF8F4] pb-4">
+              <div className="space-y-0.5">
+                <span className="text-overline text-[#FF5A36]">Flowbase Command Center</span>
+                <h4 className="text-h3 text-[#2C2A29]">Launch workspace</h4>
+              </div>
+              
+              {/* User initials bubble stack */}
+              <div className="flex -space-x-2 font-sans">
+                {["MC", "ER", "PR"].map((init, i) => (
+                  <div
+                    key={init}
+                    className={`size-7 rounded-full border border-white text-[8px] font-black flex items-center justify-center text-white shadow-sm ${
+                      i === 0 ? "bg-[#FF5A36]" : i === 1 ? "bg-emerald-500" : "bg-violet-500"
+                    }`}
+                  >
+                    {init}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Metrics cards grid */}
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { title: "Tasks completed", val: "42", badge: "on track", color: "text-[#3e9b68] bg-[#ebf7f0] border-[#d1ebd9]" },
+                { title: "AI drafts", val: "18", badge: "on track", color: "text-[#6c5ce7] bg-[#f2efff] border-[#e1dbff]" },
+                { title: "This week", val: "9 events", badge: "on track", color: "text-[#FF5A36] bg-[#fff0ed] border-[#ffd5cc]" }
+              ].map((m, i) => (
+                <div key={i} className="bg-[#FAF8F4] border border-[#EBE8E2] rounded-2xl p-3.5 space-y-2">
+                  <span className="text-label-val text-[#8b879c] leading-tight block">{m.title}</span>
+                  <p className="text-h3 text-[#2C2A29]">{m.val}</p>
+                  <span className={`inline-block px-2 py-0.5 text-badge-val rounded-md border ${m.color}`}>
+                    {m.badge}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* AI Brief and quick board columns mockup */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* AI Brief panel */}
+              <div className="bg-[#FAF8F4] border border-[#EBE8E2] rounded-2xl p-4 space-y-3 text-left">
+                <div className="flex items-center justify-between border-b border-[#EBE8E2]/50 pb-2">
+                  <span className="text-label-val text-[#2C2A29]">Al brief</span>
+                  <Bot size={13} className="text-[#FF5A36]" />
+                </div>
+                <div className="space-y-2 text-caption text-[#5E5B5A] font-semibold">
+                  {[
+                    "Create launch tasks",
+                    "Summarize notes",
+                    "Draft reminders"
+                  ].map((chk, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <span className="grid size-4 place-items-center rounded bg-emerald-500 text-white"><Check size={9} strokeWidth={3} /></span>
+                      <span>{chk}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Columns mockup */}
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { col: "Plan", cards: ["Launch checklist", "Research notes"] },
+                  { col: "Build", cards: ["AI task flow", "Whiteboard map"] },
+                  { col: "Review", cards: ["Team comments", "Calendar sync"] }
+                ].map((col, i) => (
+                  <div key={i} className="space-y-1.5">
+                    <span className="text-overline text-[#aaa6b5] block text-center">{col.col}</span>
+                    {col.cards.map((c, ci) => (
+                      <div key={ci} className="bg-white border border-[#EBE8E2] p-2 rounded-xl text-[10px] font-bold text-[#2C2A29] shadow-sm leading-tight text-center">
+                        {c}
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Features Grid */}
       <section id="features" className="max-w-6xl mx-auto px-6 py-20 space-y-12">
         <div className="text-center space-y-2 max-w-xl mx-auto">
-          <span className="text-[10px] font-extrabold text-[#6c5ce7] uppercase tracking-wider">Features grid</span>
-          <h2 className="text-2xl md:text-3xl font-black tracking-tight text-[#282633]">
+          <span className="text-label-val text-[#FF5A36] uppercase tracking-wider block">Features grid</span>
+          <h2 className="text-h2 text-[#2C2A29]">
             Everything you need in a unified knowledge workspace
           </h2>
-          <p className="text-xs text-[#777281]">
+          <p className="text-body-sm text-[#5E5B5A]">
             Ditch multiple application subscriptions. Access everything inside Worko.
           </p>
         </div>
@@ -315,80 +310,80 @@ function LandingPage() {
           ].map((feat, i) => (
             <div
               key={i}
-              className="bg-white border border-[#efedf4] rounded-2xl p-5 shadow-sm hover:shadow-md transition hover:-translate-y-0.5 space-y-3 group"
+              className="bg-white border border-[#EBE8E2] rounded-[20px] p-5 shadow-sm hover:shadow-md transition hover:-translate-y-0.5 space-y-3 group"
             >
               <div className={`size-10 rounded-xl flex items-center justify-center text-white ${feat.bg} shadow-sm group-hover:scale-105 transition`}>
                 <feat.icon size={18} strokeWidth={2.25} />
               </div>
-              <h4 className="font-extrabold text-sm text-[#282633]">{feat.title}</h4>
-              <p className="text-[11px] text-[#777281] leading-relaxed font-semibold">{feat.desc}</p>
+              <h4 className="text-h4 text-[#2C2A29]">{feat.title}</h4>
+              <p className="text-body-sm text-[#5E5B5A] leading-relaxed font-semibold">{feat.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Interactive Showcase */}
-      <section id="demo" className="max-w-6xl mx-auto px-6 py-16 space-y-8 bg-white border border-[#efedf4] rounded-3xl shadow-sm">
+      <section id="demo" className="max-w-6xl mx-auto px-6 py-16 space-y-8 bg-white border border-[#EBE8E2] rounded-3xl shadow-sm">
         <div className="text-center space-y-2 max-w-lg mx-auto">
-          <span className="text-[10px] font-extrabold text-[#6c5ce7] uppercase tracking-wider">Showcase</span>
-          <h3 className="text-2xl font-black tracking-tight text-[#282633]">Try the AI Assistant simulation</h3>
-          <p className="text-xs text-[#777281]">Type query ideas to simulate instant voice translation streams.</p>
+          <span className="text-label-val text-[#FF5A36] uppercase tracking-wider block">Showcase</span>
+          <h3 className="text-h2 text-[#2C2A29]">Try the AI Assistant simulation</h3>
+          <p className="text-body-sm text-[#5E5B5A]">Type query ideas to simulate instant voice translation streams.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center max-w-4xl mx-auto pt-4">
           <div className="space-y-4">
-            <h4 className="text-base font-black text-[#282633]">Unified AI Assistant interface</h4>
-            <p className="text-[11.5px] text-[#6f6b7b] leading-relaxed font-semibold">
+            <h4 className="text-h3 text-[#2C2A29]">Unified AI Assistant interface</h4>
+            <p className="text-body-sm text-[#5E5B5A] leading-relaxed font-semibold">
               Speak into your microphone or key in commands. Worko AI Assistant transcribes, processes workspace requests, and generates dynamic confirmations on the fly.
             </p>
             <div className="flex gap-2">
               <button
                 onClick={() => setAiChatVal("Schedule strategic planning tomorrow at 10:00")}
-                className="px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold rounded-lg hover:bg-amber-100 transition"
+                className="px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 text-caption font-bold rounded-lg hover:bg-amber-100 transition"
               >
                 &quot;Schedule sync&quot;
               </button>
               <button
                 onClick={() => setAiChatVal("Create a priority research note draft")}
-                className="px-2.5 py-1 bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] font-bold rounded-lg hover:bg-indigo-100 transition"
+                className="px-2.5 py-1 bg-indigo-50 text-indigo-700 border border-indigo-200 text-caption font-bold rounded-lg hover:bg-indigo-100 transition"
               >
                 &quot;Create note&quot;
               </button>
             </div>
           </div>
 
-          <div className="bg-[#f8f8fb] border border-[#efedf4] rounded-2xl p-4 space-y-3 text-left">
-            <div className="flex items-center gap-2 pb-2 border-b border-[#efedf4]">
+          <div className="bg-[#FAF8F4] border border-[#EBE8E2] rounded-2xl p-4 space-y-3 text-left">
+            <div className="flex items-center gap-2 pb-2 border-b border-[#EBE8E2]">
               <span className="grid size-7 place-items-center rounded-lg bg-amber-100 text-amber-600"><Bot size={13} /></span>
-              <span className="text-[10.5px] font-extrabold text-[#282633]">Worko Bot</span>
+              <span className="text-label-val text-[#2C2A29]">Worko Bot</span>
             </div>
             
-            <div className="space-y-2 max-h-48 overflow-y-auto text-[10.5px] leading-relaxed">
+            <div className="space-y-2 max-h-48 overflow-y-auto text-caption leading-relaxed font-medium">
               {aiReplies.map((r, i) => (
                 <div
                   key={i}
                   className={`p-2.5 rounded-xl font-semibold ${
-                    r.startsWith("User:") ? "bg-[#6c5ce7] text-white ml-6" : "bg-white border border-[#efedf4] mr-6"
+                    r.startsWith("User:") ? "bg-[#FF5A36] text-white ml-6" : "bg-white border border-[#EBE8E2] mr-6"
                   }`}
                 >
                   {r}
                 </div>
               ))}
-              {typing && <div className="text-[9.5px] text-slate-400 italic">Gemini is typing...</div>}
+              {typing && <div className="text-[10px] text-slate-400 italic">Gemini is typing...</div>}
             </div>
 
-            <div className="flex gap-2 border-t border-[#efedf4] pt-2">
+            <div className="flex gap-2 border-t border-[#EBE8E2] pt-2">
               <input
                 type="text"
                 placeholder="Ask simulator..."
                 value={aiChatVal}
                 onChange={(e) => setAiChatVal(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleDemoAiSubmit()}
-                className="flex-1 bg-white border border-[#e5e2ed] rounded-lg px-2 text-xs outline-none focus:border-[#bdb4f1]"
+                className="flex-1 bg-white border border-[#EBE8E2] rounded-lg px-2 text-input-val outline-none focus:border-[#FF5A36]"
               />
               <button
                 onClick={handleDemoAiSubmit}
-                className="px-3.5 bg-[#6c5ce7] hover:bg-[#5143bd] text-white font-bold rounded-lg text-xs"
+                className="px-3.5 bg-[#FF5A36] hover:bg-[#ff7d5e] text-white font-bold rounded-lg text-btn"
               >
                 Send
               </button>
@@ -400,9 +395,9 @@ function LandingPage() {
       {/* Pricing Section */}
       <section id="pricing" className="max-w-6xl mx-auto px-6 py-20 space-y-12">
         <div className="text-center space-y-2 max-w-xl mx-auto">
-          <span className="text-[10px] font-extrabold text-[#6c5ce7] uppercase tracking-wider">Pricing plan</span>
-          <h3 className="text-2xl md:text-3xl font-black tracking-tight text-[#282633]">Pricing plans designed for everyone</h3>
-          <p className="text-xs text-[#777281]">Start free, scale boundaries as your group processes grow.</p>
+          <span className="text-label-val text-[#FF5A36] uppercase tracking-wider block">Pricing plan</span>
+          <h3 className="text-h2 text-[#2C2A29]">Pricing plans designed for everyone</h3>
+          <p className="text-body-sm text-[#5E5B5A]">Start free, scale boundaries as your group processes grow.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -413,27 +408,27 @@ function LandingPage() {
           ].map((prc, idx) => (
             <div
               key={idx}
-              className={`bg-white border rounded-3xl p-6 space-y-6 flex flex-col justify-between hover:shadow-md transition relative ${
-                idx === 1 ? "border-2 border-[#6c5ce7] shadow-sm" : "border-[#efedf4]"
+              className={`bg-white border rounded-[24px] p-6 space-y-6 flex flex-col justify-between hover:shadow-md transition relative ${
+                idx === 1 ? "border-2 border-[#FF5A36] shadow-sm" : "border-[#EBE8E2]"
               }`}
             >
               {idx === 1 && (
-                <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-gradient-to-r from-[#6c5ce7] to-[#8b5cf6] text-white text-[8px] font-black uppercase rounded-full tracking-widest">
+                <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-gradient-to-r from-[#FF5A36] to-[#ff7d5e] text-white text-badge-val uppercase rounded-full">
                   Popular Choice
                 </span>
               )}
               <div className="space-y-4">
-                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">{prc.plan}</span>
+                <span className="text-overline text-slate-400 block">{prc.plan}</span>
                 <div className="flex items-baseline gap-1.5">
-                  <span className="text-3xl font-black text-[#282633]">{prc.price}</span>
-                  {idx !== 2 && <span className="text-[11px] text-[#777281] font-bold">/ month</span>}
+                  <span className="text-h1 text-[#2C2A29]">{prc.price}</span>
+                  {idx !== 2 && <span className="text-caption text-[#5E5B5A] font-bold">/ month</span>}
                 </div>
-                <p className="text-[11px] text-[#777281] font-semibold">{prc.desc}</p>
-                <div className="border-t border-[#efedf4]/80 my-3" />
-                <ul className="space-y-2.5 text-[11px] font-semibold text-[#6f6b7b]">
+                <p className="text-body-sm text-[#5E5B5A] font-semibold">{prc.desc}</p>
+                <div className="border-t border-[#EBE8E2]/85 my-3" />
+                <ul className="space-y-2.5 text-body-sm font-semibold text-[#5E5B5A]">
                   {prc.features.map((feat, fidx) => (
                     <li key={fidx} className="flex items-center gap-2">
-                      <span className="size-1.5 rounded-full bg-[#6c5ce7]" />
+                      <span className="size-1.5 rounded-full bg-[#FF5A36]" />
                       <span>{feat}</span>
                     </li>
                   ))}
@@ -442,8 +437,8 @@ function LandingPage() {
 
               <a
                 href="/sign-up"
-                className={`h-9.5 w-full font-extrabold text-xs rounded-xl flex items-center justify-center transition ${
-                  idx === 1 ? "bg-[#6c5ce7] text-white" : "bg-[#f3f1f6] text-[#716c7d] hover:bg-slate-100"
+                className={`h-9.5 w-full font-extrabold text-btn rounded-xl flex items-center justify-center transition ${
+                  idx === 1 ? "bg-[#FF5A36] text-white" : "bg-[#f3f1f6] text-[#5E5B5A] hover:bg-slate-100"
                 }`}
               >
                 Choose {prc.plan}
@@ -454,10 +449,10 @@ function LandingPage() {
       </section>
 
       {/* Testimonials */}
-      <section className="bg-white border-y border-[#efedf4] py-16 text-center space-y-10">
+      <section className="bg-white border-y border-[#EBE8E2] py-16 text-center space-y-10">
         <div className="max-w-lg mx-auto space-y-2 px-6">
-          <span className="text-[10px] font-extrabold text-[#6c5ce7] uppercase tracking-wider">Wall of Love</span>
-          <h3 className="text-xl md:text-2xl font-black text-[#282633]">Trusted by developers globally</h3>
+          <span className="text-label-val text-[#FF5A36] uppercase tracking-wider block">Wall of Love</span>
+          <h3 className="text-h2 text-[#2C2A29]">Trusted by developers globally</h3>
         </div>
 
         <div className="flex flex-wrap justify-center gap-4 max-w-5xl mx-auto px-6">
@@ -465,17 +460,17 @@ function LandingPage() {
             { name: "Jessica Carter", role: "Product Manager, Stripe", text: "The TipTap autosave and Excalidraw whiteboards are flawless. The AI Template builder helps us prototype structures in minutes." },
             { name: "Marcus Chen", role: "Frontend Architect, Vercel", text: "Worko compiles beautifully on React 19. The PostgreSQL calendar events sync dynamically without sluggish API calls." }
           ].map((tst, i) => (
-            <div key={i} className="max-w-md bg-[#fafafc] border border-[#efedf4] rounded-2xl p-5 text-left space-y-3 shadow-sm flex-grow">
-              <p className="text-[11px] leading-relaxed text-[#6f6b7b] font-semibold italic">
+            <div key={i} className="max-w-md bg-[#FAF8F4] border border-[#EBE8E2] rounded-2xl p-5 text-left space-y-3 shadow-sm flex-grow">
+              <p className="text-body text-[#5E5B5A] italic">
                 &quot;{tst.text}&quot;
               </p>
-              <div className="flex items-center gap-2 pt-2 border-t border-[#efedf4]">
-                <div className="size-8 rounded-full bg-[#eeeaff] text-[#6c5ce7] font-bold text-[10px] flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-2 pt-2 border-t border-[#EBE8E2]">
+                <div className="size-8 rounded-full bg-[#FFE8E2] text-[#FF5A36] font-bold text-[10px] flex items-center justify-center shrink-0">
                   {tst.name.substring(0, 2).toUpperCase()}
                 </div>
                 <div>
-                  <h5 className="text-[11px] font-bold text-[#282633]">{tst.name}</h5>
-                  <p className="text-[9px] text-[#aaa6b5] font-semibold">{tst.role}</p>
+                  <h5 className="text-label-val text-[#2C2A29]">{tst.name}</h5>
+                  <p className="text-caption text-[#aaa6b5] font-semibold">{tst.role}</p>
                 </div>
               </div>
             </div>
@@ -484,23 +479,23 @@ function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-[#efedf4] bg-white py-12 px-6">
+      <footer className="border-t border-[#EBE8E2] bg-white py-12 px-6">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-[#aaa6b5] font-bold">
           <div className="flex items-center gap-2.5">
-            <div className="grid size-7 place-items-center rounded-lg bg-[#6c5ce7] text-white">
+            <div className="grid size-7 place-items-center rounded-lg bg-[#FF5A36] text-white">
               <Zap size={13} fill="currentColor" />
             </div>
-            <span className="text-[#282633]">Worko</span>
+            <span className="text-h4 text-[#2C2A29]">Worko</span>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-6">
-            <a href="https://github.com/dakshgola/Worko" target="_blank" className="hover:text-[#6c5ce7] transition">GitHub</a>
-            <a href="#features" className="hover:text-[#6c5ce7] transition">Features</a>
-            <a href="#pricing" className="hover:text-[#6c5ce7] transition">Pricing</a>
-            <a href="/settings" className="hover:text-[#6c5ce7] transition">Settings</a>
+          <div className="flex flex-wrap justify-center gap-6 text-btn">
+            <a href="https://github.com/dakshgola/Worko" target="_blank" className="hover:text-[#FF5A36] transition">GitHub</a>
+            <a href="#features" className="hover:text-[#FF5A36] transition">Features</a>
+            <a href="#pricing" className="hover:text-[#FF5A36] transition">Pricing</a>
+            <a href="/settings" className="hover:text-[#FF5A36] transition">Settings</a>
           </div>
 
-          <p className="text-[11px] font-medium text-[#c0bac8]">
+          <p className="text-caption font-semibold text-[#c0bac8]">
             &copy; {new Date().getFullYear()} Worko Corp. Built with love and cozy gradients.
           </p>
         </div>
@@ -514,7 +509,6 @@ function LandingPage() {
 // ==========================================
 function DashboardView() {
   const { user } = useUser();
-  const [collapsed, setCollapsed] = useState(false);
 
   // Postgres Database Data
   const [dbData, setDbData] = useState<any>(null);
@@ -523,7 +517,6 @@ function DashboardView() {
   // LocalStorage / Kanban Store Data
   const [kanbanBoards, setKanbanBoards] = useState<any[]>([]);
   const [streakCount, setStreakCount] = useState(3);
-  const [focusTime, setFocusTime] = useState("6.5h");
 
   // Search & Notifications
   const [searchQuery, setSearchQuery] = useState("");
@@ -544,7 +537,7 @@ function DashboardView() {
   // Modals Form States
   const [taskForm, setTaskForm] = useState({ title: "", description: "", priority: "Medium", dueDate: new Date().toISOString().split("T")[0] });
   const [eventForm, setEventForm] = useState({ title: "", description: "", date: new Date().toISOString().split("T")[0], time: "10:00", category: "Meeting" });
-  const [boardForm, setBoardForm] = useState({ name: "", color: "#6c5ce7" });
+  const [boardForm, setBoardForm] = useState({ name: "", color: "#FF5A36" });
 
   const [creatingItem, setCreatingItem] = useState(false);
 
@@ -629,7 +622,6 @@ function DashboardView() {
     const matches: any[] = [];
     const query = searchQuery.toLowerCase();
 
-    // 1. Search Notes
     if (dbData?.notes) {
       dbData.notes.forEach((n: any) => {
         if (n.title.toLowerCase().includes(query) || (n.plainText && n.plainText.toLowerCase().includes(query))) {
@@ -638,7 +630,6 @@ function DashboardView() {
       });
     }
 
-    // 2. Search Pages
     if (dbData?.pages) {
       dbData.pages.forEach((p: any) => {
         if (p.title.toLowerCase().includes(query)) {
@@ -647,7 +638,6 @@ function DashboardView() {
       });
     }
 
-    // 3. Search Whiteboards
     if (dbData?.whiteboards) {
       dbData.whiteboards.forEach((w: any) => {
         if (w.name.toLowerCase().includes(query)) {
@@ -656,7 +646,6 @@ function DashboardView() {
       });
     }
 
-    // 4. Search Kanban Tasks
     kanbanBoards.forEach((board: any) => {
       (board.tasks || []).forEach((t: any) => {
         if (t.title.toLowerCase().includes(query)) {
@@ -676,7 +665,6 @@ function DashboardView() {
     ]);
   };
 
-  // Compute Productivity Score metrics
   const getProductivityMetrics = () => {
     let totalTasks = 0;
     let completedTasks = 0;
@@ -716,10 +704,9 @@ function DashboardView() {
 
   const metrics = getProductivityMetrics();
 
-  // Weekly analytics helper
   const getWeeklyStats = () => {
     const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-    const values = [3, 5, 2, 8, 4, 9, 3]; // mock baselines
+    const values = [3, 5, 2, 8, 4, 9, 3];
 
     if (dbData?.notes) {
       dbData.notes.forEach((n: any) => {
@@ -737,7 +724,6 @@ function DashboardView() {
   const weeklyStats = getWeeklyStats();
   const maxWeeklyVal = Math.max(...weeklyStats.map((d) => d.value)) || 1;
 
-  // Submit handers
   const handleTaskSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!taskForm.title.trim()) return;
@@ -751,7 +737,7 @@ function DashboardView() {
         boards = [{
           id: "board_default",
           name: "Main Project",
-          color: "#6c5ce7",
+          color: "#FF5A36",
           icon: "Rocket",
           columns: [
             { id: "todo", title: "Todo", color: "#a78bfa" },
@@ -781,7 +767,6 @@ function DashboardView() {
       localStorage.setItem("worko-kanban", JSON.stringify(storeState));
       setKanbanBoards(boards);
 
-      // Increment streak
       const ns = streakCount + 1;
       setStreakCount(ns);
       localStorage.setItem("worko-streak", String(ns));
@@ -847,14 +832,13 @@ function DashboardView() {
       setKanbanBoards(boards);
 
       setShowCreateBoardModal(false);
-      setBoardForm({ name: "", color: "#6c5ce7" });
+      setBoardForm({ name: "", color: "#FF5A36" });
       triggerNotification("Kanban Created", `Created Board: "${newBoard.name}"`);
     } catch (err) {
       console.error(err);
     }
   };
 
-  // Quick creations
   const handleQuickCreateNote = async () => {
     try {
       setCreatingItem(true);
@@ -898,7 +882,6 @@ function DashboardView() {
     }
   };
 
-  // Reorder layouts
   const handleToggleWidget = (id: string) => {
     const updated = widgetsList.map((w) => w.id === id ? { ...w, visible: !w.visible } : w);
     setWidgetsList(updated);
@@ -918,7 +901,6 @@ function DashboardView() {
     localStorage.setItem("worko-dashboard-layout", JSON.stringify(copy));
   };
 
-  // Collect active log activity
   const getTimelineActivities = () => {
     const items: any[] = [];
     if (dbData?.notes) {
@@ -951,7 +933,6 @@ function DashboardView() {
 
   const activities = getTimelineActivities();
 
-  // Tasks checklist
   const getActiveTasksList = () => {
     const list: any[] = [];
     kanbanBoards.forEach((board) => {
@@ -967,8 +948,7 @@ function DashboardView() {
   const activeTasksList = getActiveTasksList();
 
   return (
-    <div className="min-h-screen bg-[#f8f8fb] text-[#292832] flex">
-      {/* Sidebar Layout */}
+    <div className="min-h-screen bg-[#FAF8F4] text-[#2C2A29] flex">
       {/* Sidebar Layout */}
       <WorkspaceSidebar active="Dashboard" />
 
@@ -976,7 +956,7 @@ function DashboardView() {
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         
         {/* Top Header */}
-        <header className="flex h-[68px] items-center gap-4 border-b border-[#e9e7ef] bg-[#f8f8fb]/85 px-6 backdrop-blur-xl shrink-0">
+        <header className="flex h-[68px] items-center gap-4 border-b border-[#EBE8E2] bg-[#FAF8F4]/80 px-6 backdrop-blur-xl shrink-0">
           <div className="relative max-w-[420px] flex-1">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#a39d93]" />
             <input
@@ -985,18 +965,18 @@ function DashboardView() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setShowSearchResults(true)}
-              className="h-9.5 w-full rounded-xl border border-[#e5e2ed] bg-white pl-10 pr-10 text-sm shadow-sm outline-none transition-all placeholder:text-[#aaa6b4] focus:border-[#bdb4f1]"
+              className="h-10 w-full rounded-xl border border-[#EBE8E2] bg-white pl-10 pr-10 text-input-val shadow-sm outline-none transition-all placeholder:text-[#aaa6b4] focus:border-[#FF5A36]"
             />
             {searchQuery && (
-              <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#aaa6b4] hover:text-[#292832]">
+              <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#aaa6b4] hover:text-[#2C2A29]">
                 <X size={14} />
               </button>
             )}
 
             {/* Global Search overlays dropdown matches list */}
             {showSearchResults && searchResults.length > 0 && (
-              <div className="absolute left-0 right-0 top-11 bg-white border border-[#e5e2ed] rounded-xl shadow-lg p-2 max-h-[300px] overflow-y-auto z-50">
-                <div className="flex items-center justify-between px-2 py-1.5 border-b border-[#efedf4] text-[9px] font-bold text-[#b0a9bd] uppercase tracking-wider mb-1">
+              <div className="absolute left-0 right-0 top-11 bg-white border border-[#EBE8E2] rounded-xl shadow-lg p-2 max-h-[300px] overflow-y-auto z-50">
+                <div className="flex items-center justify-between px-2 py-1.5 border-b border-[#EBE8E2] text-overline text-[#b0a9bd] mb-1">
                   <span>Search Matches</span>
                   <button onClick={() => setShowSearchResults(false)}><X size={11} /></button>
                 </div>
@@ -1004,10 +984,10 @@ function DashboardView() {
                   <button
                     key={index}
                     onClick={() => { window.location.href = item.link; }}
-                    className="w-full flex items-center justify-between px-2.5 py-2 hover:bg-[#eeeaff]/40 rounded-lg text-xs font-semibold text-[#292832] text-left"
+                    className="w-full flex items-center justify-between px-2.5 py-2 hover:bg-[#FFE8E2]/40 rounded-lg text-body-sm font-semibold text-[#2C2A29] text-left"
                   >
                     <span>{item.name}</span>
-                    <span className="px-1.5 py-0.5 bg-[#f0ecfc] text-[#6c5ce7] text-[8.5px] rounded font-bold uppercase tracking-wider shrink-0">{item.type}</span>
+                    <span className="px-1.5 py-0.5 bg-[#FFE8E2] text-[#FF5A36] text-badge-val rounded shrink-0">{item.type}</span>
                   </button>
                 ))}
               </div>
@@ -1017,7 +997,7 @@ function DashboardView() {
           <div className="ml-auto flex items-center gap-3">
             <button
               onClick={() => setShowCustomizer(true)}
-              className="flex h-9.5 items-center gap-1.5 rounded-xl border border-[#e5e2ed] bg-white px-3.5 text-xs font-bold text-[#716c7d] hover:text-[#5143bd] shadow-sm transition"
+              className="flex h-10 items-center gap-1.5 rounded-xl border border-[#EBE8E2] bg-white px-3.5 text-btn text-[#5E5B5A] hover:text-[#FF5A36] shadow-sm transition"
             >
               <Sliders size={13.5} />
               <span className="hidden md:inline">Layout</span>
@@ -1027,25 +1007,25 @@ function DashboardView() {
             <div className="relative">
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="relative grid size-9.5 place-items-center rounded-xl border border-[#e5e2ed] bg-white text-[#716c7d] shadow-sm"
+                className="relative grid size-10 place-items-center rounded-xl border border-[#EBE8E2] bg-white text-[#5E5B5A] shadow-sm"
               >
                 <Bell size={17} />
                 {notifications.length > 0 && (
-                  <span className="absolute right-2.5 top-2.5 size-2 rounded-full bg-red-400 border border-white" />
+                  <span className="absolute right-2.5 top-2.5 size-2 rounded-full bg-[#FF5A36] border border-white" />
                 )}
               </button>
 
               {showNotifications && (
-                <div className="absolute right-0 top-11 w-72 bg-white border border-[#e5e2ed] rounded-xl shadow-lg p-3 z-50 space-y-2">
-                  <div className="flex items-center justify-between pb-2 border-b border-[#efedf4] text-xs font-bold">
+                <div className="absolute right-0 top-11 w-72 bg-white border border-[#EBE8E2] rounded-xl shadow-lg p-3 z-50 space-y-2">
+                  <div className="flex items-center justify-between pb-2 border-b border-[#EBE8E2] text-body-sm font-bold">
                     <span>Notifications ({notifications.length})</span>
                     <button onClick={() => setShowNotifications(false)}><X size={12} /></button>
                   </div>
                   <div className="max-h-60 overflow-y-auto space-y-2">
                     {notifications.map((n) => (
-                      <div key={n.id} className="p-2 bg-[#f8f8fb] rounded-lg border border-[#efedf4] text-[11px] leading-relaxed">
-                        <div className="font-bold text-[#5143bd]">{n.title}</div>
-                        <div className="text-[#6f6b7b] mt-0.5">{n.desc}</div>
+                      <div key={n.id} className="p-2 bg-[#FAF8F4] rounded-lg border border-[#EBE8E2] text-caption leading-relaxed font-semibold">
+                        <div className="font-bold text-[#FF5A36]">{n.title}</div>
+                        <div className="text-[#5E5B5A] mt-0.5">{n.desc}</div>
                       </div>
                     ))}
                   </div>
@@ -1055,7 +1035,7 @@ function DashboardView() {
 
             <button
               onClick={handleQuickCreateNote}
-              className="flex h-9.5 items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#6c5ce7] to-[#8b5cf6] px-4 text-xs font-bold text-white shadow-sm"
+              className="flex h-10 items-center gap-1.5 rounded-xl bg-[#FF5A36] hover:bg-[#ff7d5e] px-4 text-btn text-white shadow-sm"
             >
               <Plus size={14} />
               <span className="hidden sm:inline">Quick Note</span>
@@ -1073,13 +1053,13 @@ function DashboardView() {
                 return (
                   <section
                     key={widget.id}
-                    className="flex flex-wrap items-center justify-between gap-6 bg-gradient-to-br from-white via-[#fbfaff] to-[#fffaf8] border border-[#efedf4] rounded-2xl p-6 shadow-sm"
+                    className="flex flex-wrap items-center justify-between gap-6 bg-white border border-[#EBE8E2] rounded-[24px] p-6 shadow-sm"
                   >
                     <div className="space-y-1">
-                      <p className="text-[11px] font-bold text-[#8e877e] tracking-wider uppercase">
+                      <p className="text-overline text-[#FF5A36] block">
                         {new Date().toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" })}
                       </p>
-                      <h1 className="text-2xl font-black tracking-tight text-[#282633]">
+                      <h1 className="text-h2 text-[#2C2A29]">
                         {(() => {
                           const hour = new Date().getHours();
                           if (hour < 12) return "Good morning";
@@ -1087,25 +1067,25 @@ function DashboardView() {
                           return "Good evening";
                         })()}, {user?.firstName || "Daksh"} 👋
                       </h1>
-                      <p className="text-xs text-[#777281] font-medium">
-                        Streak: <span className="font-extrabold text-amber-500 inline-flex items-center"><Flame size={12} fill="currentColor" className="mr-0.5" />{streakCount} days</span>. You have <span className="font-bold text-[#5143bd]">{metrics.totalTasks - metrics.completedTasks} pending tasks</span> and <span className="font-bold text-[#5143bd]">{metrics.meetingsCount} events</span> scheduled.
+                      <p className="text-body-sm text-[#5E5B5A] font-semibold">
+                        Streak: <span className="font-extrabold text-amber-500 inline-flex items-center"><Flame size={12} fill="currentColor" className="mr-0.5" />{streakCount} days</span>. You have <span className="font-bold text-[#FF5A36]">{metrics.totalTasks - metrics.completedTasks} pending tasks</span> and <span className="font-bold text-[#FF5A36]">{metrics.meetingsCount} events</span> scheduled.
                       </p>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-[#aaa399] uppercase tracking-wider">Layout</span>
-                      <div className="flex bg-[#f3f1f6] p-0.5 rounded-lg border border-[#e5e2ed]">
+                      <span className="text-overline text-[#aaa399]">Layout</span>
+                      <div className="flex bg-[#f3f1f6] p-0.5 rounded-lg border border-[#EBE8E2]">
                         <button
                           onClick={() => handleMoveWidget(widgetIndex, "up")}
                           disabled={widgetIndex === 0}
-                          className="p-1 text-[#aaa399] hover:text-[#5143bd] disabled:opacity-30"
+                          className="p-1 text-[#aaa399] hover:text-[#FF5A36] disabled:opacity-30"
                         >
                           &uarr;
                         </button>
                         <button
                           onClick={() => handleMoveWidget(widgetIndex, "down")}
                           disabled={widgetIndex === widgetsList.length - 1}
-                          className="p-1 text-[#aaa399] hover:text-[#5143bd] disabled:opacity-30"
+                          className="p-1 text-[#aaa399] hover:text-[#FF5A36] disabled:opacity-30"
                         >
                           &darr;
                         </button>
@@ -1117,8 +1097,8 @@ function DashboardView() {
               case "quick-actions":
                 return (
                   <section key={widget.id} className="space-y-3">
-                    <h3 className="text-xs font-bold text-[#b0a9bd] uppercase tracking-wider flex items-center gap-1.5">
-                      <Zap size={13} className="text-[#6c5ce7]" /> Fast Actions
+                    <h3 className="text-overline text-[#FF5A36] block">
+                      <Zap size={13} className="text-[#FF5A36] inline mr-1" /> Fast Actions
                     </h3>
                     <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
                       {[
@@ -1137,7 +1117,7 @@ function DashboardView() {
                           className={`flex flex-col items-center justify-center p-3 rounded-2xl border text-center transition hover:-translate-y-0.5 ${act.bg}`}
                         >
                           <span className="mb-2"><act.icon size={18} strokeWidth={2.25} /></span>
-                          <span className="text-[10px] font-bold tracking-tight">{act.title}</span>
+                          <span className="text-label-val font-bold">{act.title}</span>
                         </button>
                       ))}
                     </div>
@@ -1155,14 +1135,14 @@ function DashboardView() {
                     ].map((st, i) => (
                       <div
                         key={i}
-                        className="flex items-center gap-4 bg-white border border-[#efedf4] rounded-2xl p-4 shadow-sm"
+                        className="flex items-center gap-4 bg-white border border-[#EBE8E2] rounded-2xl p-4 shadow-sm"
                       >
                         <div className={`grid size-11 place-items-center rounded-xl shrink-0 ${st.color}`}>
                           <st.icon size={18} strokeWidth={2.25} />
                         </div>
                         <div>
-                          <p className="text-[18px] font-black tracking-tight text-[#282633]">{st.value}</p>
-                          <p className="text-[10px] font-bold text-[#777281]">{st.title}</p>
+                          <p className="text-h3 font-black text-[#2C2A29]">{st.value}</p>
+                          <p className="text-label-val text-[#5E5B5A]">{st.title}</p>
                         </div>
                       </div>
                     ))}
@@ -1173,10 +1153,10 @@ function DashboardView() {
                 return (
                   <section key={widget.id} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Score widget */}
-                    <div className="bg-white border border-[#efedf4] rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                    <div className="bg-white border border-[#EBE8E2] rounded-[24px] p-5 shadow-sm flex flex-col justify-between">
                       <div>
-                        <h4 className="text-xs font-bold text-[#5143bd] uppercase tracking-wider mb-1">Productivity score</h4>
-                        <p className="text-[10px] text-[#777281]">Weighted metrics track</p>
+                        <h4 className="text-label-val text-[#FF5A36] uppercase tracking-wider block mb-1">Productivity score</h4>
+                        <p className="text-caption text-[#5E5B5A]">Weighted metrics track</p>
                       </div>
 
                       <div className="flex justify-center items-center py-6">
@@ -1196,36 +1176,36 @@ function DashboardView() {
                             />
                             <defs>
                               <linearGradient id="gradientScore" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stopColor="#6c5ce7" />
-                                <stop offset="100%" stopColor="#8b5cf6" />
+                                <stop offset="0%" stopColor="#FF5A36" />
+                                <stop offset="100%" stopColor="#ff7d5e" />
                               </linearGradient>
                             </defs>
                           </svg>
                           <div className="absolute inset-0 flex flex-col items-center justify-center">
-                            <span className="text-2xl font-black text-[#282633]">{metrics.score}</span>
-                            <span className="text-[9px] text-[#aaa6b5] font-bold uppercase tracking-wider">Score</span>
+                            <span className="text-h2 text-[#2C2A29]">{metrics.score}</span>
+                            <span className="text-overline text-[#aaa6b5] block">Score</span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex justify-between text-center border-t border-[#efedf4] pt-3 text-[11px]">
+                      <div className="flex justify-between text-center border-t border-[#EBE8E2] pt-3 text-caption font-bold">
                         <div>
-                          <p className="font-bold text-[#3e9b68]">{metrics.completedTasks}</p>
-                          <p className="text-[9px] text-[#aaa6b5] font-semibold uppercase">Completed</p>
+                          <p className="text-[#3e9b68]">{metrics.completedTasks}</p>
+                          <p className="text-[9px] text-[#aaa6b5] uppercase">Completed</p>
                         </div>
-                        <div className="border-l border-[#efedf4]" />
+                        <div className="border-l border-[#EBE8E2]" />
                         <div>
-                          <p className="font-bold text-[#6556d6]">{metrics.meetingsCount}</p>
-                          <p className="text-[9px] text-[#aaa6b5] font-semibold uppercase">Events</p>
+                          <p className="text-[#FF5A36]">{metrics.meetingsCount}</p>
+                          <p className="text-[9px] text-[#aaa6b5] uppercase">Events</p>
                         </div>
                       </div>
                     </div>
 
                     {/* SVG Weekly Analytics */}
-                    <div className="lg:col-span-2 bg-white border border-[#efedf4] rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                    <div className="lg:col-span-2 bg-white border border-[#EBE8E2] rounded-[24px] p-5 shadow-sm flex flex-col justify-between">
                       <div>
-                        <h4 className="text-xs font-bold text-[#5143bd] uppercase tracking-wider mb-1">Weekly Metrics</h4>
-                        <p className="text-[10px] text-[#777281]">Daily activities checklist</p>
+                        <h4 className="text-label-val text-[#FF5A36] uppercase tracking-wider block mb-1">Weekly Metrics</h4>
+                        <p className="text-caption text-[#5E5B5A]">Daily activities checklist</p>
                       </div>
 
                       <div className="flex items-end justify-between h-40 pt-6 px-4">
@@ -1233,12 +1213,12 @@ function DashboardView() {
                           const heightPct = (item.value / maxWeeklyVal) * 100;
                           return (
                             <div key={index} className="flex flex-col items-center gap-2 group flex-1">
-                              <div className="relative w-7 bg-[#f8f8fb] rounded-t-lg h-32 flex items-end overflow-hidden border border-[#efedf4]/50">
+                              <div className="relative w-7 bg-[#f8f8fb] rounded-t-lg h-32 flex items-end overflow-hidden border border-[#EBE8E2]/50">
                                 <div
-                                  className="w-full bg-gradient-to-t from-[#6c5ce7] to-[#8b5cf6] rounded-t-md transition-all duration-700"
+                                  className="w-full bg-gradient-to-t from-[#FF5A36] to-[#ff7d5e] rounded-t-md transition-all duration-700"
                                   style={{ height: `${heightPct}%` }}
                                 />
-                                <div className="absolute opacity-0 group-hover:opacity-100 bottom-full left-1/2 transform -translate-x-1/2 bg-[#292832] text-white text-[9px] px-1.5 py-0.5 rounded font-mono shadow mb-1">
+                                <div className="absolute opacity-0 group-hover:opacity-100 bottom-full left-1/2 transform -translate-x-1/2 bg-[#2C2A29] text-white text-[9px] px-1.5 py-0.5 rounded font-mono shadow mb-1">
                                   {item.value}
                                 </div>
                               </div>
@@ -1254,22 +1234,22 @@ function DashboardView() {
               case "tasks-today":
                 return (
                   <section key={widget.id} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2 bg-white border border-[#efedf4] rounded-2xl p-5 shadow-sm space-y-4">
-                      <div className="flex items-center justify-between border-b border-[#efedf4] pb-3">
+                    <div className="lg:col-span-2 bg-white border border-[#EBE8E2] rounded-[24px] p-5 shadow-sm space-y-4">
+                      <div className="flex items-center justify-between border-b border-[#EBE8E2] pb-3">
                         <div>
-                          <h4 className="text-xs font-bold text-[#5143bd] uppercase tracking-wider">Today&apos;s Focus Tasks</h4>
-                          <p className="text-[10px] text-[#777281]">Important priorities agenda</p>
+                          <h4 className="text-label-val text-[#FF5A36] uppercase tracking-wider block">Today&apos;s Focus Tasks</h4>
+                          <p className="text-caption text-[#5E5B5A]">Important priorities agenda</p>
                         </div>
-                        <button onClick={() => { window.location.href = "/kanban"; }} className="text-[10px] font-bold text-[#6c5ce7] hover:underline">
+                        <button onClick={() => { window.location.href = "/kanban"; }} className="text-caption font-bold text-[#FF5A36] hover:underline">
                           Open Kanban &rarr;
                         </button>
                       </div>
 
                       {activeTasksList.length === 0 ? (
-                        <div className="text-center py-8 text-xs text-[#aaa6b5] space-y-2">
-                          <CheckSquare size={32} className="mx-auto" />
+                        <div className="text-center py-8 text-caption text-[#aaa6b5] space-y-2 font-semibold">
+                          <CheckSquare size={32} className="mx-auto text-slate-350" />
                           <p>No active tasks in columns. Add one below!</p>
-                          <button onClick={() => setShowCreateTaskModal(true)} className="text-[#6c5ce7] font-semibold hover:underline">
+                          <button onClick={() => setShowCreateTaskModal(true)} className="text-[#FF5A36] font-semibold hover:underline">
                             Add a task
                           </button>
                         </div>
@@ -1278,16 +1258,16 @@ function DashboardView() {
                           {activeTasksList.map((task) => (
                             <div
                               key={task.id}
-                              className="flex items-center gap-3 p-3 bg-[#fbfaff]/50 border border-[#efedf4] rounded-xl hover:border-[#cfc8f5] transition"
+                              className="flex items-center gap-3 p-3 bg-[#fbfaff]/50 border border-[#EBE8E2] rounded-xl hover:border-[#cfc8f5] transition"
                             >
                               <CheckSquare size={16} className="text-emerald-500 shrink-0" />
                               <div className="min-w-0 flex-1">
-                                <p className="text-xs font-bold truncate text-[#282633]">{task.title}</p>
-                                <p className="text-[9px] text-[#777281] truncate">{task.description || "No description"}</p>
+                                <p className="text-body-sm font-bold truncate text-[#2C2A29]">{task.title}</p>
+                                <p className="text-caption text-[#5E5B5A] truncate">{task.description || "No description"}</p>
                               </div>
                               <div className="flex items-center gap-2 shrink-0">
-                                <span className="px-2 py-0.5 bg-[#f3f1f6] text-[#777281] text-[9px] rounded font-semibold">{task.dueDate}</span>
-                                <span className="px-2 py-0.5 bg-amber-50 text-amber-600 text-[9px] rounded font-bold uppercase">{task.priority}</span>
+                                <span className="px-2 py-0.5 bg-[#f3f1f6] text-[#5E5B5A] text-caption rounded font-semibold">{task.dueDate}</span>
+                                <span className="px-2 py-0.5 bg-amber-50 text-amber-600 text-caption rounded font-bold uppercase">{task.priority}</span>
                               </div>
                             </div>
                           ))}
@@ -1296,18 +1276,18 @@ function DashboardView() {
                     </div>
 
                     {/* AI assistant box */}
-                    <div className="bg-gradient-to-br from-[#5143bd] via-[#6556db] to-[#7b5fe7] text-white rounded-2xl p-5 shadow-lg flex flex-col justify-between">
+                    <div className="bg-gradient-to-br from-[#FF5A36] via-[#ff7d5e] to-pink-500 text-white rounded-[24px] p-5 shadow-lg flex flex-col justify-between">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="rounded-full bg-white/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-white/90">
+                          <span className="rounded-full bg-white/10 px-2.5 py-1 text-badge-val uppercase text-white/90">
                             AI Assistant
                           </span>
                           <Sparkles size={16} className="text-[#ffe6a7] animate-pulse" />
                         </div>
-                        <h3 className="text-[17px] font-black tracking-tight leading-snug">
+                        <h3 className="text-h3 font-black tracking-tight leading-snug">
                           Cozy command suggestions
                         </h3>
-                        <p className="text-[11px] leading-relaxed text-white/70">
+                        <p className="text-caption leading-relaxed text-white/70">
                           Query files, templates, or tasks with voice stream assistant:
                         </p>
                       </div>
@@ -1323,7 +1303,7 @@ function DashboardView() {
                             onClick={() => {
                               window.location.href = `/ai-assistant?prompt=${encodeURIComponent(rec)}`;
                             }}
-                            className="w-full text-left bg-white/10 hover:bg-white/15 px-3 py-2 rounded-xl text-[10.5px] font-bold text-white transition flex items-center justify-between"
+                            className="w-full text-left bg-white/10 hover:bg-white/15 px-3 py-2 rounded-xl text-caption font-bold text-white transition flex items-center justify-between"
                           >
                             <span>{rec}</span>
                             <ArrowUpRight size={11} className="text-white/60" />
@@ -1333,7 +1313,7 @@ function DashboardView() {
 
                       <button
                         onClick={() => { window.location.href = "/ai-assistant"; }}
-                        className="h-8.5 w-full bg-white text-[#5143bd] font-bold rounded-xl text-xs flex items-center justify-center gap-1 hover:bg-[#f6f3ff] transition"
+                        className="h-8.5 w-full bg-white text-[#FF5A36] font-bold rounded-xl text-btn flex items-center justify-center gap-1 hover:bg-[#f6f3ff] transition"
                       >
                         Ask AI Assistant
                       </button>
@@ -1344,37 +1324,37 @@ function DashboardView() {
               case "calendar-upcoming":
                 return (
                   <section key={widget.id} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2 bg-white border border-[#efedf4] rounded-2xl p-5 shadow-sm space-y-4">
-                      <div className="flex items-center justify-between border-b border-[#efedf4] pb-3">
+                    <div className="lg:col-span-2 bg-white border border-[#EBE8E2] rounded-[24px] p-5 shadow-sm space-y-4">
+                      <div className="flex items-center justify-between border-b border-[#EBE8E2] pb-3">
                         <div>
-                          <h4 className="text-xs font-bold text-[#5143bd] uppercase tracking-wider">Upcoming Schedule</h4>
-                          <p className="text-[10px] text-[#777281]">Upcoming meetings &amp; reminders</p>
+                          <h4 className="text-label-val text-[#FF5A36] uppercase tracking-wider block">Upcoming Schedule</h4>
+                          <p className="text-caption text-[#5E5B5A]">Upcoming meetings &amp; reminders</p>
                         </div>
-                        <button onClick={() => { window.location.href = "/calendar"; }} className="text-[10px] font-bold text-[#6c5ce7] hover:underline">
+                        <button onClick={() => { window.location.href = "/calendar"; }} className="text-caption font-bold text-[#FF5A36] hover:underline">
                           Open Calendar &rarr;
                         </button>
                       </div>
 
                       {!dbData?.calendarEvents || dbData.calendarEvents.length === 0 ? (
-                        <div className="text-center py-8 text-xs text-[#aaa6b5] space-y-2">
-                          <CalendarDays size={32} className="mx-auto" />
+                        <div className="text-center py-8 text-caption text-[#aaa6b5] space-y-2 font-semibold">
+                          <CalendarDays size={32} className="mx-auto text-slate-350" />
                           <p>No calendar events found.</p>
-                          <button onClick={() => setShowCreateEventModal(true)} className="text-[#6c5ce7] font-semibold hover:underline">
+                          <button onClick={() => setShowCreateEventModal(true)} className="text-[#FF5A36] font-semibold hover:underline">
                             Schedule event
                           </button>
                         </div>
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {dbData.calendarEvents.slice(0, 4).map((ev: any) => (
-                            <div key={ev.id} className="p-3 bg-[#fbfaff]/40 border border-[#efedf4] rounded-xl flex flex-col justify-between">
+                            <div key={ev.id} className="p-3 bg-[#fbfaff]/40 border border-[#EBE8E2] rounded-xl flex flex-col justify-between">
                               <div>
-                                <span className="px-2 py-0.5 bg-sky-50 text-sky-600 border border-sky-100 text-[8px] font-black uppercase rounded mb-2 inline-block">
+                                <span className="px-2 py-0.5 bg-sky-50 text-sky-600 border border-sky-100 text-badge-val rounded mb-2 inline-block">
                                   {ev.category}
                                 </span>
-                                <h5 className="text-xs font-bold text-[#282633] truncate">{ev.title}</h5>
-                                <p className="text-[10px] text-[#777281] mt-0.5 line-clamp-1">{ev.description || "No description"}</p>
+                                <h5 className="text-body-sm font-bold text-[#2C2A29] truncate">{ev.title}</h5>
+                                <p className="text-caption text-[#5E5B5A] mt-0.5 line-clamp-1">{ev.description || "No description"}</p>
                               </div>
-                              <div className="flex items-center justify-between border-t border-[#efedf4]/50 pt-2 mt-3 text-[10px] font-bold text-[#6f6b7b]">
+                              <div className="flex items-center justify-between border-t border-[#EBE8E2]/50 pt-2 mt-3 text-caption font-bold text-[#5E5B5A]">
                                 <span>{ev.date} at {ev.time}</span>
                                 <span className="text-[8px] bg-red-50 text-red-600 px-1.5 rounded">{ev.priority}</span>
                               </div>
@@ -1384,10 +1364,10 @@ function DashboardView() {
                       )}
                     </div>
 
-                    <div className="bg-white border border-[#efedf4] rounded-2xl p-5 shadow-sm space-y-4">
+                    <div className="bg-white border border-[#EBE8E2] rounded-2xl p-5 shadow-sm space-y-4">
                       <div>
-                        <h4 className="text-xs font-bold text-[#5143bd] uppercase tracking-wider">AI Insights</h4>
-                        <p className="text-[10px] text-[#777281]">Daily deduced deductions</p>
+                        <h4 className="text-label-val text-[#FF5A36] uppercase tracking-wider block">AI Insights</h4>
+                        <p className="text-caption text-[#5E5B5A]">Daily deduced deductions</p>
                       </div>
                       <div className="space-y-3">
                         {[
@@ -1395,9 +1375,9 @@ function DashboardView() {
                           { text: `Your notes database contains ${metrics.notesCount} entries.`, icon: Info },
                           { text: `You have ${metrics.meetingsCount} events this month.`, icon: Info },
                         ].map((ins, i) => (
-                          <div key={i} className="flex gap-2.5 items-start text-xs bg-[#f8f8fb] p-2.5 rounded-xl border border-[#efedf4]">
-                            <ins.icon size={14} className="text-[#6c5ce7] shrink-0 mt-0.5" />
-                            <p className="text-[#292832] font-semibold">{ins.text}</p>
+                          <div key={i} className="flex gap-2.5 items-start text-caption bg-[#FAF8F4] p-2.5 rounded-xl border border-[#EBE8E2]">
+                            <ins.icon size={14} className="text-[#FF5A36] shrink-0 mt-0.5" />
+                            <p className="text-[#2C2A29] font-semibold">{ins.text}</p>
                           </div>
                         ))}
                       </div>
@@ -1408,20 +1388,20 @@ function DashboardView() {
               case "favorites-panel":
                 return (
                   <section key={widget.id} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div className="bg-white border border-[#efedf4] rounded-2xl p-5 shadow-sm space-y-4">
+                    <div className="bg-white border border-[#EBE8E2] rounded-[24px] p-5 shadow-sm space-y-4">
                       <div>
-                        <h4 className="text-xs font-bold text-[#5143bd] uppercase tracking-wider">Recently Visited</h4>
-                        <p className="text-[10px] text-[#777281]">Pick up where you left off</p>
+                        <h4 className="text-label-val text-[#FF5A36] uppercase tracking-wider block">Recently Visited</h4>
+                        <p className="text-caption text-[#5E5B5A]">Pick up where you left off</p>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {dbData?.notes?.slice(0, 2).map((n: any) => (
-                          <button key={n.id} onClick={() => { window.location.href = "/notes"; }} className="flex items-center gap-2.5 p-2.5 bg-[#fbfaff]/50 border border-[#efedf4] hover:bg-[#fbfaff] rounded-xl text-xs font-bold transition">
+                          <button key={n.id} onClick={() => { window.location.href = "/notes"; }} className="flex items-center gap-2.5 p-2.5 bg-[#fbfaff]/50 border border-[#EBE8E2] hover:bg-[#fbfaff] rounded-xl text-body-sm font-bold transition">
                             <StickyNote size={14} className="text-orange-500 shrink-0" />
                             <span className="truncate flex-1 text-left">{n.title}</span>
                           </button>
                         ))}
                         {dbData?.whiteboards?.slice(0, 2).map((w: any) => (
-                          <button key={w.id} onClick={() => { window.location.href = "/whiteboard"; }} className="flex items-center gap-2.5 p-2.5 bg-[#fbfaff]/50 border border-[#efedf4] hover:bg-[#fbfaff] rounded-xl text-xs font-bold transition">
+                          <button key={w.id} onClick={() => { window.location.href = "/whiteboard"; }} className="flex items-center gap-2.5 p-2.5 bg-[#fbfaff]/50 border border-[#EBE8E2] hover:bg-[#fbfaff] rounded-xl text-body-sm font-bold transition">
                             <PenTool size={14} className="text-pink-500 shrink-0" />
                             <span className="truncate flex-1 text-left">{w.name}</span>
                           </button>
@@ -1429,21 +1409,21 @@ function DashboardView() {
                       </div>
                     </div>
 
-                    <div className="bg-white border border-[#efedf4] rounded-2xl p-5 shadow-sm space-y-4">
+                    <div className="bg-white border border-[#EBE8E2] rounded-[24px] p-5 shadow-sm space-y-4">
                       <div>
-                        <h4 className="text-xs font-bold text-[#5143bd] uppercase tracking-wider">Favorites &amp; Pins</h4>
-                        <p className="text-[10px] text-[#777281]">Favorited notes/apps</p>
+                        <h4 className="text-label-val text-[#FF5A36] uppercase tracking-wider block">Favorites &amp; Pins</h4>
+                        <p className="text-caption text-[#5E5B5A]">Favorited notes/apps</p>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {dbData?.notes?.filter((n: any) => n.isFavorite).slice(0, 2).map((fav: any) => (
-                          <button key={fav.id} onClick={() => { window.location.href = "/notes"; }} className="flex items-center gap-2.5 p-2.5 bg-yellow-50/20 border border-yellow-100 rounded-xl text-xs font-bold text-yellow-800 transition">
+                          <button key={fav.id} onClick={() => { window.location.href = "/notes"; }} className="flex items-center gap-2.5 p-2.5 bg-yellow-50/20 border border-yellow-100 rounded-xl text-body-sm font-bold text-yellow-800 transition">
                             <Star size={13.5} fill="#e49a3a" className="text-[#e49a3a] shrink-0" />
                             <span className="truncate flex-1 text-left">{fav.title}</span>
                           </button>
                         ))}
                         {dbData?.generatedApps?.filter((a: any) => a.isPinned).slice(0, 2).map((app: any) => (
-                          <button key={app.id} onClick={() => { window.location.href = "/ai-template-builder"; }} className="flex items-center gap-2.5 p-2.5 bg-[#eeeaff]/40 border border-[#cfc8f5] rounded-xl text-xs font-bold text-[#5143bd] transition">
-                            <WandSparkles size={13.5} className="text-[#6c5ce7] shrink-0" />
+                          <button key={app.id} onClick={() => { window.location.href = "/ai-template-builder"; }} className="flex items-center gap-2.5 p-2.5 bg-[#eeeaff]/40 border border-[#cfc8f5] rounded-xl text-body-sm font-bold text-[#FF5A36] transition">
+                            <WandSparkles size={13.5} className="text-[#FF5A36] shrink-0" />
                             <span className="truncate flex-1 text-left">{app.appName}</span>
                           </button>
                         ))}
@@ -1455,23 +1435,23 @@ function DashboardView() {
               case "activity-insights":
                 return (
                   <section key={widget.id} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2 bg-white border border-[#efedf4] rounded-2xl p-5 shadow-sm space-y-4">
+                    <div className="lg:col-span-2 bg-white border border-[#EBE8E2] rounded-[24px] p-5 shadow-sm space-y-4">
                       <div>
-                        <h4 className="text-xs font-bold text-[#5143bd] uppercase tracking-wider">Activity Log Timeline</h4>
-                        <p className="text-[10px] text-[#777281]">Real-time operations timeline</p>
+                        <h4 className="text-label-val text-[#FF5A36] uppercase tracking-wider block">Activity Log Timeline</h4>
+                        <p className="text-caption text-[#5E5B5A]">Real-time operations timeline</p>
                       </div>
                       {activities.length === 0 ? (
-                        <p className="text-xs text-[#777281] italic">No recent timeline activities.</p>
+                        <p className="text-body-sm text-[#5E5B5A] italic">No recent timeline activities.</p>
                       ) : (
-                        <div className="relative border-l border-[#efedf4] pl-4 ml-2.5 space-y-4">
+                        <div className="relative border-l border-[#EBE8E2] pl-4 ml-2.5 space-y-4">
                           {activities.map((act, i) => (
                             <div key={i} className="relative">
                               <span className="absolute -left-7 top-0.5 size-5 rounded-full border border-white bg-white shadow-sm flex items-center justify-center">
-                                <act.icon size={11} className="text-[#777281]" />
+                                <act.icon size={11} className="text-[#5E5B5A]" />
                               </span>
-                              <div className="text-xs">
-                                <p className="font-bold text-[#282633]">{act.title}</p>
-                                <p className="text-[10px] text-[#777281] mt-0.5">{act.desc}</p>
+                              <div className="text-caption font-semibold">
+                                <p className="font-bold text-[#2C2A29]">{act.title}</p>
+                                <p className="text-slate-400 mt-0.5">{act.desc}</p>
                               </div>
                             </div>
                           ))}
@@ -1480,19 +1460,19 @@ function DashboardView() {
                     </div>
 
                     {/* AI Chat History */}
-                    <div className="bg-white border border-[#efedf4] rounded-2xl p-5 shadow-sm space-y-4">
+                    <div className="bg-white border border-[#EBE8E2] rounded-[24px] p-5 shadow-sm space-y-4">
                       <div>
-                        <h4 className="text-xs font-bold text-[#5143bd] uppercase tracking-wider">AI Chats</h4>
-                        <p className="text-[10px] text-[#777281]">Conversational archives</p>
+                        <h4 className="text-label-val text-[#FF5A36] uppercase tracking-wider block">AI Chats</h4>
+                        <p className="text-caption text-[#5E5B5A]">Conversational archives</p>
                       </div>
                       {!dbData?.chats || dbData.chats.length === 0 ? (
-                        <div className="text-xs text-[#aaa6b5] text-center py-6">No recent chats.</div>
+                        <div className="text-caption text-[#aaa6b5] text-center py-6">No recent chats.</div>
                       ) : (
                         <div className="space-y-2">
                           {dbData.chats.slice(0, 3).map((chat: any) => (
-                            <div key={chat.id} className="p-3 bg-[#fbfaff] border border-[#efedf4] rounded-xl flex items-center justify-between">
-                              <p className="text-xs font-bold truncate flex-1 pr-2">{chat.title}</p>
-                              <button onClick={() => { window.location.href = "/ai-assistant"; }} className="px-2.5 py-1 bg-[#eeeaff] text-[#5143bd] rounded-lg text-[10px] font-bold">
+                            <div key={chat.id} className="p-3 bg-[#FAF8F4] border border-[#EBE8E2] rounded-xl flex items-center justify-between">
+                              <p className="text-body-sm font-bold truncate flex-1 pr-2">{chat.title}</p>
+                              <button onClick={() => { window.location.href = "/ai-assistant"; }} className="px-2.5 py-1 bg-[#FFE8E2] text-[#FF5A36] rounded-lg text-badge-val font-bold">
                                 Continue
                               </button>
                             </div>
@@ -1515,13 +1495,13 @@ function DashboardView() {
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex justify-end">
           <div className="w-[320px] bg-white h-full shadow-2xl p-6 flex flex-col justify-between animate-in slide-in-from-right duration-200">
             <div>
-              <div className="flex items-center justify-between border-b border-[#efedf4] pb-4 mb-4">
+              <div className="flex items-center justify-between border-b border-[#EBE8E2] pb-4 mb-4">
                 <div>
-                  <h3 className="font-bold text-sm text-[#282633] flex items-center gap-1.5">
-                    <Sliders size={16} className="text-[#6c5ce7]" />
+                  <h3 className="font-bold text-sm text-[#2C2A29] flex items-center gap-1.5">
+                    <Sliders size={16} className="text-[#FF5A36]" />
                     Dashboard Widgets
                   </h3>
-                  <p className="text-[10px] text-[#777281] mt-0.5">Toggle visibilities &amp; layout order</p>
+                  <p className="text-[10px] text-[#5E5B5A] mt-0.5">Toggle visibilities &amp; layout order</p>
                 </div>
                 <button onClick={() => setShowCustomizer(false)} className="p-1 rounded-lg text-[#aaa6b5] hover:bg-slate-100">
                   <X size={15} />
@@ -1530,22 +1510,22 @@ function DashboardView() {
 
               <div className="space-y-2.5 overflow-y-auto max-h-[70vh] pr-1">
                 {widgetsList.map((w, index) => (
-                  <div key={w.id} className="p-3 bg-[#f8f8fb] border border-[#efedf4] rounded-xl flex items-center justify-between gap-2">
+                  <div key={w.id} className="p-3 bg-[#FAF8F4] border border-[#EBE8E2] rounded-xl flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <input
                         type="checkbox"
                         checked={w.visible}
                         onChange={() => handleToggleWidget(w.id)}
-                        className="rounded text-[#6c5ce7] focus:ring-[#6c5ce7]"
+                        className="rounded text-[#FF5A36] focus:ring-[#FF5A36]"
                       />
-                      <span className="text-xs font-semibold text-[#292832]">{w.name}</span>
+                      <span className="text-body-sm font-semibold text-[#2C2A29]">{w.name}</span>
                     </div>
 
                     <div className="flex items-center gap-1">
-                      <button onClick={() => handleMoveWidget(index, "up")} disabled={index === 0} className="p-1 text-[#aaa399] hover:text-[#6c5ce7] disabled:opacity-30">
+                      <button onClick={() => handleMoveWidget(index, "up")} disabled={index === 0} className="p-1 text-[#aaa399] hover:text-[#FF5A36] disabled:opacity-30">
                         &uarr;
                       </button>
-                      <button onClick={() => handleMoveWidget(index, "down")} disabled={index === widgetsList.length - 1} className="p-1 text-[#aaa399] hover:text-[#6c5ce7] disabled:opacity-30">
+                      <button onClick={() => handleMoveWidget(index, "down")} disabled={index === widgetsList.length - 1} className="p-1 text-[#aaa399] hover:text-[#FF5A36] disabled:opacity-30">
                         &darr;
                       </button>
                     </div>
@@ -1554,7 +1534,7 @@ function DashboardView() {
               </div>
             </div>
 
-            <button onClick={() => setShowCustomizer(false)} className="h-10 w-full bg-[#6c5ce7] hover:bg-[#5143bd] text-white font-bold rounded-xl text-xs">
+            <button onClick={() => setShowCustomizer(false)} className="h-10 w-full bg-[#FF5A36] hover:bg-[#ff7d5e] text-white font-bold rounded-xl text-btn">
               Save Dashboard Layout
             </button>
           </div>
@@ -1564,51 +1544,51 @@ function DashboardView() {
       {/* Creation forms dialog popups */}
       {showCreateTaskModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <form onSubmit={handleTaskSubmit} className="bg-white rounded-2xl border-2 border-[#6c5ce7] w-full max-w-md p-6 shadow-2xl space-y-4">
+          <form onSubmit={handleTaskSubmit} className="bg-white rounded-2xl border-2 border-[#FF5A36] w-full max-w-md p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b pb-3">
-              <h4 className="font-black text-sm text-[#282633] flex items-center gap-1.5">
-                <SquareKanban size={16} className="text-[#6c5ce7]" />
+              <h4 className="font-black text-sm text-[#2C2A29] flex items-center gap-1.5">
+                <SquareKanban size={16} className="text-[#FF5A36]" />
                 Create Kanban Task
               </h4>
               <button type="button" onClick={() => setShowCreateTaskModal(false)}><X size={15} /></button>
             </div>
             <div className="space-y-3">
               <div>
-                <label className="block text-[10px] font-bold uppercase text-[#b0a9bd] mb-1">Task Title</label>
+                <label className="block text-label-val uppercase text-[#aaa6b5] mb-1">Task Title</label>
                 <input
                   type="text"
                   required
                   value={taskForm.title}
                   onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
                   placeholder="Review pricing structure..."
-                  className="w-full h-9 px-3 rounded-lg border text-xs outline-none focus:border-[#6c5ce7]"
+                  className="w-full h-10 px-3 rounded-lg border text-input-val outline-none focus:border-[#FF5A36]"
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-bold uppercase text-[#b0a9bd] mb-1">Description</label>
+                <label className="block text-label-val uppercase text-[#aaa6b5] mb-1">Description</label>
                 <textarea
                   value={taskForm.description}
                   onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
                   placeholder="Detail notes..."
-                  className="w-full h-16 p-2 rounded-lg border text-xs outline-none resize-none focus:border-[#6c5ce7]"
+                  className="w-full h-16 p-2 rounded-lg border text-input-val outline-none resize-none focus:border-[#FF5A36]"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase text-[#b0a9bd] mb-1">Due Date</label>
+                  <label className="block text-label-val uppercase text-[#aaa6b5] mb-1">Due Date</label>
                   <input
                     type="date"
                     value={taskForm.dueDate}
                     onChange={(e) => setTaskForm({ ...taskForm, dueDate: e.target.value })}
-                    className="w-full h-9 px-2 rounded-lg border text-xs outline-none"
+                    className="w-full h-10 px-2 rounded-lg border text-input-val outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase text-[#b0a9bd] mb-1">Priority</label>
+                  <label className="block text-label-val uppercase text-[#aaa6b5] mb-1">Priority</label>
                   <select
                     value={taskForm.priority}
                     onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value })}
-                    className="w-full h-9 px-2 rounded-lg border text-xs outline-none"
+                    className="w-full h-10 px-2 rounded-lg border text-input-val outline-none text-[#5E5B5A]"
                   >
                     <option value="Low">Low</option>
                     <option value="Medium">Medium</option>
@@ -1618,8 +1598,8 @@ function DashboardView() {
               </div>
             </div>
             <div className="flex justify-end gap-2 border-t pt-3">
-              <button type="button" onClick={() => setShowCreateTaskModal(false)} className="h-8.5 px-4 bg-slate-50 border rounded-xl text-xs font-semibold text-[#777281]">Cancel</button>
-              <button type="submit" className="h-8.5 px-4 bg-[#6c5ce7] text-white rounded-xl text-xs font-bold">Add Task</button>
+              <button type="button" onClick={() => setShowCreateTaskModal(false)} className="h-9 px-4 bg-slate-50 border rounded-xl text-btn text-[#5E5B5A]">Cancel</button>
+              <button type="submit" className="h-9 px-4 bg-[#FF5A36] text-white rounded-xl text-btn">Add Task</button>
             </div>
           </form>
         </div>
@@ -1627,63 +1607,63 @@ function DashboardView() {
 
       {showCreateEventModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <form onSubmit={handleEventSubmit} className="bg-white rounded-2xl border-2 border-[#6c5ce7] w-full max-w-md p-6 shadow-2xl space-y-4">
+          <form onSubmit={handleEventSubmit} className="bg-white rounded-2xl border-2 border-[#FF5A36] w-full max-w-md p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b pb-3">
-              <h4 className="font-black text-sm text-[#282633] flex items-center gap-1.5">
-                <CalendarDays size={16} className="text-[#6c5ce7]" />
+              <h4 className="font-black text-sm text-[#2C2A29] flex items-center gap-1.5">
+                <CalendarDays size={16} className="text-[#FF5A36]" />
                 Schedule Calendar Event
               </h4>
               <button type="button" onClick={() => setShowCreateEventModal(false)}><X size={15} /></button>
             </div>
             <div className="space-y-3">
               <div>
-                <label className="block text-[10px] font-bold uppercase text-[#b0a9bd] mb-1">Event Title</label>
+                <label className="block text-label-val uppercase text-[#aaa6b5] mb-1">Event Title</label>
                 <input
                   type="text"
                   required
                   value={eventForm.title}
                   onChange={(e) => setEventForm({ ...eventForm, title: e.target.value })}
                   placeholder="Strategic roadmap sync..."
-                  className="w-full h-9 px-3 rounded-lg border text-xs outline-none focus:border-[#6c5ce7]"
+                  className="w-full h-10 px-3 rounded-lg border text-input-val outline-none focus:border-[#FF5A36]"
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-bold uppercase text-[#b0a9bd] mb-1">Description</label>
+                <label className="block text-label-val uppercase text-[#aaa6b5] mb-1">Description</label>
                 <input
                   type="text"
                   value={eventForm.description}
                   onChange={(e) => setEventForm({ ...eventForm, description: e.target.value })}
                   placeholder="Sync link details..."
-                  className="w-full h-9 px-3 rounded-lg border text-xs outline-none focus:border-[#6c5ce7]"
+                  className="w-full h-10 px-3 rounded-lg border text-input-val outline-none focus:border-[#FF5A36]"
                 />
               </div>
               <div className="grid grid-cols-3 gap-3">
                 <div className="col-span-2">
-                  <label className="block text-[10px] font-bold uppercase text-[#b0a9bd] mb-1">Date</label>
+                  <label className="block text-label-val uppercase text-[#aaa6b5] mb-1">Date</label>
                   <input
                     type="date"
                     value={eventForm.date}
                     onChange={(e) => setEventForm({ ...eventForm, date: e.target.value })}
-                    className="w-full h-9 px-2 rounded-lg border text-xs outline-none"
+                    className="w-full h-10 px-2 rounded-lg border text-input-val outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase text-[#b0a9bd] mb-1">Time</label>
+                  <label className="block text-label-val uppercase text-[#aaa6b5] mb-1">Time</label>
                   <input
                     type="text"
                     value={eventForm.time}
                     onChange={(e) => setEventForm({ ...eventForm, time: e.target.value })}
                     placeholder="10:00"
-                    className="w-full h-9 px-2 rounded-lg border text-xs outline-none"
+                    className="w-full h-10 px-2 rounded-lg border text-input-val outline-none"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-[10px] font-bold uppercase text-[#b0a9bd] mb-1">Category</label>
+                <label className="block text-label-val uppercase text-[#aaa6b5] mb-1">Category</label>
                 <select
                   value={eventForm.category}
                   onChange={(e) => setEventForm({ ...eventForm, category: e.target.value })}
-                  className="w-full h-9 px-2 rounded-lg border text-xs outline-none"
+                  className="w-full h-10 px-2 rounded-lg border text-input-val outline-none text-[#5E5B5A]"
                 >
                   <option value="Meeting">Meeting</option>
                   <option value="Reminder">Reminder</option>
@@ -1693,8 +1673,8 @@ function DashboardView() {
               </div>
             </div>
             <div className="flex justify-end gap-2 border-t pt-3">
-              <button type="button" onClick={() => setShowCreateEventModal(false)} className="h-8.5 px-4 bg-slate-50 border rounded-xl text-xs font-semibold text-[#777281]">Cancel</button>
-              <button type="submit" disabled={creatingItem} className="h-8.5 px-4 bg-[#6c5ce7] text-white rounded-xl text-xs font-bold">
+              <button type="button" onClick={() => setShowCreateEventModal(false)} className="h-9 px-4 bg-slate-50 border rounded-xl text-btn text-[#5E5B5A]">Cancel</button>
+              <button type="submit" disabled={creatingItem} className="h-9 px-4 bg-[#FF5A36] text-white rounded-xl text-btn">
                 {creatingItem ? <Loader2 size={12} className="animate-spin" /> : "Add Event"}
               </button>
             </div>
@@ -1704,30 +1684,30 @@ function DashboardView() {
 
       {showCreateBoardModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <form onSubmit={handleBoardSubmit} className="bg-white rounded-2xl border-2 border-[#6c5ce7] w-full max-w-sm p-6 shadow-2xl space-y-4">
+          <form onSubmit={handleBoardSubmit} className="bg-white rounded-2xl border-2 border-[#FF5A36] w-full max-w-sm p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b pb-3">
-              <h4 className="font-black text-sm text-[#282633] flex items-center gap-1.5">
-                <LayoutDashboard size={16} className="text-[#6c5ce7]" />
+              <h4 className="font-black text-sm text-[#2C2A29] flex items-center gap-1.5">
+                <LayoutDashboard size={16} className="text-[#FF5A36]" />
                 Create Kanban Board
               </h4>
               <button type="button" onClick={() => setShowCreateBoardModal(false)}><X size={15} /></button>
             </div>
             <div className="space-y-3">
               <div>
-                <label className="block text-[10px] font-bold uppercase text-[#b0a9bd] mb-1">Board Name</label>
+                <label className="block text-label-val uppercase text-[#aaa6b5] mb-1">Board Name</label>
                 <input
                   type="text"
                   required
                   value={boardForm.name}
                   onChange={(e) => setBoardForm({ ...boardForm, name: e.target.value })}
                   placeholder="Design Sprint #2..."
-                  className="w-full h-9 px-3 rounded-lg border text-xs outline-none focus:border-[#6c5ce7]"
+                  className="w-full h-10 px-3 rounded-lg border text-input-val outline-none focus:border-[#FF5A36]"
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-bold uppercase text-[#b0a9bd] mb-1">Accent Color</label>
+                <label className="block text-label-val uppercase text-[#aaa6b5] mb-1">Accent Color</label>
                 <div className="flex gap-2">
-                  {["#6c5ce7", "#3e9b68", "#ef6688", "#e49a3a", "#3b82f6"].map((hex) => (
+                  {["#FF5A36", "#3e9b68", "#ef6688", "#e49a3a", "#3b82f6"].map((hex) => (
                     <button
                       key={hex}
                       type="button"
@@ -1742,8 +1722,8 @@ function DashboardView() {
               </div>
             </div>
             <div className="flex justify-end gap-2 border-t pt-3">
-              <button type="button" onClick={() => setShowCreateBoardModal(false)} className="h-8.5 px-4 bg-slate-50 border rounded-xl text-xs font-semibold text-[#777281]">Cancel</button>
-              <button type="submit" className="h-8.5 px-4 bg-[#6c5ce7] text-white rounded-xl text-xs font-bold">Add Board</button>
+              <button type="button" onClick={() => setShowCreateBoardModal(false)} className="h-9 px-4 bg-slate-50 border rounded-xl text-btn text-[#5E5B5A]">Cancel</button>
+              <button type="submit" className="h-9 px-4 bg-[#FF5A36] text-white rounded-xl text-btn">Add Board</button>
             </div>
           </form>
         </div>

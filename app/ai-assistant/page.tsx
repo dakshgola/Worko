@@ -43,18 +43,6 @@ import { WorkspaceSidebar } from "@/components/WorkspaceSidebar";
 import { createEvent } from "@/lib/calendar/actions";
 import { createNote } from "@/lib/notes/actions";
 
-const sidebarNav = [
-  { label: "Dashboard", icon: LayoutDashboard, href: "/" },
-  { label: "AI Assistant", icon: Bot, href: "/ai-assistant", active: true },
-  { label: "Calendar", icon: CalendarDays, href: "/calendar" },
-  { label: "Tasks", icon: SquareKanban, href: "/kanban" },
-  { label: "Notes", icon: StickyNote, href: "/notes" },
-  { label: "Whiteboard", icon: PenTool, href: "/whiteboard" },
-  { label: "Spaces", icon: PanelTop, href: "/spaces" },
-  { label: "AI Builder", icon: WandSparkles, href: "/ai-template-builder" },
-  { label: "Settings", icon: Settings, href: "/settings" },
-];
-
 export default function AiAssistantPage() {
   const { user } = useUser();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -248,26 +236,27 @@ export default function AiAssistantPage() {
       if (actionConfirmation.type === "event") {
         await createEvent(actionConfirmation.payload);
       } else if (actionConfirmation.type === "note") {
-        await createNote(actionConfirmation.payload);
+        await createNote({ title: actionConfirmation.payload.title });
       }
-
       setActionSuccess(true);
       setTimeout(() => {
         setActionConfirmation(null);
         setActionSuccess(false);
-      }, 2000);
-    } catch (err) {
-      console.error(err);
+      }, 1800);
+    } catch (e) {
+      console.error(e);
     }
   };
 
-  // AssemblyAI Audio mic stream
+  // AssemblyAI Voice Streaming Handshake
   const startVoiceRecording = async () => {
     try {
       const response = await fetch("/api/assemblyai/token", { method: "POST" });
+      if (!response.ok) throw new Error("Handshake failed");
       const { token } = await response.json();
 
-      const socket = new WebSocket(`wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000&token=${token}`);
+      const wsUrl = `wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000&token=${token}`;
+      const socket = new WebSocket(wsUrl);
       socketRef.current = socket;
 
       socket.onopen = async () => {
@@ -275,42 +264,44 @@ export default function AiAssistantPage() {
         micStreamRef.current = stream;
 
         const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-        const ctx = new AudioCtx({ sampleRate: 16000 });
-        audioCtxRef.current = ctx;
+        const audioCtx = new AudioCtx({ sampleRate: 16000 });
+        audioCtxRef.current = audioCtx;
 
-        const src = ctx.createMediaStreamSource(stream);
-        const proc = ctx.createScriptProcessor(4096, 1, 1);
-        processorRef.current = proc;
+        const source = audioCtx.createMediaStreamSource(stream);
+        const processor = audioCtx.createScriptProcessor(4096, 1, 1);
+        processorRef.current = processor;
 
-        proc.onaudioprocess = (e) => {
-          const input = e.inputBuffer.getChannelData(0);
-          const pcm = new Int16Array(input.length);
-          for (let i = 0; i < input.length; i++) {
-            pcm[i] = Math.max(-1, Math.min(1, input[i])) * 0x7fff;
+        processor.onaudioprocess = (e) => {
+          const inputData = e.inputBuffer.getChannelData(0);
+          const pcmData = new Int16Array(inputData.length);
+          for (let i = 0; i < inputData.length; i++) {
+            pcmData[i] = Math.max(-1, Math.min(1, inputData[i])) * 0x7fff;
           }
           if (socket.readyState === WebSocket.OPEN) {
-            socket.send(JSON.stringify({ audio_data: Buffer.from(pcm.buffer).toString("base64") }));
+            socket.send(JSON.stringify({ audio_data: Buffer.from(pcmData.buffer).toString("base64") }));
           }
         };
 
-        src.connect(proc);
-        proc.connect(ctx.destination);
+        source.connect(processor);
+        processor.connect(audioCtx.destination);
         setIsRecording(true);
       };
 
-      socket.onmessage = (msg) => {
-        const data = JSON.parse(msg.data);
-        if (data.text && data.message_type === "PartialTranscript") {
-          setInputMsg(data.text);
-        } else if (data.text && data.message_type === "FinalTranscript") {
-          setInputMsg(data.text);
+      socket.onmessage = (message) => {
+        const res = JSON.parse(message.data);
+        if (res.text && res.message_type === "PartialTranscript") {
+          setInputMsg(res.text);
+        } else if (res.text && res.message_type === "FinalTranscript") {
+          setInputMsg(res.text);
+          handleSubmitPrompt(res.text);
         }
       };
 
+      socket.onerror = (e) => console.error(e);
       socket.onclose = () => stopVoiceRecording();
     } catch (err) {
       console.error(err);
-      alert("Microphone permissions required.");
+      alert("Please allow microphone permissions to dictating prompts.");
     }
   };
 
@@ -319,40 +310,45 @@ export default function AiAssistantPage() {
     if (processorRef.current) processorRef.current.disconnect();
     if (audioCtxRef.current) audioCtxRef.current.close();
     if (micStreamRef.current) micStreamRef.current.getTracks().forEach((t) => t.stop());
-    if (socketRef.current) socketRef.current.close();
+    if (socketRef.current) {
+      if (socketRef.current.readyState === WebSocket.OPEN) {
+        socketRef.current.send(JSON.stringify({ terminate_session: true }));
+      }
+      socketRef.current.close();
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f8fb] text-[#292832] flex">
+    <div className="min-h-screen bg-[#FAF8F4] text-[#2C2A29] flex">
       {/* Sidebar Navigation */}
       <WorkspaceSidebar active="AI Assistant" />
 
-      <main className="flex-1 min-w-0 flex h-screen overflow-hidden">
-        {/* Chat conversations history list */}
-        <section className="w-60 border-r border-[#efedf4] bg-white flex flex-col shrink-0">
-          <div className="p-4 border-b border-[#efedf4] flex items-center justify-between">
-            <span className="text-xs font-bold text-[#b0a9bd] uppercase tracking-wider">Chat Threads</span>
-            <button onClick={() => handleCreateChat()} className="p-1 bg-[#eeeaff] text-[#6c5ce7] rounded-lg">
+      <main className="flex-grow min-w-0 flex h-screen overflow-hidden">
+        {/* Left conversations list */}
+        <section className="w-60 border-r border-[#EBE8E2] bg-white flex flex-col shrink-0">
+          <div className="p-4 border-b border-[#EBE8E2] flex items-center justify-between">
+            <span className="text-overline text-[#aaa6b5] block">Conversations</span>
+            <button onClick={() => handleCreateChat()} className="p-1.5 bg-[#FFE8E2] text-[#FF5A36] rounded-xl hover:bg-[#FF5A36] hover:text-white transition">
               <Plus size={13} />
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-2 space-y-1">
+          <div className="flex-grow overflow-y-auto p-2 space-y-1">
             {loadingChats ? (
-              <div className="text-center py-6 text-xs"><Loader2 size={11} className="animate-spin text-[#6c5ce7]" /></div>
+              <div className="text-center py-4 text-caption font-semibold text-[#aaa6b5]"><Loader2 size={12} className="animate-spin text-[#FF5A36] inline" /></div>
             ) : chatsList.length === 0 ? (
-              <p className="text-[10px] text-center text-slate-400 py-6">0 chats started.</p>
+              <div className="text-caption text-slate-400 text-center py-4 font-semibold">0 conversation logs.</div>
             ) : (
               chatsList.map((chat) => (
                 <button
                   key={chat.id}
                   onClick={() => handleSelectChat(chat)}
-                  className={`w-full text-left p-2.5 rounded-xl text-xs font-bold flex items-center justify-between group truncate ${
-                    activeChat?.id === chat.id ? "bg-[#eeeaff] text-[#6c5ce7]" : "hover:bg-[#fbfaff]"
+                  className={`w-full text-left p-2.5 rounded-xl text-body-sm font-bold flex items-center justify-between group truncate ${
+                    activeChat?.id === chat.id ? "bg-[#FFE8E2]/60 text-[#FF5A36]" : "hover:bg-slate-50"
                   }`}
                 >
-                  <span className="truncate flex-grow pr-1">{chat.title}</span>
-                  <button onClick={(e) => handleDeleteChat(chat.id, e)} className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 transition">
+                  <span className="truncate flex-1">{chat.title}</span>
+                  <button onClick={(e) => handleDeleteChat(chat.id, e)} className="text-slate-300 hover:text-red-500 transition ml-2 opacity-0 group-hover:opacity-100">
                     <Trash2 size={11} />
                   </button>
                 </button>
@@ -361,131 +357,128 @@ export default function AiAssistantPage() {
           </div>
         </section>
 
-        {/* ChatGPT Chat Console */}
-        <section className="flex-grow bg-white flex flex-col min-w-0 h-full overflow-hidden relative">
-          <div className="flex h-[64px] items-center border-b border-[#efedf4] px-6 shrink-0 bg-white/80 z-10">
-            <span className="grid size-9 place-items-center rounded-xl bg-amber-100 text-amber-600 shadow-sm shrink-0 mr-2.5">
-              <Bot size={17} />
-            </span>
-            <div>
-              <h3 className="font-black text-sm text-[#282633]">{activeChat?.title || "AI Command Assistant"}</h3>
-              <p className="text-[9.5px] text-[#b0a9bd] font-bold uppercase tracking-wider">Gemini LLM model online</p>
+        {/* Right Chat Board */}
+        <section className="flex-grow flex flex-col bg-[#FAF8F4] relative h-full">
+          {/* Header */}
+          <div className="h-[68px] bg-white border-b border-[#EBE8E2] flex items-center px-6 gap-3 shrink-0">
+            <div className="flex items-center gap-2">
+              <span className="grid size-8 place-items-center bg-[#FFE8E2] text-[#FF5A36] rounded-xl"><Bot size={15} /></span>
+              <div>
+                <h3 className="text-body-sm font-extrabold text-[#2C2A29]">{activeChat?.title || "New Session"}</h3>
+                <p className="text-overline text-[#aaa6b5] block">AI Orchestrator</p>
+              </div>
             </div>
           </div>
 
-          {/* Messages scroll */}
+          {/* Messages Flow */}
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
-            {messages.length === 0 && !isAiResponding && (
-              <div className="max-w-md mx-auto text-center py-10 space-y-4">
-                <Bot size={40} className="mx-auto text-amber-500" />
-                <h4 className="font-extrabold text-sm text-[#282633]">Ask Worko AI Assistant anything</h4>
-                <p className="text-xs text-[#777281] leading-relaxed">
-                  Compose task events, sync outlines, summarize database note blocks, or dictate text via speech recorder:
+            {loadingHistory ? (
+              <div className="flex items-center justify-center py-12 text-caption font-semibold text-[#aaa6b5]">
+                <Loader2 size={14} className="animate-spin mr-1 text-[#FF5A36]" /> Loading history...
+              </div>
+            ) : messages.length === 0 && !streamingResponse ? (
+              <div className="max-w-md mx-auto text-center py-16 space-y-4">
+                <Bot size={42} className="text-[#FF5A36] mx-auto animate-bounce" />
+                <h4 className="text-h3 text-[#2C2A29]">Ask anything about your workspace</h4>
+                <p className="text-body-sm text-[#5E5B5A] leading-relaxed font-semibold">
+                  I can schedule events, write specifications notes drafts, or calculate productivity logs based on Neon Database records.
                 </p>
-                <div className="flex flex-col gap-2 pt-2">
-                  {suggestedPrompts.map((p, idx) => (
+
+                <div className="flex flex-wrap justify-center gap-2 pt-2">
+                  {suggestedPrompts.map((sg, i) => (
                     <button
-                      key={idx}
-                      onClick={() => {
-                        setInputMsg(p);
-                        handleSubmitPrompt(p);
-                      }}
-                      className="text-left p-3 border border-[#efedf4] rounded-xl hover:border-[#cfc8f5] hover:bg-[#fbfaff] transition text-xs font-semibold text-[#5143bd]"
+                      key={i}
+                      onClick={() => { setInputMsg(sg); handleSubmitPrompt(sg); }}
+                      className="px-3 py-1.5 bg-[#FFE8E2] border border-[#ffcfc4] hover:bg-[#FF5A36] hover:text-white text-[#FF5A36] text-btn rounded-full transition"
                     >
-                      {p}
+                      {sg}
                     </button>
                   ))}
                 </div>
               </div>
-            )}
+            ) : (
+              <div className="space-y-4 max-w-3xl mx-auto">
+                {messages.map((m) => (
+                  <div key={m.id} className={`flex gap-3.5 items-start ${m.role === "user" ? "flex-row-reverse" : ""}`}>
+                    <span className={`grid size-8 shrink-0 place-items-center rounded-xl text-badge-val ${
+                      m.role === "user" ? "bg-amber-100 text-amber-750" : "bg-[#FFE8E2] text-[#FF5A36]"
+                    }`}>
+                      {m.role === "user" ? "US" : "AI"}
+                    </span>
+                    <div className={`p-3.5 rounded-2xl text-body-sm leading-relaxed font-semibold ${
+                      m.role === "user" ? "bg-[#FF5A36] text-white" : "bg-white border border-[#EBE8E2] text-[#2C2A29]"
+                    }`}>
+                      {m.content}
+                    </div>
+                  </div>
+                ))}
 
-            {messages.map((m) => (
-              <div
-                key={m.id}
-                className={`flex gap-3 max-w-xl ${m.role === "user" ? "ml-auto flex-row-reverse" : ""}`}
-              >
-                <span className={`grid size-8 place-items-center rounded-lg text-xs font-extrabold shrink-0 ${
-                  m.role === "user" ? "bg-[#eeeaff] text-[#6c5ce7]" : "bg-amber-100 text-amber-600"
-                }`}>
-                  {m.role === "user" ? "U" : "AI"}
-                </span>
-
-                <div className={`p-3.5 rounded-2xl text-xs leading-relaxed font-semibold shadow-sm ${
-                  m.role === "user" ? "bg-[#6c5ce7] text-white" : "bg-[#f8f8fb] border border-[#efedf4]"
-                }`}>
-                  {m.content}
-                </div>
-              </div>
-            ))}
-
-            {/* SSE typing streaming */}
-            {isAiResponding && streamingResponse && (
-              <div className="flex gap-3 max-w-xl">
-                <span className="grid size-8 place-items-center rounded-lg text-xs font-extrabold bg-amber-100 text-amber-600 shrink-0">AI</span>
-                <div className="p-3.5 bg-[#f8f8fb] border border-[#efedf4] rounded-2xl text-xs leading-relaxed font-semibold shadow-sm">
-                  {streamingResponse}
-                  <span className="inline-block size-2 bg-amber-500 rounded-full animate-ping ml-1" />
-                </div>
+                {streamingResponse && (
+                  <div className="flex gap-3.5 items-start">
+                    <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-[#FFE8E2] text-[#FF5A36] text-badge-val">AI</span>
+                    <div className="p-3.5 rounded-2xl text-body-sm leading-relaxed bg-white border border-[#EBE8E2] text-[#2C2A29] font-semibold">
+                      {streamingResponse}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
-            {/* Confirm action widget overlay */}
+            {/* Action Confirmation Panel Overlay */}
             {actionConfirmation && (
-              <div className="max-w-md mx-auto bg-amber-50/50 border-2 border-dashed border-amber-300 p-4 rounded-2xl shadow space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wider">AI Intent Confirmed</span>
-                  {actionSuccess && <span className="text-[10px] text-emerald-600 font-bold">Successfully created!</span>}
+              <div className="max-w-md mx-auto bg-white border border-[#EBE8E2] p-4 rounded-2xl shadow-lg space-y-3">
+                <div className="flex items-center gap-2 border-b border-[#FAF8F4] pb-2">
+                  <Sparkles size={14} className="text-[#FF5A36] animate-pulse" />
+                  <span className="text-overline text-[#2C2A29] block">Detected Workspace Action Intent</span>
                 </div>
-                <h5 className="font-extrabold text-xs text-[#282633]">
-                  Ready to compile &quot;{actionConfirmation.payload.title}&quot; {actionConfirmation.type === "event" ? "event" : "note"}?
-                </h5>
-                <p className="text-[10px] text-[#777281]">Assigned parameters parsed from assistant chat context.</p>
-
-                <div className="flex justify-end gap-2 pt-1.5 border-t border-amber-200">
-                  <button onClick={() => setActionConfirmation(null)} className="h-7.5 px-3 bg-white border border-amber-200 text-amber-900 rounded-lg text-[10px] font-bold">Cancel</button>
-                  <button onClick={handleConfirmAction} className="h-7.5 px-3 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-[10px] font-bold">Confirm Execute</button>
+                <div className="text-body-sm text-[#5E5B5A] leading-relaxed">
+                  <p className="text-overline text-[#FF5A36] tracking-wider block">{actionConfirmation.type} to build:</p>
+                  <p className="text-body-sm font-extrabold text-[#2C2A29] mt-0.5">{actionConfirmation.payload.title}</p>
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <button onClick={() => setActionConfirmation(null)} className="px-3 py-1 bg-slate-50 border border-[#EBE8E2] rounded-lg text-btn text-[#5E5B5A]">Discard</button>
+                  <button onClick={handleConfirmAction} className="px-3 py-1 bg-[#FF5A36] text-white rounded-lg text-btn">
+                    {actionSuccess ? <Check size={11} /> : "Execute Confirmation"}
+                  </button>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Prompt composer footers */}
-          <div className="p-4 border-t border-[#efedf4] shrink-0 bg-white">
-            <div className="max-w-2.5xl mx-auto relative flex items-center bg-[#f8f8fb] border border-[#e5e2ed] rounded-2xl p-1 px-3 shadow-inner">
-              
+          {/* Form input bar */}
+          <div className="p-4 bg-white border-t border-[#EBE8E2] shrink-0">
+            <div className="max-w-3xl mx-auto flex gap-2">
               <button
+                type="button"
                 onClick={isRecording ? stopVoiceRecording : startVoiceRecording}
-                className={`p-2 rounded-xl transition ${
-                  isRecording ? "text-red-500 hover:bg-red-50" : "text-[#716c7d] hover:text-[#282633]"
+                className={`grid size-10 place-items-center rounded-xl border transition ${
+                  isRecording ? "bg-red-500 border-red-500 text-white animate-pulse" : "bg-[#FFE8E2] border-[#EBE8E2] text-[#FF5A36]"
                 }`}
               >
-                {isRecording ? <MicOff size={15} className="animate-pulse" /> : <Mic size={15} />}
+                {isRecording ? <MicOff size={15} /> : <Mic size={15} />}
               </button>
 
-              <input
-                type="text"
-                placeholder={isRecording ? "Listening stream..." : "Ask Assistant to log tasks, schedule calendar events, or write note specifications..."}
-                value={inputMsg}
-                onChange={(e) => setInputMsg(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleSubmitPrompt(inputMsg);
-                  }
-                }}
-                className="flex-1 bg-transparent border-none outline-none py-2 px-3 text-xs text-[#292832] font-semibold"
-              />
-
-              <button
-                onClick={() => handleSubmitPrompt(inputMsg)}
-                className="p-2 bg-[#6c5ce7] hover:bg-[#5143bd] text-white rounded-xl shadow-sm transition"
-              >
-                <Send size={13} />
-              </button>
+              <div className="flex-1 relative flex items-center">
+                <input
+                  type="text"
+                  placeholder="Ask Gemini orchestrator..."
+                  value={inputMsg}
+                  onChange={(e) => setInputMsg(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSubmitPrompt(inputMsg)}
+                  className="w-full h-10 border border-[#EBE8E2] bg-[#FAF8F4] px-4 rounded-xl text-input-val outline-none focus:border-[#FF5A36]"
+                />
+                <button
+                  onClick={() => handleSubmitPrompt(inputMsg)}
+                  disabled={isAiResponding || !inputMsg.trim()}
+                  className="absolute right-2 grid size-7 place-items-center rounded-lg bg-[#FF5A36] text-white hover:bg-[#ff7d5e] transition"
+                >
+                  <Send size={11} fill="currentColor" />
+                </button>
+              </div>
             </div>
           </div>
         </section>
       </main>
-      {sidebarOpen && <button aria-label="Close sidebar" onClick={() => setSidebarOpen(false)} className="fixed inset-0 z-30 bg-[#302a3d]/20 backdrop-blur-sm lg:hidden" />}
     </div>
   );
 }

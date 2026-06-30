@@ -45,18 +45,6 @@ import {
 } from "@/lib/spaces/actions";
 import { WorkspaceSidebar } from "@/components/WorkspaceSidebar";
 
-const sidebarNav = [
-  { label: "Dashboard", icon: LayoutDashboard, href: "/" },
-  { label: "AI Assistant", icon: Bot, href: "/ai-assistant" },
-  { label: "Calendar", icon: CalendarDays, href: "/calendar" },
-  { label: "Tasks", icon: SquareKanban, href: "/kanban" },
-  { label: "Notes", icon: StickyNote, href: "/notes" },
-  { label: "Whiteboard", icon: PenTool, href: "/whiteboard" },
-  { label: "Spaces", icon: PanelTop, href: "/spaces", active: true },
-  { label: "AI Builder", icon: WandSparkles, href: "/ai-template-builder" },
-  { label: "Settings", icon: Settings, href: "/settings" },
-];
-
 export default function SpacesPage() {
   const { user } = useUser();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -215,25 +203,25 @@ export default function SpacesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f8fb] text-[#292832] flex">
+    <div className="min-h-screen bg-[#FAF8F4] text-[#2C2A29] flex">
       {/* Sidebar Navigation */}
       <WorkspaceSidebar active="Spaces" />
 
       <main className="flex-1 min-w-0 flex h-screen overflow-hidden">
         {/* Spaces Folders sidebar */}
-        <section className="w-60 border-r border-[#efedf4] bg-white flex flex-col shrink-0">
-          <div className="p-4 border-b border-[#efedf4] flex items-center justify-between">
-            <span className="text-xs font-bold text-[#b0a9bd] uppercase tracking-wider">Workspace Spaces</span>
-            <button onClick={() => setShowSpaceModal(true)} className="p-1 bg-violet-50 text-[#6c5ce7] rounded-lg">
+        <section className="w-60 border-r border-[#EBE8E2] bg-white flex flex-col shrink-0">
+          <div className="p-4 border-b border-[#EBE8E2] flex items-center justify-between">
+            <span className="text-overline text-[#aaa6b5] block">Workspace Spaces</span>
+            <button onClick={() => setShowSpaceModal(true)} className="p-1 bg-[#FFE8E2] text-[#FF5A36] rounded-lg">
               <FolderPlus size={13} />
             </button>
           </div>
 
-          <div className="p-2 space-y-1 overflow-y-auto max-h-[40vh] border-b border-[#efedf4]">
+          <div className="p-2 space-y-1 overflow-y-auto max-h-[40vh] border-b border-[#EBE8E2]">
             {loadingSpaces ? (
-              <div className="text-center py-4 text-xs"><Loader2 size={12} className="animate-spin text-[#6c5ce7] mr-1" /> Loading</div>
+              <div className="text-center py-4 text-caption font-semibold text-[#aaa6b5]"><Loader2 size={12} className="animate-spin text-[#FF5A36] mr-1 inline" /> Loading</div>
             ) : spacesList.length === 0 ? (
-              <p className="text-[10px] text-center py-3 text-slate-400">No spaces created.</p>
+              <p className="text-caption text-center py-3 text-slate-400 font-semibold">No spaces created.</p>
             ) : (
               spacesList.map((space) => (
                 <button
@@ -242,11 +230,11 @@ export default function SpacesPage() {
                     setActiveSpace(space);
                     fetchPages(space.id);
                   }}
-                  className={`w-full text-left p-2.5 rounded-xl text-xs font-bold flex items-center gap-2 truncate ${
-                    activeSpace?.id === space.id ? "bg-[#eeeaff] text-[#6c5ce7]" : ""
+                  className={`w-full text-left p-2.5 rounded-xl text-body-sm font-bold flex items-center gap-2 truncate ${
+                    activeSpace?.id === space.id ? "bg-[#FFE8E2]/60 text-[#FF5A36]" : "hover:bg-slate-50"
                   }`}
                 >
-                  <span className="size-2 rounded-full shrink-0" style={{ backgroundColor: space.color === "Purple" ? "#6c5ce7" : space.color === "Green" ? "#3e9b68" : "#3b82f6" }} />
+                  <span className="size-2 rounded-full shrink-0" style={{ backgroundColor: space.color === "Purple" ? "#FF5A36" : space.color === "Green" ? "#3e9b68" : "#3b82f6" }} />
                   <span className="truncate">{space.name}</span>
                 </button>
               ))
@@ -255,26 +243,26 @@ export default function SpacesPage() {
 
           {/* Subpages Sidebar under space */}
           {activeSpace && (
-            <div className="flex-1 flex flex-col min-h-0 bg-[#fcfcfd]">
-              <div className="p-4 border-b border-[#efedf4]/70 flex items-center justify-between shrink-0 bg-white">
-                <span className="text-[10px] font-extrabold text-[#aaa6b5] uppercase tracking-wider">Nested Pages</span>
-                <button onClick={handleCreatePageInsideActiveSpace} className="p-1 bg-[#eeeaff] text-[#6c5ce7] rounded-lg">
+            <div className="flex-1 flex flex-col min-h-0 bg-[#FAF8F4]/30">
+              <div className="p-4 border-b border-[#EBE8E2]/70 flex items-center justify-between shrink-0 bg-white">
+                <span className="text-overline text-[#aaa6b5] block">Nested Pages</span>
+                <button onClick={handleCreatePageInsideActiveSpace} className="p-1 bg-[#FFE8E2] text-[#FF5A36] rounded-lg">
                   <FilePlus size={12} />
                 </button>
               </div>
 
               <div className="flex-1 overflow-y-auto p-2 space-y-1">
                 {loadingPages ? (
-                  <div className="text-center py-6 text-xs"><Loader2 size={11} className="animate-spin text-[#6c5ce7]" /></div>
+                  <div className="text-center py-6 text-xs text-[#aaa6b5]"><Loader2 size={11} className="animate-spin text-[#FF5A36]" /></div>
                 ) : pagesList.length === 0 ? (
-                  <p className="text-[10px] text-center text-slate-400 py-6">0 page sheets.</p>
+                  <p className="text-caption text-center text-slate-400 py-6 font-semibold">0 page sheets.</p>
                 ) : (
                   pagesList.map((page) => (
                     <button
                       key={page.id}
                       onClick={() => setActivePage(page)}
-                      className={`w-full text-left p-2 rounded-lg text-[11px] font-semibold truncate ${
-                        activePage?.id === page.id ? "bg-white border border-[#ece9f2] text-[#6c5ce7] shadow-sm" : "text-[#777281] hover:bg-[#fafafb]"
+                      className={`w-full text-left p-2 rounded-lg text-sidebar font-semibold truncate ${
+                        activePage?.id === page.id ? "bg-white border border-[#EBE8E2] text-[#FF5A36] shadow-sm" : "text-[#5E5B5A] hover:bg-slate-50"
                       }`}
                     >
                       📄 {page.title}
@@ -291,22 +279,22 @@ export default function SpacesPage() {
           {activePage ? (
             <>
               {/* Toolbar */}
-              <div className="h-[64px] bg-white border-b border-[#efedf4] px-6 flex items-center gap-3 shrink-0">
+              <div className="h-[68px] bg-white border-b border-[#EBE8E2] px-6 flex items-center gap-3 shrink-0">
                 <input
                   type="text"
                   value={activePage.title}
                   onChange={(e) => handleUpdatePageTitle(e.target.value)}
-                  className="font-black text-base text-[#282633] outline-none max-w-sm border-b border-transparent focus:border-slate-100"
+                  className="text-h3 font-black text-[#2C2A29] outline-none max-w-sm border-b border-transparent focus:border-slate-100 bg-transparent"
                 />
 
                 {saving && (
-                  <span className="text-[10px] text-[#aaa6b5] font-bold flex items-center animate-pulse gap-1">
-                    <Loader2 size={10} className="animate-spin text-[#6c5ce7]" /> Autosaving
+                  <span className="text-caption text-[#aaa6b5] font-bold flex items-center animate-pulse gap-1">
+                    <Loader2 size={10} className="animate-spin text-[#FF5A36]" /> Autosaving
                   </span>
                 )}
 
                 <div className="ml-auto flex items-center gap-2">
-                  <button onClick={handleDeleteActivePage} className="p-1.5 rounded-lg border border-[#e5e2ed] text-red-500 hover:bg-red-50">
+                  <button onClick={handleDeleteActivePage} className="p-1.5 rounded-lg border border-[#EBE8E2] text-red-500 hover:bg-red-50">
                     <Trash2 size={14} />
                   </button>
                 </div>
@@ -314,34 +302,34 @@ export default function SpacesPage() {
 
               {/* Rich-Text Editor content */}
               <div className="flex-1 flex min-w-0 overflow-hidden">
-                <div className="flex-1 overflow-y-auto px-8 py-6 prose max-w-none prose-sm">
-                  <div className="mb-4 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                    Doc Template: <span className="text-[#6c5ce7]">{activePage.template}</span>
+                <div className="flex-1 overflow-y-auto px-8 py-6 bg-white prose max-w-none">
+                  <div className="mb-4 text-overline text-[#FF5A36] block">
+                    Doc Template: <span>{activePage.template}</span>
                   </div>
-                  <EditorContent editor={editor} className="outline-none min-h-[350px] text-sm text-[#292832] font-normal leading-relaxed" />
+                  <EditorContent editor={editor} className="outline-none min-h-[350px] text-body text-[#2C2A29]" />
                 </div>
 
                 {/* Linked References Sidebar */}
-                <div className="w-72 border-l border-[#efedf4] bg-[#fafafc] p-5 space-y-4 shrink-0 flex flex-col justify-between">
+                <div className="w-72 border-l border-[#EBE8E2] bg-[#FAF8F4] p-5 space-y-4 shrink-0 flex flex-col justify-between">
                   <div className="space-y-4">
-                    <h5 className="text-[11px] font-bold text-[#5143bd] uppercase tracking-wider flex items-center gap-1">
+                    <h5 className="text-label-val text-[#FF5A36] uppercase tracking-wider block flex items-center gap-1">
                       <Link size={12} /> Linked References
                     </h5>
-                    <p className="text-[10px] text-[#777281]">Outline connections with calendar sync, tasks, or boards logs:</p>
+                    <p className="text-caption text-[#5E5B5A] font-semibold">Outline connections with calendar sync, tasks, or boards logs:</p>
 
                     <div className="space-y-2">
-                      <div className="p-2.5 bg-white border border-[#efedf4] rounded-xl text-xs space-y-1 shadow-sm">
-                        <p className="font-bold text-[10px] text-slate-400 uppercase tracking-wider">Linked Boards</p>
-                        <p className="font-semibold truncate text-[#282633]">None connected</p>
+                      <div className="p-2.5 bg-white border border-[#EBE8E2] rounded-xl space-y-1 shadow-sm">
+                        <p className="text-overline text-[#aaa6b5] block">Linked Boards</p>
+                        <p className="text-body-sm font-bold truncate text-[#2C2A29]">None connected</p>
                       </div>
-                      <div className="p-2.5 bg-white border border-[#efedf4] rounded-xl text-xs space-y-1 shadow-sm">
-                        <p className="font-bold text-[10px] text-slate-400 uppercase tracking-wider">Calendar Events</p>
-                        <p className="font-semibold truncate text-[#282633]">None scheduled</p>
+                      <div className="p-2.5 bg-white border border-[#EBE8E2] rounded-xl space-y-1 shadow-sm">
+                        <p className="text-overline text-[#aaa6b5] block">Calendar Events</p>
+                        <p className="text-body-sm font-bold truncate text-[#2C2A29]">None scheduled</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-3 bg-indigo-50/40 border border-indigo-100 rounded-xl text-[9px] text-[#5143bd] leading-relaxed font-semibold">
+                  <div className="p-3 bg-[#FFE8E2]/60 border border-[#ffcfc4] rounded-xl text-caption text-[#FF5A36] leading-relaxed font-semibold">
                     Pages are synced securely inside spaces folders. Changes sync automatically in real-time.
                   </div>
                 </div>
@@ -350,10 +338,10 @@ export default function SpacesPage() {
           ) : (
             <div className="flex-grow flex flex-col items-center justify-center p-8 text-center text-slate-400 space-y-3">
               <PanelTop size={48} className="text-slate-300" />
-              <h4 className="font-bold text-sm text-slate-500">No active page selected</h4>
-              <p className="text-xs max-w-xs text-slate-400">Select an existing document under your spaces navigation or create a new spec document sheet.</p>
+              <h4 className="text-body-sm font-bold text-slate-500">No active page selected</h4>
+              <p className="text-caption max-w-xs text-slate-400">Select an existing document under your spaces navigation or create a new spec document sheet.</p>
               {activeSpace && (
-                <button onClick={handleCreatePageInsideActiveSpace} className="h-9 px-4 bg-[#6c5ce7] text-white rounded-xl text-xs font-bold">
+                <button onClick={handleCreatePageInsideActiveSpace} className="h-9.5 px-4 bg-[#FF5A36] text-white rounded-xl text-btn">
                   Create Page
                 </button>
               )}
@@ -365,58 +353,56 @@ export default function SpacesPage() {
       {/* Create Space Modal */}
       {showSpaceModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <form onSubmit={handleCreateSpaceSubmit} className="bg-white rounded-2xl border-2 border-[#6c5ce7] w-full max-w-sm p-6 shadow-2xl space-y-4">
+          <form onSubmit={handleCreateSpaceSubmit} className="bg-white rounded-2xl border-2 border-[#FF5A36] w-full max-w-sm p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b pb-3">
-              <h4 className="font-black text-sm text-[#282633] flex items-center gap-1.5">
-                <FolderPlus size={16} className="text-[#6c5ce7]" />
+              <h4 className="font-black text-sm text-[#2C2A29] flex items-center gap-1.5">
+                <FolderPlus size={16} className="text-[#FF5A36]" />
                 Create Workspace Space
               </h4>
               <button type="button" onClick={() => setShowSpaceModal(false)}><X size={15} /></button>
             </div>
             <div className="space-y-3">
               <div>
-                <label className="block text-[10px] font-bold uppercase text-[#b0a9bd] mb-1">Space Name</label>
+                <label className="block text-label-val uppercase text-[#aaa6b5] mb-1">Space Name</label>
                 <input
                   type="text"
                   required
                   value={newSpaceForm.name}
                   onChange={(e) => setNewSpaceForm({ ...newSpaceForm, name: e.target.value })}
                   placeholder="e.g. Confluence Wiki, Engineering Team..."
-                  className="w-full h-9 px-3 rounded-lg border text-xs outline-none focus:border-[#6c5ce7]"
+                  className="w-full h-10 px-3 rounded-lg border text-input-val outline-none focus:border-[#FF5A36]"
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-bold uppercase text-[#b0a9bd] mb-1">Description</label>
+                <label className="block text-label-val uppercase text-[#aaa6b5] mb-1">Description</label>
                 <input
                   type="text"
                   value={newSpaceForm.description}
                   onChange={(e) => setNewSpaceForm({ ...newSpaceForm, description: e.target.value })}
                   placeholder="e.g. Document specifications and roadmaps..."
-                  className="w-full h-9 px-3 rounded-lg border text-xs outline-none focus:border-[#6c5ce7]"
+                  className="w-full h-10 px-3 rounded-lg border text-input-val outline-none focus:border-[#FF5A36]"
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-bold uppercase text-[#b0a9bd] mb-1">Space Theme Color</label>
+                <label className="block text-label-val uppercase text-[#aaa6b5] mb-1">Space Theme Color</label>
                 <select
                   value={newSpaceForm.color}
                   onChange={(e) => setNewSpaceForm({ ...newSpaceForm, color: e.target.value })}
-                  className="w-full h-9 px-2 rounded-lg border text-xs outline-none"
+                  className="w-full h-10 px-2 rounded-lg border text-input-val outline-none text-[#5E5B5A] font-semibold"
                 >
-                  <option value="Purple">Purple Accent</option>
+                  <option value="Purple">Coral Orange Theme</option>
                   <option value="Green">Green Forest</option>
                   <option value="Blue">Blue Ocean</option>
                 </select>
               </div>
             </div>
             <div className="flex justify-end gap-2 border-t pt-3">
-              <button type="button" onClick={() => setShowSpaceModal(false)} className="h-8.5 px-4 bg-slate-50 border rounded-xl text-xs font-semibold text-[#777281]">Cancel</button>
-              <button type="submit" className="h-8.5 px-4 bg-[#6c5ce7] text-white rounded-xl text-xs font-bold">Add Space</button>
+              <button type="button" onClick={() => setShowSpaceModal(false)} className="h-9 px-4 bg-slate-50 border rounded-xl text-btn text-[#5E5B5A]">Cancel</button>
+              <button type="submit" className="h-9 px-4 bg-[#FF5A36] text-white rounded-xl text-btn">Add Space</button>
             </div>
           </form>
         </div>
       )}
-
-      {sidebarOpen && <button aria-label="Close sidebar" onClick={() => setSidebarOpen(false)} className="fixed inset-0 z-30 bg-[#302a3d]/20 backdrop-blur-sm lg:hidden" />}
     </div>
   );
 }

@@ -86,8 +86,8 @@ export function WorkspaceSidebar({ active }: WorkspaceSidebarProps) {
             </div>
             {!collapsed && (
               <div className="min-w-0">
-                <p className="truncate text-sm font-bold tracking-tight text-[#2C2A29]">Worko</p>
-                <p className="truncate text-[8.5px] font-black uppercase tracking-widest text-[#aaa6b5]">
+                <p className="truncate text-h4 text-[#2C2A29]">Worko</p>
+                <p className="truncate text-overline text-[#aaa6b5]">
                   Workspace
                 </p>
               </div>
@@ -99,7 +99,7 @@ export function WorkspaceSidebar({ active }: WorkspaceSidebarProps) {
           {sections.map((section) => (
             <div key={section.label}>
               {!collapsed && (
-                <p className="mb-1.5 px-2.5 text-[9px] font-black uppercase tracking-widest text-[#aaa6b5]">
+                <p className="mb-1.5 px-2.5 text-overline text-[#aaa6b5] block">
                   {section.label}
                 </p>
               )}
@@ -110,7 +110,7 @@ export function WorkspaceSidebar({ active }: WorkspaceSidebarProps) {
                     <a
                       key={label}
                       href={href}
-                      className={`group relative flex h-9.5 w-full items-center gap-2.5 rounded-xl px-2 text-[12px] font-bold transition-all duration-200 ${
+                      className={`group relative flex h-9.5 w-full items-center gap-2.5 rounded-xl px-2 text-sidebar transition-all duration-200 ${
                         isActive
                           ? "bg-white text-[#FF5A36] shadow-sm border border-[#EBE8E2]"
                           : "text-[#6f6b7b] hover:translate-x-0.5 hover:bg-white hover:text-[#2C2A29]"
@@ -136,8 +136,8 @@ export function WorkspaceSidebar({ active }: WorkspaceSidebarProps) {
             </div>
             {!collapsed && (
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[11px] font-bold text-[#2C2A29]">{user?.fullName || "Daksh Gola"}</p>
-                <p className="truncate text-[8.5px] text-[#aaa6b5] font-black uppercase tracking-wider">Workspace</p>
+                <p className="truncate text-label-val text-[#2C2A29]">{user?.fullName || "Daksh Gola"}</p>
+                <p className="truncate text-caption text-[#aaa6b5] uppercase tracking-wider font-semibold">Workspace</p>
               </div>
             )}
           </div>

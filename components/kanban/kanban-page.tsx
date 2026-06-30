@@ -17,7 +17,7 @@ import type { KanbanBoard, KanbanTask, Priority, TaskFormData } from "./types";
 import { WorkspaceSidebar } from "@/components/WorkspaceSidebar";
 
 const iconMap = { Rocket, Sparkles, Briefcase: BriefcaseBusiness, Sun };
-const priorityStyles: Record<Priority, string> = { Low: "bg-[#e9f7ef] text-[#37845a]", Medium: "bg-[#fff3df] text-[#b87322]", High: "bg-[#ffe8ec] text-[#c84c62]" };
+const priorityStyles: Record<Priority, string> = { Low: "bg-[#ebf7f0] text-[#3e9b68]", Medium: "bg-[#fff0ed] text-[#FF5A36]", High: "bg-[#ffe8ec] text-[#ef6688]" };
 
 export function KanbanPage() {
   const store = useKanbanStore();
@@ -29,7 +29,6 @@ export function KanbanPage() {
   const [sort, setSort] = useState<"Created" | "Due date" | "Priority">("Created");
   const [boardModal, setBoardModal] = useState<"new" | "edit" | null>(null);
   const [taskModal, setTaskModal] = useState<{ columnId: string; task?: KanbanTask } | null>(null);
-  const [dark, setDark] = useState(false);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
   const filteredTasks = useMemo(() => {
@@ -57,73 +56,68 @@ export function KanbanPage() {
     }
   };
 
-  if (!board) return <div className="grid min-h-screen place-items-center"><button onClick={() => setBoardModal("new")} className="rounded-xl bg-[#6c5ce7] px-4 py-2 text-sm font-bold text-white">Create your first board</button><BoardModal open={boardModal === "new"} onClose={() => setBoardModal(null)} onSave={store.addBoard} /></div>;
+  if (!board) return <div className="grid min-h-screen place-items-center bg-[#FAF8F4]"><button onClick={() => setBoardModal("new")} className="rounded-xl bg-[#FF5A36] px-4 py-2 text-btn text-white shadow-sm">Create your first board</button><BoardModal open={boardModal === "new"} onClose={() => setBoardModal(null)} onSave={store.addBoard} /></div>;
 
   return (
-    <div className={dark ? "dark" : ""}>
-      <div className="min-h-screen bg-[#f8f8fb] text-[#292832] transition-colors dark:bg-[#18161e] dark:text-[#f1edf6] flex">
-        <WorkspaceSidebar active="Tasks" />
-        <main className="flex-1 min-w-0 min-h-screen">
-          <header className="sticky top-0 z-30 flex h-[64px] items-center gap-3 border-b border-[#e9e7ef] bg-[#f8f8fb]/90 px-4 backdrop-blur-xl dark:border-[#302b38] dark:bg-[#18161e]/90 lg:px-6">
-            <button onClick={() => setSidebarOpen(true)} className="grid size-9 place-items-center rounded-xl border border-[#e5e2ed] bg-white text-[#777080] dark:border-[#3b3543] dark:bg-[#24212b] lg:hidden"><Menu size={16} /></button>
-            <div className="relative hidden max-w-[330px] flex-1 sm:block"><Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#aaa3b1]" /><input value={taskSearch} onChange={(e) => setTaskSearch(e.target.value)} placeholder="Search tasks and labels..." className="kanban-input h-9 pl-9" /></div>
-            <div className="ml-auto flex items-center gap-2">
-              <button onClick={() => setDark(!dark)} aria-label="Toggle dark mode" className="grid size-9 place-items-center rounded-xl border border-[#e5e2ed] bg-white text-[#7b7484] dark:border-[#3b3543] dark:bg-[#24212b] dark:text-[#c8c1d0]">{dark ? <Sun size={15} /> : <Moon size={15} />}</button>
-              <button className="relative grid size-9 place-items-center rounded-xl border border-[#e5e2ed] bg-white text-[#7b7484] dark:border-[#3b3543] dark:bg-[#24212b]"><Bell size={15} /><span className="absolute right-2 top-2 size-1.5 rounded-full bg-[#ef6688] ring-2 ring-white" /></button>
-              <button onClick={() => setTaskModal({ columnId: board.columns[0].id })} className="flex h-9 items-center gap-2 rounded-xl bg-gradient-to-r from-[#6556db] to-[#7b5fe7] px-3.5 text-[10px] font-bold text-white shadow-[0_6px_18px_rgba(103,87,220,0.25)]"><Plus size={14} /><span className="hidden sm:inline">New task</span></button>
-            </div>
-          </header>
-
-          <div className="flex min-h-[calc(100vh-64px)] min-w-0">
-            <BoardSidebar boards={store.boards} activeId={board.id} search={boardSearch} setSearch={setBoardSearch} setActive={store.setActiveBoard} onAdd={() => setBoardModal("new")} onEdit={(id) => { store.setActiveBoard(id); setBoardModal("edit"); }} onDelete={store.deleteBoard} onFavorite={store.toggleFavorite} />
-            <div className="min-w-0 flex-1 p-4 lg:p-6">
-              <section className="mb-5 flex flex-wrap items-end justify-between gap-4">
-                <div><p className="mb-1.5 text-[9px] font-bold uppercase tracking-[0.14em] text-[#9f98a7]">Kanban workspace</p><div className="flex items-center gap-2"><span className="size-3 rounded-full" style={{ background: board.color }} /><h1 className="text-2xl font-bold tracking-[-0.045em] sm:text-3xl">{board.name}</h1><button onClick={() => store.toggleFavorite(board.id)} className={board.favorite ? "text-[#f5a524]" : "text-[#b6afbd]"}><Star size={16} fill={board.favorite ? "currentColor" : "none"} /></button></div><p className="mt-1.5 text-[11px] text-[#918a98]">{board.description || "A clear view of everything moving."}</p></div>
-                <div className="flex flex-wrap gap-2">
-                  <label className="relative flex h-9 items-center gap-1.5 rounded-xl border border-[#e5e1eb] bg-white px-3 text-[9px] font-bold text-[#756e7e] shadow-sm dark:border-[#3b3543] dark:bg-[#24212b] xl:hidden">
-                    <SquareKanban size={12} />
-                    <select value={board.id} onChange={(event) => store.setActiveBoard(event.target.value)} className="max-w-28 appearance-none bg-transparent pr-3 outline-none">
-                      {store.boards.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
-                    </select>
-                  </label>
-                  <button onClick={() => setBoardModal("new")} className="grid size-9 place-items-center rounded-xl border border-[#e5e1eb] bg-white text-[#6556d6] shadow-sm dark:border-[#3b3543] dark:bg-[#24212b] xl:hidden"><Plus size={13} /></button>
-                  <SelectButton icon={Filter} value={priority} options={["All", "Low", "Medium", "High"]} onChange={(value) => setPriority(value as Priority | "All")} />
-                  <SelectButton icon={ChevronDown} value={sort} options={["Created", "Due date", "Priority"]} onChange={(value) => setSort(value as typeof sort)} />
-                  <button onClick={() => store.addColumn(board.id)} disabled={board.columns.length >= 5} className="flex h-9 items-center gap-2 rounded-xl border border-[#e5e1eb] bg-white px-3 text-[9px] font-bold text-[#756e7e] shadow-sm disabled:opacity-40 dark:border-[#3b3543] dark:bg-[#24212b]"><Plus size={13} /> Add column <span className="text-[#aaa3b1]">{board.columns.length}/5</span></button>
-                </div>
-              </section>
-
-              <section className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                <Stat icon={SquareKanban} value={stats.total} label="Total tasks" color="bg-[#eeeaff] text-[#6556d6]" />
-                <Stat icon={Check} value={stats.complete} label="Completed" color="bg-[#e9f7ef] text-[#3e9b68]" />
-                <Stat icon={CalendarDays} value={stats.overdue} label="Overdue" color="bg-[#ffe8ec] text-[#c84c62]" />
-                <Stat icon={BarChart3} value={`${stats.progress}%`} label="Productivity" color="bg-[#fff3df] text-[#d58c32]" progress={stats.progress} />
-              </section>
-
-              <DndContext sensors={sensors} onDragEnd={dragEnd}>
-                <SortableContext items={board.columns.map((column) => column.id)} strategy={horizontalListSortingStrategy}>
-                  <section className="grid min-w-0 gap-4 overflow-x-auto pb-4 [grid-template-columns:repeat(var(--columns),minmax(270px,1fr))]" style={{ "--columns": board.columns.length } as React.CSSProperties}>
-                    {board.columns.map((column) => <Column key={column.id} board={board} column={column} tasks={filteredTasks.filter((task) => task.columnId === column.id)} onAdd={() => setTaskModal({ columnId: column.id })} onEdit={(task) => setTaskModal({ columnId: column.id, task })} />)}
-                  </section>
-                </SortableContext>
-              </DndContext>
-            </div>
+    <div className="min-h-screen bg-[#FAF8F4] text-[#2C2A29] flex">
+      <WorkspaceSidebar active="Tasks" />
+      <main className="flex-1 min-w-0 min-h-screen">
+        <header className="sticky top-0 z-30 flex h-[68px] items-center gap-3 border-b border-[#EBE8E2] bg-[#FAF8F4]/80 px-4 backdrop-blur-xl lg:px-6">
+          <div className="relative hidden max-w-[330px] flex-1 sm:block"><Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#aaa3b1]" /><input value={taskSearch} onChange={(e) => setTaskSearch(e.target.value)} placeholder="Search tasks and labels..." className="w-full h-10 rounded-xl border border-[#EBE8E2] bg-white pl-9 pr-10 text-input-val outline-none focus:border-[#FF5A36]" /></div>
+          <div className="ml-auto flex items-center gap-2">
+            <button className="relative grid size-10 place-items-center rounded-xl border border-[#EBE8E2] bg-white text-[#5E5B5A]"><Bell size={15} /><span className="absolute right-2 top-2 size-1.5 rounded-full bg-[#FF5A36] ring-2 ring-white" /></button>
+            <button onClick={() => setTaskModal({ columnId: board.columns[0].id })} className="flex h-10 items-center gap-2 rounded-xl bg-[#FF5A36] hover:bg-[#ff7d5e] px-4 text-btn text-white shadow-sm transition hover:-translate-y-0.5"><Plus size={14} /><span className="hidden sm:inline">New task</span></button>
           </div>
-        </main>
-        {sidebarOpen && <button onClick={() => setSidebarOpen(false)} className="fixed inset-0 z-30 bg-[#302a3d]/20 backdrop-blur-sm lg:hidden" />}
-        <BoardModal open={boardModal !== null} board={boardModal === "edit" ? board : undefined} onClose={() => setBoardModal(null)} onSave={(data) => boardModal === "edit" ? store.updateBoard(board.id, data) : store.addBoard(data)} />
-        <TaskModal open={!!taskModal} board={board} columnId={taskModal?.columnId ?? board.columns[0].id} task={taskModal?.task} onClose={() => setTaskModal(null)} onSave={(data: TaskFormData) => store.saveTask(board.id, data, taskModal?.task?.id)} />
-      </div>
+        </header>
+
+        <div className="flex min-h-[calc(100vh-68px)] min-w-0">
+          <BoardSidebar boards={store.boards} activeId={board.id} search={boardSearch} setSearch={setBoardSearch} setActive={store.setActiveBoard} onAdd={() => setBoardModal("new")} onEdit={(id) => { store.setActiveBoard(id); setBoardModal("edit"); }} onDelete={store.deleteBoard} onFavorite={store.toggleFavorite} />
+          <div className="min-w-0 flex-1 p-4 lg:p-6">
+            <section className="mb-5 flex flex-wrap items-end justify-between gap-4">
+              <div><p className="mb-1.5 text-overline text-[#aaa6b5] block">Kanban workspace</p><div className="flex items-center gap-2"><span className="size-3 rounded-full" style={{ background: board.color }} /><h1 className="text-h2 text-[#2C2A29]">{board.name}</h1><button onClick={() => store.toggleFavorite(board.id)} className={board.favorite ? "text-amber-500" : "text-[#b6afbd]"}><Star size={16} fill={board.favorite ? "currentColor" : "none"} /></button></div><p className="mt-1.5 text-body-sm text-[#5E5B5A] font-semibold">{board.description || "A clear view of everything moving."}</p></div>
+              <div className="flex flex-wrap gap-2">
+                <label className="relative flex h-10 items-center gap-1.5 rounded-xl border border-[#EBE8E2] bg-white px-3 text-btn text-[#5E5B5A] shadow-sm xl:hidden">
+                  <SquareKanban size={12} />
+                  <select value={board.id} onChange={(event) => store.setActiveBoard(event.target.value)} className="max-w-28 appearance-none bg-transparent pr-3 outline-none">
+                    {store.boards.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+                  </select>
+                </label>
+                <button onClick={() => setBoardModal("new")} className="grid size-10 place-items-center rounded-xl border border-[#EBE8E2] bg-white text-[#FF5A36] shadow-sm xl:hidden"><Plus size={13} /></button>
+                <SelectButton icon={Filter} value={priority} options={["All", "Low", "Medium", "High"]} onChange={(value) => setPriority(value as Priority | "All")} />
+                <SelectButton icon={ChevronDown} value={sort} options={["Created", "Due date", "Priority"]} onChange={(value) => setSort(value as typeof sort)} />
+                <button onClick={() => store.addColumn(board.id)} disabled={board.columns.length >= 5} className="flex h-10 items-center gap-2 rounded-xl border border-[#EBE8E2] bg-white px-3 text-btn text-[#5E5B5A] shadow-sm disabled:opacity-40"><Plus size={13} /> Add column <span className="text-[#aaa3b1]">{board.columns.length}/5</span></button>
+              </div>
+            </section>
+
+            <section className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <Stat icon={SquareKanban} value={stats.total} label="Total tasks" color="bg-[#FFE8E2] text-[#FF5A36]" />
+              <Stat icon={Check} value={stats.complete} label="Completed" color="bg-[#ebf7f0] text-[#3e9b68]" />
+              <Stat icon={CalendarDays} value={stats.overdue} label="Overdue" color="bg-[#ffe8ec] text-[#ef6688]" />
+              <Stat icon={BarChart3} value={`${stats.progress}%`} label="Productivity" color="bg-[#fff0ed] text-[#FF5A36]" progress={stats.progress} />
+            </section>
+
+            <DndContext sensors={sensors} onDragEnd={dragEnd}>
+              <SortableContext items={board.columns.map((column) => column.id)} strategy={horizontalListSortingStrategy}>
+                <section className="grid min-w-0 gap-4 overflow-x-auto pb-4 [grid-template-columns:repeat(var(--columns),minmax(270px,1fr))]" style={{ "--columns": board.columns.length } as React.CSSProperties}>
+                  {board.columns.map((column) => <Column key={column.id} board={board} column={column} tasks={filteredTasks.filter((task) => task.columnId === column.id)} onAdd={() => setTaskModal({ columnId: column.id })} onEdit={(task) => setTaskModal({ columnId: column.id, task })} />)}
+                </section>
+              </SortableContext>
+            </DndContext>
+          </div>
+        </div>
+      </main>
+      <BoardModal open={boardModal !== null} board={boardModal === "edit" ? board : undefined} onClose={() => setBoardModal(null)} onSave={(data) => boardModal === "edit" ? store.updateBoard(board.id, data) : store.addBoard(data)} />
+      <TaskModal open={!!taskModal} board={board} columnId={taskModal?.columnId ?? board.columns[0].id} task={taskModal?.task} onClose={() => setTaskModal(null)} onSave={(data: TaskFormData) => store.saveTask(board.id, data, taskModal?.task?.id)} />
     </div>
   );
 }
 
 function BoardSidebar({ boards, activeId, search, setSearch, setActive, onAdd, onEdit, onDelete, onFavorite }: { boards: KanbanBoard[]; activeId: string; search: string; setSearch: (value: string) => void; setActive: (id: string) => void; onAdd: () => void; onEdit: (id: string) => void; onDelete: (id: string) => void; onFavorite: (id: string) => void }) {
   const visible = boards.filter((board) => board.name.toLowerCase().includes(search.toLowerCase())).sort((a, b) => Number(b.favorite) - Number(a.favorite));
-  return <aside className="hidden w-[230px] shrink-0 border-r border-[#e8e7ef] bg-white/70 p-3 dark:border-[#302b38] dark:bg-[#1d1a23] xl:block">
-    <div className="mb-3 flex items-center justify-between px-1"><div><p className="text-[11px] font-bold">Your boards</p><p className="mt-0.5 text-[8px] text-[#aaa3b1]">{boards.length} active workspaces</p></div><button onClick={onAdd} className="grid size-8 place-items-center rounded-xl bg-[#eeeaff] text-[#6556d6] dark:bg-[#352f4e]"><Plus size={14} /></button></div>
-    <div className="relative mb-3"><Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#aaa3b1]" /><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search boards..." className="kanban-input h-9 pl-8 text-[9px]" /></div>
-    <div className="space-y-1.5">{visible.map((board) => { const Icon = iconMap[board.icon as keyof typeof iconMap] ?? SquareKanban; return <div key={board.id} className={`group relative rounded-xl border p-2 transition ${board.id === activeId ? "border-[#d9d2fb] bg-[#f3f0ff] shadow-sm dark:bg-[#302b42]" : "border-transparent hover:bg-[#f8f6fa] dark:hover:bg-[#28242f]"}`}><button onClick={() => setActive(board.id)} className="flex w-full items-center gap-2 text-left"><span className="grid size-8 shrink-0 place-items-center rounded-[10px] text-white shadow-sm" style={{ background: board.color }}><Icon size={13} /></span><span className="min-w-0 flex-1"><span className="block truncate text-[10px] font-bold">{board.name}</span><span className="mt-0.5 block text-[8px] text-[#9d96a6]">{board.tasks.filter((task) => !task.archived).length} tasks</span></span></button><div className="absolute right-2 top-2 hidden gap-0.5 rounded-lg bg-white p-0.5 shadow-sm group-hover:flex dark:bg-[#383242]"><MiniButton onClick={() => onFavorite(board.id)} icon={Star} /><MiniButton onClick={() => onEdit(board.id)} icon={Pencil} /><MiniButton onClick={() => onDelete(board.id)} icon={Trash2} /></div></div>; })}</div>
+  return <aside className="hidden w-[230px] shrink-0 border-r border-[#EBE8E2] bg-[#FAF8F4] p-3 xl:block">
+    <div className="mb-3 flex items-center justify-between px-1"><div><p className="text-label-val font-bold text-[#2C2A29]">Your boards</p><p className="mt-0.5 text-caption text-[#aaa6b5] font-semibold">{boards.length} active workspaces</p></div><button onClick={onAdd} className="grid size-8 place-items-center rounded-xl bg-[#FFE8E2] text-[#FF5A36]"><Plus size={14} /></button></div>
+    <div className="relative mb-3"><Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#aaa3b1]" /><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search boards..." className="w-full h-8 rounded-lg border border-[#EBE8E2] pl-8 text-input-val outline-none bg-white focus:border-[#FF5A36]" /></div>
+    <div className="space-y-1.5">{visible.map((board) => { const Icon = iconMap[board.icon as keyof typeof iconMap] ?? SquareKanban; return <div key={board.id} className={`group relative rounded-xl border p-2 transition ${board.id === activeId ? "border-[#ffcfc4] bg-[#FFE8E2]/60 shadow-sm" : "border-transparent hover:bg-slate-50"}`}><button onClick={() => setActive(board.id)} className="flex w-full items-center gap-2 text-left"><span className="grid size-8 shrink-0 place-items-center rounded-[10px] text-white shadow-sm" style={{ background: board.color }}><Icon size={13} /></span><span className="min-w-0 flex-1"><span className="block truncate text-body-sm font-bold text-[#2C2A29]">{board.name}</span><span className="mt-0.5 block text-caption text-[#aaa6b5] font-semibold">{board.tasks.filter((task) => !task.archived).length} tasks</span></span></button><div className="absolute right-2 top-2 hidden gap-0.5 rounded-lg bg-white p-0.5 shadow-sm group-hover:flex"><MiniButton onClick={() => onFavorite(board.id)} icon={Star} /><MiniButton onClick={() => onEdit(board.id)} icon={Pencil} /><MiniButton onClick={() => onDelete(board.id)} icon={Trash2} /></div></div>; })}</div>
   </aside>;
 }
 
@@ -132,10 +126,10 @@ function Column({ board, column, tasks, onAdd, onEdit }: { board: KanbanBoard; c
   const sortable = useSortable({ id: column.id, data: { kind: "column" } });
   const droppable = useDroppable({ id: column.id, data: { kind: "column" } });
   const style = { transform: CSS.Transform.toString(sortable.transform), transition: sortable.transition };
-  return <div ref={(node) => { sortable.setNodeRef(node); droppable.setNodeRef(node); }} style={style} className={`min-h-[450px] rounded-[20px] border bg-[#f3f2f7]/75 p-3 transition dark:border-[#393341] dark:bg-[#211e28] ${droppable.isOver ? "border-[#bdb4f1] ring-2 ring-[#ded9ff]" : "border-[#e8e5ed]"}`}>
-    <div className="mb-3 flex items-center gap-2 px-1"><button {...sortable.attributes} {...sortable.listeners} className="cursor-grab text-[#aaa3b1]"><GripVertical size={14} /></button><span className="size-2 rounded-full" style={{ background: column.color }} /><input value={column.title} onChange={(e) => store.renameColumn(board.id, column.id, e.target.value)} className="min-w-0 flex-1 bg-transparent text-[11px] font-bold outline-none" /><span className="rounded-full bg-white px-2 py-0.5 text-[8px] font-bold text-[#8f8798] shadow-sm dark:bg-[#302b38]">{tasks.length}</span><button onClick={() => store.deleteColumn(board.id, column.id)} className="text-[#aaa3b1] hover:text-[#d05268]"><Trash2 size={12} /></button></div>
+  return <div ref={(node) => { sortable.setNodeRef(node); droppable.setNodeRef(node); }} style={style} className={`min-h-[450px] rounded-[20px] border bg-[#FAF8F4]/80 p-3 transition ${droppable.isOver ? "border-[#FF5A36] ring-2 ring-[#FFE8E2]" : "border-[#EBE8E2]"}`}>
+    <div className="mb-3 flex items-center gap-2 px-1"><button {...sortable.attributes} {...sortable.listeners} className="cursor-grab text-[#aaa3b1]"><GripVertical size={14} /></button><span className="size-2 rounded-full" style={{ background: column.color }} /><input value={column.title} onChange={(e) => store.renameColumn(board.id, column.id, e.target.value)} className="min-w-0 flex-1 bg-transparent text-label-val font-bold text-[#2C2A29] outline-none" /><span className="rounded-full bg-white px-2 py-0.5 text-badge-val text-[#8b879c] shadow-sm">{tasks.length}</span><button onClick={() => store.deleteColumn(board.id, column.id)} className="text-[#aaa3b1] hover:text-[#FF5A36]"><Trash2 size={12} /></button></div>
     <SortableContext items={tasks.map((task) => task.id)}><div className="space-y-2">{tasks.map((task) => <TaskCard key={task.id} task={task} board={board} onEdit={() => onEdit(task)} />)}</div></SortableContext>
-    <button onClick={onAdd} className="mt-2 flex h-9 w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-[#d9d3e0] text-[9px] font-bold text-[#918a99] transition hover:border-[#bdb4f1] hover:bg-white hover:text-[#6556d6] dark:border-[#453e50] dark:hover:bg-[#2b2732]"><Plus size={12} /> Add task</button>
+    <button onClick={onAdd} className="mt-2 flex h-9.5 w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-[#EBE8E2] bg-white text-btn text-[#5E5B5A] transition hover:border-[#FF5A36] hover:text-[#FF5A36]"><Plus size={12} /> Add task</button>
   </div>;
 }
 
@@ -144,18 +138,16 @@ function TaskCard({ task, board, onEdit }: { task: KanbanTask; board: KanbanBoar
   const sortable = useSortable({ id: task.id, data: { kind: "task", columnId: task.columnId } });
   const complete = task.checklist.filter((item) => item.completed).length;
   const progress = task.checklist.length ? Math.round(complete / task.checklist.length * 100) : 0;
-  return <article ref={sortable.setNodeRef} style={{ transform: CSS.Transform.toString(sortable.transform), transition: sortable.transition }} className={`group rounded-[16px] border border-[#e6e2eb] bg-white p-3 shadow-[0_5px_16px_rgba(54,48,89,0.045)] transition hover:-translate-y-0.5 hover:border-[#d7d0f1] hover:shadow-[0_10px_24px_rgba(54,48,89,0.09)] dark:border-[#3c3645] dark:bg-[#2a2631] ${sortable.isDragging ? "opacity-50" : ""}`}>
-    <div className="mb-2 flex items-start gap-2"><button {...sortable.attributes} {...sortable.listeners} className="mt-0.5 cursor-grab text-[#c0b9c6] opacity-0 group-hover:opacity-100"><GripVertical size={12} /></button><button onClick={onEdit} className="min-w-0 flex-1 text-left text-[11px] font-bold leading-4">{task.title}</button><div className="relative"><button className="peer grid size-5 place-items-center rounded-md text-[#aaa3b1] hover:bg-[#f4f1f6]"><MoreHorizontal size={13} /></button><div className="invisible absolute right-0 top-5 z-20 w-28 rounded-xl border border-[#e5e1eb] bg-white p-1 opacity-0 shadow-xl transition peer-focus:visible peer-focus:opacity-100 hover:visible hover:opacity-100 dark:border-[#453e50] dark:bg-[#312c39]"><Action label="Edit" icon={Pencil} onClick={onEdit} /><Action label="Duplicate" icon={Copy} onClick={() => store.duplicateTask(board.id, task.id)} /><Action label="Archive" icon={Archive} onClick={() => store.archiveTask(board.id, task.id)} /><Action label="Delete" icon={Trash2} onClick={() => store.deleteTask(board.id, task.id)} /></div></div></div>
-    {task.description && <p className="mb-2 line-clamp-2 text-[9px] leading-4 text-[#958e9c]">{task.description}</p>}
+  return <article ref={sortable.setNodeRef} style={{ transform: CSS.Transform.toString(sortable.transform), transition: sortable.transition }} className={`group rounded-[16px] border border-[#EBE8E2] bg-white p-3 shadow-sm transition hover:-translate-y-0.5 hover:border-[#ffcfc4] hover:shadow-md ${sortable.isDragging ? "opacity-50" : ""}`}>
+    <div className="mb-2 flex items-start gap-2"><button {...sortable.attributes} {...sortable.listeners} className="mt-0.5 cursor-grab text-[#c0b9c6] opacity-0 group-hover:opacity-100"><GripVertical size={12} /></button><button onClick={onEdit} className="min-w-0 flex-1 text-left text-body-sm font-bold text-[#2C2A29] leading-4">{task.title}</button><div className="relative"><button className="peer grid size-5 place-items-center rounded-md text-[#aaa3b1] hover:bg-[#f4f1f6]"><MoreHorizontal size={13} /></button><div className="invisible absolute right-0 top-5 z-20 w-28 rounded-xl border border-[#EBE8E2] bg-white p-1 opacity-0 shadow-lg transition peer-focus:visible peer-focus:opacity-100 hover:visible hover:opacity-100"><Action label="Edit" icon={Pencil} onClick={onEdit} /><Action label="Duplicate" icon={Copy} onClick={() => store.duplicateTask(board.id, task.id)} /><Action label="Archive" icon={Archive} onClick={() => store.archiveTask(board.id, task.id)} /><Action label="Delete" icon={Trash2} onClick={() => store.deleteTask(board.id, task.id)} /></div></div></div>
+    {task.description && <p className="mb-2 line-clamp-2 text-caption leading-relaxed text-[#8b879c] font-semibold">{task.description}</p>}
     <div className="mb-2 flex flex-wrap gap-1">{task.labels.slice(0, 3).map((label) => <span key={label.id} className="rounded-full px-2 py-0.5 text-[7px] font-bold text-white" style={{ background: label.color }}>{label.name}</span>)}</div>
-    {task.checklist.length > 0 && <div className="mb-2"><div className="mb-1 flex justify-between text-[7px] font-bold text-[#aaa3b1]"><span>Progress</span><span>{complete}/{task.checklist.length}</span></div><div className="h-1 overflow-hidden rounded-full bg-[#eeeaf1] dark:bg-[#403947]"><div className="h-full rounded-full bg-[#6c5ce7]" style={{ width: `${progress}%` }} /></div></div>}
-    <div className="flex items-center gap-1.5 border-t border-[#f0edf3] pt-2 text-[8px] text-[#9a93a2] dark:border-[#3a3442]"><span className={`rounded-full px-1.5 py-0.5 font-bold ${priorityStyles[task.priority]}`}>{task.priority}</span><CalendarDays size={9} /><span>{task.dueDate.slice(5)}</span>{task.syncCalendar && <CalendarDays size={10} className="ml-auto text-[#6556d6]" />}{task.linkNotes && <FileText size={10} className="text-[#df8b3b]" />}{task.assignee && <span className="ml-auto grid size-5 place-items-center rounded-full bg-gradient-to-br from-[#ffad72] to-[#ef6688] text-[6px] font-bold text-white">{task.assignee.slice(0, 2).toUpperCase()}</span>}</div>
+    {task.checklist.length > 0 && <div className="mb-2"><div className="mb-1 flex justify-between text-badge-val text-[#aaa3b1]"><span>Progress</span><span>{complete}/{task.checklist.length}</span></div><div className="h-1 overflow-hidden rounded-full bg-[#FAF8F4] border border-[#EBE8E2]"><div className="h-full rounded-full bg-[#FF5A36]" style={{ width: `${progress}%` }} /></div></div>}
+    <div className="flex items-center gap-1.5 border-t border-[#FAF8F4] pt-2 text-caption text-[#aaa6b5] font-semibold"><span className={`rounded-full px-1.5 py-0.5 font-bold ${priorityStyles[task.priority]}`}>{task.priority}</span><CalendarDays size={9} /><span>{task.dueDate.slice(5)}</span>{task.syncCalendar && <CalendarDays size={10} className="ml-auto text-[#FF5A36]" />}{task.linkNotes && <FileText size={10} className="text-[#FF5A36]" />}{task.assignee && <span className="ml-auto grid size-5 place-items-center rounded-full bg-gradient-to-br from-[#ffad72] to-[#ef6688] text-[6px] font-bold text-white">{task.assignee.slice(0, 2).toUpperCase()}</span>}</div>
   </article>;
 }
 
-
-
-function SelectButton({ icon: Icon, value, options, onChange }: { icon: typeof Filter; value: string; options: string[]; onChange: (value: string) => void }) { return <label className="relative flex h-9 items-center gap-1.5 rounded-xl border border-[#e5e1eb] bg-white px-3 text-[9px] font-bold text-[#756e7e] shadow-sm dark:border-[#3b3543] dark:bg-[#24212b]"><Icon size={12} /><select value={value} onChange={(e) => onChange(e.target.value)} className="appearance-none bg-transparent pr-3 outline-none">{options.map((option) => <option key={option}>{option}</option>)}</select></label>; }
-function Stat({ icon: Icon, value, label, color, progress }: { icon: typeof SquareKanban; value: string | number; label: string; color: string; progress?: number }) { return <div className="flex items-center gap-3 rounded-[16px] border border-[#e7e4ee] bg-white p-3 shadow-[0_6px_20px_rgba(54,48,89,0.04)] dark:border-[#393341] dark:bg-[#24212b]"><span className={`grid size-9 place-items-center rounded-xl ${color}`}><Icon size={15} /></span><span><span className="block text-sm font-bold">{value}</span><span className="text-[8px] font-bold uppercase tracking-[0.1em] text-[#9d96a6]">{label}</span></span>{progress !== undefined && <span className="ml-auto h-8 w-1.5 overflow-hidden rounded-full bg-[#eeeaf1] dark:bg-[#403947]"><span className="block w-full rounded-full bg-[#f0a342]" style={{ height: `${progress}%`, marginTop: `${100 - progress}%` }} /></span>}</div>; }
-function MiniButton({ onClick, icon: Icon }: { onClick: () => void; icon: typeof Star }) { return <button onClick={onClick} className="grid size-5 place-items-center rounded-md text-[#9992a2] hover:bg-[#f2eff5] hover:text-[#6556d6] dark:hover:bg-[#494153]"><Icon size={10} /></button>; }
-function Action({ label, icon: Icon, onClick }: { label: string; icon: typeof Pencil; onClick: () => void }) { return <button onClick={onClick} className="flex h-7 w-full items-center gap-2 rounded-lg px-2 text-[8px] font-bold text-[#756e7e] hover:bg-[#f5f2f7] dark:text-[#c0b8c8] dark:hover:bg-[#403947]"><Icon size={10} />{label}</button>; }
+function SelectButton({ icon: Icon, value, options, onChange }: { icon: typeof Filter; value: string; options: string[]; onChange: (value: string) => void }) { return <label className="relative flex h-10 items-center gap-1.5 rounded-xl border border-[#EBE8E2] bg-white px-3 text-btn text-[#5E5B5A] shadow-sm"><Icon size={12} /><select value={value} onChange={(e) => onChange(e.target.value)} className="appearance-none bg-transparent pr-3 outline-none">{options.map((option) => <option key={option}>{option}</option>)}</select></label>; }
+function Stat({ icon: Icon, value, label, color, progress }: { icon: typeof SquareKanban; value: string | number; label: string; color: string; progress?: number }) { return <div className="flex items-center gap-3 rounded-[16px] border border-[#EBE8E2] bg-white p-3 shadow-sm"><span className={`grid size-9 place-items-center rounded-xl ${color}`}><Icon size={15} /></span><span><span className="block text-h3 font-black text-[#2C2A29]">{value}</span><span className="text-overline text-[#aaa6b5] block">{label}</span></span>{progress !== undefined && <span className="ml-auto h-8 w-1.5 overflow-hidden rounded-full bg-slate-100"><span className="block w-full rounded-full bg-[#FF5A36]" style={{ height: `${progress}%`, marginTop: `${100 - progress}%` }} /></span>}</div>; }
+function MiniButton({ onClick, icon: Icon }: { onClick: () => void; icon: typeof Star }) { return <button onClick={onClick} className="grid size-5 place-items-center rounded-md text-[#aaa6b5] hover:bg-[#FFE8E2]/60 hover:text-[#FF5A36]"><Icon size={10} /></button>; }
+function Action({ label, icon: Icon, onClick }: { label: string; icon: typeof Pencil; onClick: () => void }) { return <button onClick={onClick} className="flex h-7 w-full items-center gap-2 rounded-lg px-2 text-caption font-bold text-[#5E5B5A] hover:bg-[#FFE8E2]/60 hover:text-[#FF5A36]"><Icon size={10} />{label}</button>; }
