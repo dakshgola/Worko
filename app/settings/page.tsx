@@ -45,6 +45,19 @@ export default function SettingsPage() {
   const { signOut } = useClerk();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const handleSignOut = async () => {
+    try {
+      setLoggingOut(true);
+      await signOut({ redirectUrl: "/" });
+    } catch (e) {
+      console.error("Logout failed:", e);
+      window.location.href = "/";
+    } finally {
+      setLoggingOut(false);
+    }
+  };
 
   // Tabs: profile, preferences, categories, subscription
   const [activeTab, setActiveTab] = useState<"profile" | "preferences" | "categories" | "subscription">("profile");
@@ -435,20 +448,25 @@ export default function SettingsPage() {
               <div className="flex justify-end gap-2 border-t border-border pt-3">
                 <button
                   type="button"
+                  disabled={loggingOut}
                   onClick={() => setShowLogoutConfirm(false)}
-                  className="btn-outline h-8.5 px-4"
+                  className="btn-outline h-8.5 px-4 disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    signOut();
-                    window.location.href = "/";
-                  }}
-                  className="btn-danger h-8.5 px-4 text-center"
+                  disabled={loggingOut}
+                  onClick={handleSignOut}
+                  className="btn-danger h-8.5 px-4 text-center flex items-center justify-center gap-1.5 disabled:opacity-50 min-w-[90px]"
                 >
-                  Sign Out
+                  {loggingOut ? (
+                    <>
+                      <Loader2 size={13} className="animate-spin text-white" /> Signing Out
+                    </>
+                  ) : (
+                    "Sign Out"
+                  )}
                 </button>
               </div>
             </motion.div>
