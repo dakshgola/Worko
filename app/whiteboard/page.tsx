@@ -617,9 +617,11 @@ export default function WhiteboardPage() {
               className="w-full btn-primary h-9.5"
             >
               {generating ? (
-                <>
-                  <Loader2 size={13} className="animate-spin" /> Generating
-                </>
+                <div className="flex items-center justify-center gap-1">
+                  <span className="ai-dot-indicator" />
+                  <span className="ai-dot-indicator" />
+                  <span className="ai-dot-indicator" />
+                </div>
               ) : (
                 <>
                   <Sparkles size={13} /> Generate shapes

@@ -971,24 +971,32 @@ function DashboardView() {
             )}
 
             {/* Global Search overlays dropdown matches list */}
-            {showSearchResults && searchResults.length > 0 && (
-              <div className="absolute left-0 right-0 top-11 bg-surface border border-border rounded-xl shadow-lg p-2 max-h-[300px] overflow-y-auto z-50 animate-in fade-in duration-200">
-                <div className="flex items-center justify-between px-2 py-1.5 border-b border-border text-overline text-muted mb-1">
-                  <span>Search Matches</span>
-                  <button onClick={() => setShowSearchResults(false)}><X size={11} /></button>
-                </div>
-                {searchResults.map((item, index) => (
-                  <button
-                    key={index}
-                    onClick={() => { window.location.href = item.link; }}
-                    className="w-full flex items-center justify-between px-2.5 py-2 hover:bg-primary-soft/40 rounded-lg text-body-sm font-semibold text-foreground text-left"
-                  >
-                    <span>{item.name}</span>
-                    <span className="px-1.5 py-0.5 bg-primary-soft text-primary text-badge-val rounded shrink-0">{item.type}</span>
-                  </button>
-                ))}
-              </div>
-            )}
+            <AnimatePresence>
+              {showSearchResults && searchResults.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute left-0 right-0 top-11 bg-surface border border-border rounded-xl shadow-lg p-2 max-h-[300px] overflow-y-auto z-50"
+                >
+                  <div className="flex items-center justify-between px-2 py-1.5 border-b border-border text-overline text-muted mb-1">
+                    <span>Search Matches</span>
+                    <button onClick={() => setShowSearchResults(false)}><X size={11} /></button>
+                  </div>
+                  {searchResults.map((item, index) => (
+                    <button
+                      key={index}
+                      onClick={() => { window.location.href = item.link; }}
+                      className="w-full flex items-center justify-between px-2.5 py-2 hover:bg-primary-soft/40 rounded-lg text-body-sm font-semibold text-foreground text-left"
+                    >
+                      <span>{item.name}</span>
+                      <span className="px-1.5 py-0.5 bg-primary-soft text-primary text-badge-val rounded shrink-0">{item.type}</span>
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <div className="ml-auto flex items-center gap-3">
@@ -1012,22 +1020,30 @@ function DashboardView() {
                 )}
               </button>
 
-              {showNotifications && (
-                <div className="absolute right-0 top-11 w-72 bg-surface border border-border rounded-xl shadow-lg p-3 z-50 space-y-2 animate-in fade-in duration-250">
-                  <div className="flex items-center justify-between pb-2 border-b border-border text-body-sm font-bold">
-                    <span>Notifications ({notifications.length})</span>
-                    <button onClick={() => setShowNotifications(false)}><X size={12} /></button>
-                  </div>
-                  <div className="max-h-60 overflow-y-auto space-y-2">
-                    {notifications.map((n) => (
-                      <div key={n.id} className="p-2 bg-background rounded-lg border border-border text-caption leading-relaxed font-semibold">
-                        <div className="font-bold text-primary">{n.title}</div>
-                        <div className="text-muted mt-0.5">{n.desc}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <AnimatePresence>
+                {showNotifications && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 top-11 w-72 bg-surface border border-border rounded-xl shadow-lg p-3 z-50 space-y-2"
+                  >
+                    <div className="flex items-center justify-between pb-2 border-b border-border text-body-sm font-bold">
+                      <span>Notifications ({notifications.length})</span>
+                      <button onClick={() => setShowNotifications(false)}><X size={12} /></button>
+                    </div>
+                    <div className="max-h-60 overflow-y-auto space-y-2">
+                      {notifications.map((n) => (
+                        <div key={n.id} className="p-2 bg-background rounded-lg border border-border text-caption leading-relaxed font-semibold">
+                          <div className="font-bold text-primary">{n.title}</div>
+                          <div className="text-muted mt-0.5">{n.desc}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             <button
@@ -1041,14 +1057,29 @@ function DashboardView() {
         </header>
 
         {/* Dashboard Panels Scroll */}
-        <div className="flex-1 overflow-y-auto p-6 lg:p-10 space-y-8">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.03
+              }
+            }
+          }}
+          className="flex-1 overflow-y-auto p-6 lg:p-10 space-y-8"
+        >
           {widgetsList.map((widget, widgetIndex) => {
             if (!widget.visible) return null;
 
             switch (widget.id) {
               case "welcome":
                 return (
-                  <section
+                  <motion.section
+                    variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
                     key={widget.id}
                     className="flex flex-wrap items-center justify-between gap-6 bg-surface border border-border rounded-[24px] p-6 shadow-sm"
                   >
@@ -1088,7 +1119,7 @@ function DashboardView() {
                         </button>
                       </div>
                     </div>
-                  </section>
+                  </motion.section>
                 );
 
               case "quick-actions":
@@ -1484,247 +1515,302 @@ function DashboardView() {
                 return null;
             }
           })}
-        </div>
+        </motion.div>
       </div>
 
       {/* Widget Layout Customizer Drawer */}
-      {showCustomizer && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex justify-end">
-          <div className="w-[320px] bg-surface h-full shadow-2xl p-6 flex flex-col justify-between animate-in slide-in-from-right duration-200 border-l border-border">
-            <div>
-              <div className="flex items-center justify-between border-b border-border pb-4 mb-4">
-                <div>
-                  <h3 className="font-bold text-sm text-foreground flex items-center gap-1.5">
-                    <Sliders size={16} className="text-primary" />
-                    Dashboard Widgets
-                  </h3>
-                  <p className="text-[10px] text-muted mt-0.5 font-semibold">Toggle visibilities &amp; layout order</p>
-                </div>
-                <button onClick={() => setShowCustomizer(false)} className="p-1 rounded-lg text-muted hover:bg-slate-100">
-                  <X size={15} />
-                </button>
-              </div>
-
-              <div className="space-y-2.5 overflow-y-auto max-h-[70vh] pr-1">
-                {widgetsList.map((w, index) => (
-                  <div key={w.id} className="p-3 bg-background border border-border rounded-xl flex items-center justify-between gap-2 animate-in fade-in duration-100">
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={w.visible}
-                        onChange={() => handleToggleWidget(w.id)}
-                        className="rounded text-primary focus:ring-primary size-4"
-                      />
-                      <span className="text-body-sm font-semibold text-foreground">{w.name}</span>
-                    </div>
-
-                    <div className="flex items-center gap-1">
-                      <button onClick={() => handleMoveWidget(index, "up")} disabled={index === 0} className="p-1 text-muted hover:text-primary disabled:opacity-30 font-bold">
-                        &uarr;
-                      </button>
-                      <button onClick={() => handleMoveWidget(index, "down")} disabled={index === widgetsList.length - 1} className="p-1 text-muted hover:text-primary disabled:opacity-30 font-bold">
-                        &darr;
-                      </button>
-                    </div>
+      <AnimatePresence>
+        {showCustomizer && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex justify-end"
+          >
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 350 }}
+              className="w-[320px] bg-surface h-full shadow-2xl p-6 flex flex-col justify-between border-l border-border"
+            >
+              <div>
+                <div className="flex items-center justify-between border-b border-border pb-4 mb-4">
+                  <div>
+                    <h3 className="font-bold text-sm text-foreground flex items-center gap-1.5">
+                      <Sliders size={16} className="text-primary" />
+                      Dashboard Widgets
+                    </h3>
+                    <p className="text-[10px] text-muted mt-0.5 font-semibold">Toggle visibilities &amp; layout order</p>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            <button onClick={() => setShowCustomizer(false)} className="w-full btn-primary">
-              Save Dashboard Layout
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Creation forms dialog popups */}
-      {showCreateTaskModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <form onSubmit={handleTaskSubmit} className="bg-surface rounded-2xl border-2 border-primary w-full max-w-md p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <h4 className="font-black text-sm text-foreground flex items-center gap-1.5">
-                <SquareKanban size={16} className="text-primary" />
-                Create Kanban Task
-              </h4>
-              <button type="button" onClick={() => setShowCreateTaskModal(false)}><X size={15} /></button>
-            </div>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-label-val uppercase text-muted mb-1">Task Title</label>
-                <input
-                  type="text"
-                  required
-                  value={taskForm.title}
-                  onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
-                  placeholder="Review pricing structure..."
-                  className="input-cozy"
-                />
-              </div>
-              <div>
-                <label className="block text-label-val uppercase text-muted mb-1">Description</label>
-                <textarea
-                  value={taskForm.description}
-                  onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
-                  placeholder="Detail notes..."
-                  className="w-full h-16 p-2 rounded-lg border border-border bg-background text-input-val outline-none resize-none focus:border-primary"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-label-val uppercase text-muted mb-1">Due Date</label>
-                  <input
-                    type="date"
-                    value={taskForm.dueDate}
-                    onChange={(e) => setTaskForm({ ...taskForm, dueDate: e.target.value })}
-                    className="w-full h-10 px-2 rounded-lg border border-border bg-background text-input-val outline-none"
-                  />
+                  <button onClick={() => setShowCustomizer(false)} className="p-1 rounded-lg text-muted hover:bg-slate-100">
+                    <X size={15} />
+                  </button>
                 </div>
-                <div>
-                  <label className="block text-label-val uppercase text-muted mb-1">Priority</label>
-                  <select
-                    value={taskForm.priority}
-                    onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value })}
-                    className="w-full h-10 px-2 rounded-lg border border-border bg-background text-input-val outline-none text-[#5E5B5A]"
-                  >
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-end gap-2 border-t border-border pt-3">
-              <button type="button" onClick={() => setShowCreateTaskModal(false)} className="btn-outline h-9 px-4 text-btn text-muted">Cancel</button>
-              <button type="submit" className="btn-primary h-9 px-4 text-btn">Add Task</button>
-            </div>
-          </form>
-        </div>
-      )}
 
-      {showCreateEventModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <form onSubmit={handleEventSubmit} className="bg-surface rounded-2xl border-2 border-primary w-full max-w-md p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <h4 className="font-black text-sm text-foreground flex items-center gap-1.5">
-                <CalendarDays size={16} className="text-primary" />
-                Schedule Calendar Event
-              </h4>
-              <button type="button" onClick={() => setShowCreateEventModal(false)}><X size={15} /></button>
-            </div>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-label-val uppercase text-muted mb-1">Event Title</label>
-                <input
-                  type="text"
-                  required
-                  value={eventForm.title}
-                  onChange={(e) => setEventForm({ ...eventForm, title: e.target.value })}
-                  placeholder="Strategic roadmap sync..."
-                  className="input-cozy"
-                />
-              </div>
-              <div>
-                <label className="block text-label-val uppercase text-muted mb-1">Description</label>
-                <input
-                  type="text"
-                  value={eventForm.description}
-                  onChange={(e) => setEventForm({ ...eventForm, description: e.target.value })}
-                  placeholder="Sync link details..."
-                  className="input-cozy"
-                />
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                <div className="col-span-2">
-                  <label className="block text-label-val uppercase text-muted mb-1">Date</label>
-                  <input
-                    type="date"
-                    value={eventForm.date}
-                    onChange={(e) => setEventForm({ ...eventForm, date: e.target.value })}
-                    className="w-full h-10 px-2 rounded-lg border border-border bg-background text-input-val outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-label-val uppercase text-muted mb-1">Time</label>
-                  <input
-                    type="text"
-                    value={eventForm.time}
-                    onChange={(e) => setEventForm({ ...eventForm, time: e.target.value })}
-                    placeholder="10:00"
-                    className="w-full h-10 px-2 rounded-lg border border-border bg-background text-input-val outline-none"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-label-val uppercase text-muted mb-1">Category</label>
-                <select
-                  value={eventForm.category}
-                  onChange={(e) => setEventForm({ ...eventForm, category: e.target.value })}
-                  className="w-full h-10 px-2 rounded-lg border border-border bg-background text-input-val outline-none text-[#5E5B5A]"
-                >
-                  <option value="Meeting">Meeting</option>
-                  <option value="Reminder">Reminder</option>
-                  <option value="Work">Work</option>
-                  <option value="Personal">Personal</option>
-                </select>
-              </div>
-            </div>
-            <div className="flex justify-end gap-2 border-t border-border pt-3">
-              <button type="button" onClick={() => setShowCreateEventModal(false)} className="btn-outline h-9 px-4 text-btn text-muted">Cancel</button>
-              <button type="submit" disabled={creatingItem} className="btn-primary h-9 px-4 text-btn">
-                {creatingItem ? <Loader2 size={12} className="animate-spin" /> : "Add Event"}
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
+                <div className="space-y-2.5 overflow-y-auto max-h-[70vh] pr-1">
+                  {widgetsList.map((w, index) => (
+                    <div key={w.id} className="p-3 bg-background border border-border rounded-xl flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={w.visible}
+                          onChange={() => handleToggleWidget(w.id)}
+                          className="rounded text-primary focus:ring-primary size-4"
+                        />
+                        <span className="text-body-sm font-semibold text-foreground">{w.name}</span>
+                      </div>
 
-      {showCreateBoardModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <form onSubmit={handleBoardSubmit} className="bg-surface rounded-2xl border-2 border-primary w-full max-w-sm p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <h4 className="font-black text-sm text-foreground flex items-center gap-1.5">
-                <LayoutDashboard size={16} className="text-primary" />
-                Create Kanban Board
-              </h4>
-              <button type="button" onClick={() => setShowCreateBoardModal(false)}><X size={15} /></button>
-            </div>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-label-val uppercase text-muted mb-1">Board Name</label>
-                <input
-                  type="text"
-                  required
-                  value={boardForm.name}
-                  onChange={(e) => setBoardForm({ ...boardForm, name: e.target.value })}
-                  placeholder="Design Sprint #2..."
-                  className="input-cozy"
-                />
-              </div>
-              <div>
-                <label className="block text-label-val uppercase text-muted mb-1">Accent Color</label>
-                <div className="flex gap-2">
-                  {["#FF5A36", "#3e9b68", "#ef6688", "#e49a3a", "#3b82f6"].map((hex) => (
-                    <button
-                      key={hex}
-                      type="button"
-                      onClick={() => setBoardForm({ ...boardForm, color: hex })}
-                      className="size-6 rounded-full border border-white relative flex items-center justify-center"
-                      style={{ backgroundColor: hex }}
-                    >
-                      {boardForm.color === hex && <Check size={11} className="text-white" />}
-                    </button>
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => handleMoveWidget(index, "up")} disabled={index === 0} className="p-1 text-muted hover:text-primary disabled:opacity-30 font-bold">
+                          &uarr;
+                        </button>
+                        <button onClick={() => handleMoveWidget(index, "down")} disabled={index === widgetsList.length - 1} className="p-1 text-muted hover:text-primary disabled:opacity-30 font-bold">
+                          &darr;
+                        </button>
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
-            </div>
-            <div className="flex justify-end gap-2 border-t border-border pt-3">
-              <button type="button" onClick={() => setShowCreateBoardModal(false)} className="btn-outline h-9 px-4 text-btn text-muted">Cancel</button>
-              <button type="submit" className="btn-primary h-9 px-4 text-btn">Add Board</button>
-            </div>
-          </form>
-        </div>
-      )}
+
+              <button onClick={() => setShowCustomizer(false)} className="w-full btn-primary">
+                Save Dashboard Layout
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Creation forms dialog popups */}
+      <AnimatePresence>
+        {showCreateTaskModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          >
+            <motion.form
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              onSubmit={handleTaskSubmit}
+              className="bg-surface rounded-2xl border-2 border-primary w-full max-w-md p-6 shadow-2xl space-y-4"
+            >
+              <div className="flex items-center justify-between border-b border-border pb-3">
+                <h4 className="font-black text-sm text-foreground flex items-center gap-1.5">
+                  <SquareKanban size={16} className="text-primary" />
+                  Create Kanban Task
+                </h4>
+                <button type="button" onClick={() => setShowCreateTaskModal(false)}><X size={15} /></button>
+              </div>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-label-val uppercase text-muted mb-1">Task Title</label>
+                  <input
+                    type="text"
+                    required
+                    value={taskForm.title}
+                    onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
+                    placeholder="Review pricing structure..."
+                    className="input-cozy"
+                  />
+                </div>
+                <div>
+                  <label className="block text-label-val uppercase text-muted mb-1">Description</label>
+                  <textarea
+                    value={taskForm.description}
+                    onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
+                    placeholder="Detail notes..."
+                    className="w-full h-16 p-2 rounded-lg border border-border bg-background text-input-val outline-none resize-none focus:border-primary text-foreground"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-label-val uppercase text-muted mb-1">Due Date</label>
+                    <input
+                      type="date"
+                      value={taskForm.dueDate}
+                      onChange={(e) => setTaskForm({ ...taskForm, dueDate: e.target.value })}
+                      className="w-full h-10 px-2 rounded-lg border border-border bg-background text-input-val outline-none text-foreground"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-label-val uppercase text-muted mb-1">Priority</label>
+                    <select
+                      value={taskForm.priority}
+                      onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value })}
+                      className="w-full h-10 px-2 rounded-lg border border-border bg-background text-input-val outline-none text-[#5E5B5A]"
+                    >
+                      <option value="Low">Low</option>
+                      <option value="Medium">Medium</option>
+                      <option value="High">High</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 border-t border-border pt-3">
+                <button type="button" onClick={() => setShowCreateTaskModal(false)} className="btn-outline h-9 px-4 text-btn text-muted">Cancel</button>
+                <button type="submit" className="btn-primary h-9 px-4 text-btn">Add Task</button>
+              </div>
+            </motion.form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showCreateEventModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          >
+            <motion.form
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              onSubmit={handleEventSubmit}
+              className="bg-surface rounded-2xl border-2 border-primary w-full max-w-md p-6 shadow-2xl space-y-4"
+            >
+              <div className="flex items-center justify-between border-b border-border pb-3">
+                <h4 className="font-black text-sm text-foreground flex items-center gap-1.5">
+                  <CalendarDays size={16} className="text-primary" />
+                  Schedule Calendar Event
+                </h4>
+                <button type="button" onClick={() => setShowCreateEventModal(false)}><X size={15} /></button>
+              </div>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-label-val uppercase text-muted mb-1">Event Title</label>
+                  <input
+                    type="text"
+                    required
+                    value={eventForm.title}
+                    onChange={(e) => setEventForm({ ...eventForm, title: e.target.value })}
+                    placeholder="Strategic roadmap sync..."
+                    className="input-cozy"
+                  />
+                </div>
+                <div>
+                  <label className="block text-label-val uppercase text-muted mb-1">Description</label>
+                  <input
+                    type="text"
+                    value={eventForm.description}
+                    onChange={(e) => setEventForm({ ...eventForm, description: e.target.value })}
+                    placeholder="Sync link details..."
+                    className="input-cozy"
+                  />
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="col-span-2">
+                    <label className="block text-label-val uppercase text-muted mb-1">Date</label>
+                    <input
+                      type="date"
+                      value={eventForm.date}
+                      onChange={(e) => setEventForm({ ...eventForm, date: e.target.value })}
+                      className="w-full h-10 px-2 rounded-lg border border-border bg-background text-input-val outline-none text-foreground"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-label-val uppercase text-muted mb-1">Time</label>
+                    <input
+                      type="text"
+                      value={eventForm.time}
+                      onChange={(e) => setEventForm({ ...eventForm, time: e.target.value })}
+                      placeholder="10:00"
+                      className="w-full h-10 px-2 rounded-lg border border-border bg-background text-input-val outline-none text-foreground"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-label-val uppercase text-muted mb-1">Category</label>
+                  <select
+                    value={eventForm.category}
+                    onChange={(e) => setEventForm({ ...eventForm, category: e.target.value })}
+                    className="w-full h-10 px-2 rounded-lg border border-border bg-background text-input-val outline-none text-[#5E5B5A]"
+                  >
+                    <option value="Meeting">Meeting</option>
+                    <option value="Reminder">Reminder</option>
+                    <option value="Work">Work</option>
+                    <option value="Personal">Personal</option>
+                  </select>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 border-t border-border pt-3">
+                <button type="button" onClick={() => setShowCreateEventModal(false)} className="btn-outline h-9 px-4 text-btn text-muted">Cancel</button>
+                <button type="submit" disabled={creatingItem} className="btn-primary h-9 px-4 text-btn">
+                  {creatingItem ? <Loader2 size={12} className="animate-spin" /> : "Add Event"}
+                </button>
+              </div>
+            </motion.form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showCreateBoardModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          >
+            <motion.form
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              onSubmit={handleBoardSubmit}
+              className="bg-surface rounded-2xl border-2 border-primary w-full max-w-sm p-6 shadow-2xl space-y-4"
+            >
+              <div className="flex items-center justify-between border-b border-border pb-3">
+                <h4 className="font-black text-sm text-foreground flex items-center gap-1.5">
+                  <LayoutDashboard size={16} className="text-primary" />
+                  Create Kanban Board
+                </h4>
+                <button type="button" onClick={() => setShowCreateBoardModal(false)}><X size={15} /></button>
+              </div>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-label-val uppercase text-muted mb-1">Board Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={boardForm.name}
+                    onChange={(e) => setBoardForm({ ...boardForm, name: e.target.value })}
+                    placeholder="Design Sprint #2..."
+                    className="input-cozy"
+                  />
+                </div>
+                <div>
+                  <label className="block text-label-val uppercase text-muted mb-1">Accent Color</label>
+                  <div className="flex gap-2">
+                    {["#FF5A36", "#3e9b68", "#ef6688", "#e49a3a", "#3b82f6"].map((hex) => (
+                      <button
+                        key={hex}
+                        type="button"
+                        onClick={() => setBoardForm({ ...boardForm, color: hex })}
+                        className="size-6 rounded-full border border-white relative flex items-center justify-center"
+                        style={{ backgroundColor: hex }}
+                      >
+                        {boardForm.color === hex && <Check size={11} className="text-white" />}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 border-t border-border pt-3">
+                <button type="button" onClick={() => setShowCreateBoardModal(false)} className="btn-outline h-9 px-4 text-btn text-muted">Cancel</button>
+                <button type="submit" className="btn-primary h-9 px-4 text-btn">Add Board</button>
+              </div>
+            </motion.form>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   Bot,
@@ -208,7 +209,12 @@ export default function SpacesPage() {
       {/* Sidebar Navigation */}
       <WorkspaceSidebar active="Spaces" />
 
-      <main className="flex-1 min-w-0 flex h-screen overflow-hidden">
+      <motion.main
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2 }}
+        className="flex-1 min-w-0 flex h-screen overflow-hidden"
+      >
         {/* Spaces Folders sidebar */}
         <section className="w-60 border-r border-border bg-surface flex flex-col shrink-0">
           <div className="p-4 border-b border-border flex items-center justify-between">
@@ -349,12 +355,25 @@ export default function SpacesPage() {
             </div>
           )}
         </section>
-      </main>
+      </motion.main>
 
       {/* Create Space Modal */}
-      {showSpaceModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <form onSubmit={handleCreateSpaceSubmit} className="bg-surface rounded-2xl border-2 border-primary w-full max-w-sm p-6 shadow-2xl space-y-4">
+      <AnimatePresence>
+        {showSpaceModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          >
+            <motion.form
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              onSubmit={handleCreateSpaceSubmit}
+              className="bg-surface rounded-2xl border-2 border-primary w-full max-w-sm p-6 shadow-2xl space-y-4"
+            >
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h4 className="font-black text-sm text-foreground flex items-center gap-1.5">
                 <FolderPlus size={16} className="text-primary" />
@@ -401,9 +420,10 @@ export default function SpacesPage() {
               <button type="button" onClick={() => setShowSpaceModal(false)} className="btn-outline h-9 px-4 text-btn text-muted">Cancel</button>
               <button type="submit" className="btn-primary h-9 px-4 text-btn">Add Space</button>
             </div>
-          </form>
-        </div>
-      )}
+            </motion.form>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

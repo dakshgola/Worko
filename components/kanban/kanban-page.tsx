@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import { DndContext, DragEndEvent, PointerSensor, useDroppable, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, horizontalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -72,7 +73,13 @@ export function KanbanPage() {
 
         <div className="flex min-h-[calc(100vh-68px)] min-w-0">
           <BoardSidebar boards={store.boards} activeId={board.id} search={boardSearch} setSearch={setBoardSearch} setActive={store.setActiveBoard} onAdd={() => setBoardModal("new")} onEdit={(id) => { store.setActiveBoard(id); setBoardModal("edit"); }} onDelete={store.deleteBoard} onFavorite={store.toggleFavorite} />
-          <div className="min-w-0 flex-1 p-4 lg:p-6">
+          
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="min-w-0 flex-1 p-4 lg:p-6"
+          >
             <section className="mb-5 flex flex-wrap items-end justify-between gap-4">
               <div><p className="mb-1.5 text-overline text-muted block">Kanban workspace</p><div className="flex items-center gap-2"><span className="size-3 rounded-full" style={{ background: board.color }} /><h1 className="text-h2 text-foreground">{board.name}</h1><button onClick={() => store.toggleFavorite(board.id)} className={board.favorite ? "text-amber-500" : "text-muted"}><Star size={16} fill={board.favorite ? "currentColor" : "none"} /></button></div><p className="mt-1.5 text-body-sm text-muted font-semibold">{board.description || "A clear view of everything moving."}</p></div>
               <div className="flex flex-wrap gap-2">
@@ -103,7 +110,7 @@ export function KanbanPage() {
                 </section>
               </SortableContext>
             </DndContext>
-          </div>
+          </motion.div>
         </div>
       </main>
       <BoardModal open={boardModal !== null} board={boardModal === "edit" ? board : undefined} onClose={() => setBoardModal(null)} onSave={(data) => boardModal === "edit" ? store.updateBoard(board.id, data) : store.addBoard(data)} />

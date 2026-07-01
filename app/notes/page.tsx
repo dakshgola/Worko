@@ -453,6 +453,18 @@ export default function NotesPage() {
                     <h5 className="text-label-val text-primary uppercase tracking-wider block font-bold">Voice Notes</h5>
                     <p className="text-caption text-muted">Dictate your text. Audio will transcribe directly at cursor:</p>
                     
+                    {isRecording && (
+                      <div className="flex justify-center items-center py-2">
+                        <div className="voice-wave-container">
+                          <span className="voice-wave-bar" />
+                          <span className="voice-wave-bar" />
+                          <span className="voice-wave-bar" />
+                          <span className="voice-wave-bar" />
+                          <span className="voice-wave-bar" />
+                        </div>
+                      </div>
+                    )}
+
                     <button
                       onClick={isRecording ? stopVoiceRecording : startVoiceRecording}
                       className={`h-9.5 w-full btn-secondary text-btn flex items-center justify-center gap-1.5 shadow-sm transition ${
@@ -496,9 +508,11 @@ export default function NotesPage() {
                       className="w-full btn-primary h-9.5"
                     >
                       {refining ? (
-                        <>
-                          <Loader2 size={13} className="animate-spin" /> Refining
-                        </>
+                        <div className="flex items-center justify-center gap-1">
+                          <span className="ai-dot-indicator" />
+                          <span className="ai-dot-indicator" />
+                          <span className="ai-dot-indicator" />
+                        </div>
                       ) : (
                         <>
                           <Sparkles size={13} /> Refine Text

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import {
   Bell,
   CalendarDays,
@@ -178,7 +179,12 @@ export function CalendarPage() {
           </div>
         </header>
 
-        <div className="mx-auto max-w-[1600px] p-4 lg:p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="mx-auto max-w-[1600px] p-4 lg:p-6"
+        >
           <section className="mb-5 flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="mb-1.5 text-overline text-muted block">Calendar workspace</p>
@@ -241,7 +247,7 @@ export function CalendarPage() {
               </div>
             </section>
           )}
-        </div>
+        </motion.div>
       </main>
 
       <TaskDialog open={dialogOpen} initialDate={dialogDate} onClose={() => setDialogOpen(false)} onSave={saveTask} />

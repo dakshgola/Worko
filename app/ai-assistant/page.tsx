@@ -42,6 +42,7 @@ import {
 import { WorkspaceSidebar } from "@/components/WorkspaceSidebar";
 import { createEvent } from "@/lib/calendar/actions";
 import { createNote } from "@/lib/notes/actions";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AiAssistantPage() {
   const { user } = useUser();
@@ -421,29 +422,64 @@ export default function AiAssistantPage() {
                     </div>
                   </div>
                 )}
+
+                {isAiResponding && !streamingResponse && (
+                  <div className="flex gap-3.5 items-start">
+                    <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary text-badge-val">AI</span>
+                    <div className="p-3.5 rounded-2xl text-body-sm leading-relaxed bg-surface border border-border text-foreground font-semibold">
+                      <div className="flex items-center gap-1 py-1.5 px-3">
+                        <span className="ai-dot-indicator" />
+                        <span className="ai-dot-indicator" />
+                        <span className="ai-dot-indicator" />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
             {/* Action Confirmation Panel Overlay */}
-            {actionConfirmation && (
-              <div className="max-w-md mx-auto bg-surface border border-border p-4 rounded-2xl shadow-lg space-y-3">
-                <div className="flex items-center gap-2 border-b border-border pb-2">
-                  <Sparkles size={14} className="text-primary animate-pulse" />
-                  <span className="text-overline text-foreground block font-bold">Detected Workspace Action Intent</span>
-                </div>
-                <div className="text-body-sm text-muted leading-relaxed">
-                  <p className="text-overline text-primary tracking-wider block font-bold">{actionConfirmation.type} to build:</p>
-                  <p className="text-body-sm font-extrabold text-foreground mt-0.5">{actionConfirmation.payload.title}</p>
-                </div>
-                <div className="flex gap-2 justify-end">
-                  <button onClick={() => setActionConfirmation(null)} className="btn-outline h-9.5 px-3 py-1">Discard</button>
-                  <button onClick={handleConfirmAction} className="btn-primary h-9.5 px-3 py-1">
-                    {actionSuccess ? <Check size={11} /> : "Execute Confirmation"}
-                  </button>
-                </div>
-              </div>
-            )}
+            <AnimatePresence>
+              {actionConfirmation && (
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 12 }}
+                  transition={{ duration: 0.2 }}
+                  className="max-w-md mx-auto bg-surface border border-border p-4 rounded-2xl shadow-lg space-y-3"
+                >
+                  <div className="flex items-center gap-2 border-b border-border pb-2">
+                    <Sparkles size={14} className="text-primary animate-pulse" />
+                    <span className="text-overline text-foreground block font-bold">Detected Workspace Action Intent</span>
+                  </div>
+                  <div className="text-body-sm text-muted leading-relaxed">
+                    <p className="text-overline text-primary tracking-wider block font-bold">{actionConfirmation.type} to build:</p>
+                    <p className="text-body-sm font-extrabold text-foreground mt-0.5">{actionConfirmation.payload.title}</p>
+                  </div>
+                  <div className="flex gap-2 justify-end">
+                    <button onClick={() => setActionConfirmation(null)} className="btn-outline h-9.5 px-3 py-1">Discard</button>
+                    <button onClick={handleConfirmAction} className="btn-primary h-9.5 px-3 py-1">
+                      {actionSuccess ? <Check size={11} /> : "Execute Confirmation"}
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
+
+          {/* Sound wave overlay */}
+          {isRecording && (
+            <div className="flex justify-center items-center py-2.5 bg-background border-t border-border shrink-0 gap-2">
+              <div className="voice-wave-container">
+                <span className="voice-wave-bar" />
+                <span className="voice-wave-bar" />
+                <span className="voice-wave-bar" />
+                <span className="voice-wave-bar" />
+                <span className="voice-wave-bar" />
+              </div>
+              <span className="text-caption text-primary font-bold animate-pulse">Streaming Voice Dictation...</span>
+            </div>
+          )}
 
           {/* Form input bar */}
           <div className="p-4 bg-surface border-t border-border shrink-0">
