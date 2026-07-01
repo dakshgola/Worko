@@ -319,36 +319,36 @@ export default function AiAssistantPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F4] text-[#2C2A29] flex">
+    <div className="min-h-screen bg-background text-foreground flex">
       {/* Sidebar Navigation */}
       <WorkspaceSidebar active="AI Assistant" />
 
       <main className="flex-grow min-w-0 flex h-screen overflow-hidden">
         {/* Left conversations list */}
-        <section className="w-60 border-r border-[#EBE8E2] bg-white flex flex-col shrink-0">
-          <div className="p-4 border-b border-[#EBE8E2] flex items-center justify-between">
-            <span className="text-overline text-[#aaa6b5] block">Conversations</span>
-            <button onClick={() => handleCreateChat()} className="p-1.5 bg-[#FFE8E2] text-[#FF5A36] rounded-xl hover:bg-[#FF5A36] hover:text-white transition">
+        <section className="w-60 border-r border-border bg-surface flex flex-col shrink-0">
+          <div className="p-4 border-b border-border flex items-center justify-between">
+            <span className="text-overline text-muted block">Conversations</span>
+            <button onClick={() => handleCreateChat()} className="btn-secondary size-8 p-0 flex items-center justify-center">
               <Plus size={13} />
             </button>
           </div>
 
           <div className="flex-grow overflow-y-auto p-2 space-y-1">
             {loadingChats ? (
-              <div className="text-center py-4 text-caption font-semibold text-[#aaa6b5]"><Loader2 size={12} className="animate-spin text-[#FF5A36] inline" /></div>
+              <div className="text-center py-4 text-caption font-semibold text-muted"><Loader2 size={12} className="animate-spin text-primary inline" /></div>
             ) : chatsList.length === 0 ? (
-              <div className="text-caption text-slate-400 text-center py-4 font-semibold">0 conversation logs.</div>
+              <div className="text-caption text-muted text-center py-4 font-semibold">0 conversation logs.</div>
             ) : (
               chatsList.map((chat) => (
                 <button
                   key={chat.id}
                   onClick={() => handleSelectChat(chat)}
                   className={`w-full text-left p-2.5 rounded-xl text-body-sm font-bold flex items-center justify-between group truncate ${
-                    activeChat?.id === chat.id ? "bg-[#FFE8E2]/60 text-[#FF5A36]" : "hover:bg-slate-50"
+                    activeChat?.id === chat.id ? "bg-primary-soft text-primary" : "hover:bg-hover-overlay"
                   }`}
                 >
                   <span className="truncate flex-1">{chat.title}</span>
-                  <button onClick={(e) => handleDeleteChat(chat.id, e)} className="text-slate-300 hover:text-red-500 transition ml-2 opacity-0 group-hover:opacity-100">
+                  <button onClick={(e) => handleDeleteChat(chat.id, e)} className="text-slate-300 hover:text-danger transition ml-2 opacity-0 group-hover:opacity-100">
                     <Trash2 size={11} />
                   </button>
                 </button>
@@ -358,14 +358,14 @@ export default function AiAssistantPage() {
         </section>
 
         {/* Right Chat Board */}
-        <section className="flex-grow flex flex-col bg-[#FAF8F4] relative h-full">
+        <section className="flex-grow flex flex-col bg-background relative h-full">
           {/* Header */}
-          <div className="h-[68px] bg-white border-b border-[#EBE8E2] flex items-center px-6 gap-3 shrink-0">
+          <div className="h-[68px] bg-surface border-b border-border flex items-center px-6 gap-3 shrink-0">
             <div className="flex items-center gap-2">
-              <span className="grid size-8 place-items-center bg-[#FFE8E2] text-[#FF5A36] rounded-xl"><Bot size={15} /></span>
+              <span className="grid size-8 place-items-center bg-primary-soft text-primary rounded-xl"><Bot size={15} /></span>
               <div>
-                <h3 className="text-body-sm font-extrabold text-[#2C2A29]">{activeChat?.title || "New Session"}</h3>
-                <p className="text-overline text-[#aaa6b5] block">AI Orchestrator</p>
+                <h3 className="text-body-sm font-extrabold text-foreground">{activeChat?.title || "New Session"}</h3>
+                <p className="text-overline text-muted block font-semibold">AI Orchestrator</p>
               </div>
             </div>
           </div>
@@ -373,14 +373,14 @@ export default function AiAssistantPage() {
           {/* Messages Flow */}
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {loadingHistory ? (
-              <div className="flex items-center justify-center py-12 text-caption font-semibold text-[#aaa6b5]">
-                <Loader2 size={14} className="animate-spin mr-1 text-[#FF5A36]" /> Loading history...
+              <div className="flex items-center justify-center py-12 text-caption font-semibold text-muted">
+                <Loader2 size={14} className="animate-spin mr-1 text-primary" /> Loading history...
               </div>
             ) : messages.length === 0 && !streamingResponse ? (
               <div className="max-w-md mx-auto text-center py-16 space-y-4">
-                <Bot size={42} className="text-[#FF5A36] mx-auto animate-bounce" />
-                <h4 className="text-h3 text-[#2C2A29]">Ask anything about your workspace</h4>
-                <p className="text-body-sm text-[#5E5B5A] leading-relaxed font-semibold">
+                <Bot size={42} className="text-primary mx-auto animate-bounce" />
+                <h4 className="text-h3 text-foreground">Ask anything about your workspace</h4>
+                <p className="text-body-sm text-muted leading-relaxed font-semibold">
                   I can schedule events, write specifications notes drafts, or calculate productivity logs based on Neon Database records.
                 </p>
 
@@ -389,7 +389,7 @@ export default function AiAssistantPage() {
                     <button
                       key={i}
                       onClick={() => { setInputMsg(sg); handleSubmitPrompt(sg); }}
-                      className="px-3 py-1.5 bg-[#FFE8E2] border border-[#ffcfc4] hover:bg-[#FF5A36] hover:text-white text-[#FF5A36] text-btn rounded-full transition"
+                      className="px-3 py-1.5 bg-primary-soft border border-primary-soft hover:bg-primary hover:text-white text-primary text-btn rounded-full transition"
                     >
                       {sg}
                     </button>
@@ -401,12 +401,12 @@ export default function AiAssistantPage() {
                 {messages.map((m) => (
                   <div key={m.id} className={`flex gap-3.5 items-start ${m.role === "user" ? "flex-row-reverse" : ""}`}>
                     <span className={`grid size-8 shrink-0 place-items-center rounded-xl text-badge-val ${
-                      m.role === "user" ? "bg-amber-100 text-amber-750" : "bg-[#FFE8E2] text-[#FF5A36]"
+                      m.role === "user" ? "bg-amber-100 text-amber-700" : "bg-primary-soft text-primary"
                     }`}>
                       {m.role === "user" ? "US" : "AI"}
                     </span>
                     <div className={`p-3.5 rounded-2xl text-body-sm leading-relaxed font-semibold ${
-                      m.role === "user" ? "bg-[#FF5A36] text-white" : "bg-white border border-[#EBE8E2] text-[#2C2A29]"
+                      m.role === "user" ? "bg-primary text-white" : "bg-surface border border-border text-foreground"
                     }`}>
                       {m.content}
                     </div>
@@ -415,8 +415,8 @@ export default function AiAssistantPage() {
 
                 {streamingResponse && (
                   <div className="flex gap-3.5 items-start">
-                    <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-[#FFE8E2] text-[#FF5A36] text-badge-val">AI</span>
-                    <div className="p-3.5 rounded-2xl text-body-sm leading-relaxed bg-white border border-[#EBE8E2] text-[#2C2A29] font-semibold">
+                    <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary text-badge-val">AI</span>
+                    <div className="p-3.5 rounded-2xl text-body-sm leading-relaxed bg-surface border border-border text-foreground font-semibold">
                       {streamingResponse}
                     </div>
                   </div>
@@ -426,18 +426,18 @@ export default function AiAssistantPage() {
 
             {/* Action Confirmation Panel Overlay */}
             {actionConfirmation && (
-              <div className="max-w-md mx-auto bg-white border border-[#EBE8E2] p-4 rounded-2xl shadow-lg space-y-3">
-                <div className="flex items-center gap-2 border-b border-[#FAF8F4] pb-2">
-                  <Sparkles size={14} className="text-[#FF5A36] animate-pulse" />
-                  <span className="text-overline text-[#2C2A29] block">Detected Workspace Action Intent</span>
+              <div className="max-w-md mx-auto bg-surface border border-border p-4 rounded-2xl shadow-lg space-y-3">
+                <div className="flex items-center gap-2 border-b border-border pb-2">
+                  <Sparkles size={14} className="text-primary animate-pulse" />
+                  <span className="text-overline text-foreground block font-bold">Detected Workspace Action Intent</span>
                 </div>
-                <div className="text-body-sm text-[#5E5B5A] leading-relaxed">
-                  <p className="text-overline text-[#FF5A36] tracking-wider block">{actionConfirmation.type} to build:</p>
-                  <p className="text-body-sm font-extrabold text-[#2C2A29] mt-0.5">{actionConfirmation.payload.title}</p>
+                <div className="text-body-sm text-muted leading-relaxed">
+                  <p className="text-overline text-primary tracking-wider block font-bold">{actionConfirmation.type} to build:</p>
+                  <p className="text-body-sm font-extrabold text-foreground mt-0.5">{actionConfirmation.payload.title}</p>
                 </div>
                 <div className="flex gap-2 justify-end">
-                  <button onClick={() => setActionConfirmation(null)} className="px-3 py-1 bg-slate-50 border border-[#EBE8E2] rounded-lg text-btn text-[#5E5B5A]">Discard</button>
-                  <button onClick={handleConfirmAction} className="px-3 py-1 bg-[#FF5A36] text-white rounded-lg text-btn">
+                  <button onClick={() => setActionConfirmation(null)} className="btn-outline h-9.5 px-3 py-1">Discard</button>
+                  <button onClick={handleConfirmAction} className="btn-primary h-9.5 px-3 py-1">
                     {actionSuccess ? <Check size={11} /> : "Execute Confirmation"}
                   </button>
                 </div>
@@ -446,13 +446,13 @@ export default function AiAssistantPage() {
           </div>
 
           {/* Form input bar */}
-          <div className="p-4 bg-white border-t border-[#EBE8E2] shrink-0">
+          <div className="p-4 bg-surface border-t border-border shrink-0">
             <div className="max-w-3xl mx-auto flex gap-2">
               <button
                 type="button"
                 onClick={isRecording ? stopVoiceRecording : startVoiceRecording}
                 className={`grid size-10 place-items-center rounded-xl border transition ${
-                  isRecording ? "bg-red-500 border-red-500 text-white animate-pulse" : "bg-[#FFE8E2] border-[#EBE8E2] text-[#FF5A36]"
+                  isRecording ? "bg-red-500 border-red-500 text-white animate-pulse" : "btn-secondary text-primary border-border bg-surface flex items-center justify-center"
                 }`}
               >
                 {isRecording ? <MicOff size={15} /> : <Mic size={15} />}
@@ -465,12 +465,12 @@ export default function AiAssistantPage() {
                   value={inputMsg}
                   onChange={(e) => setInputMsg(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSubmitPrompt(inputMsg)}
-                  className="w-full h-10 border border-[#EBE8E2] bg-[#FAF8F4] px-4 rounded-xl text-input-val outline-none focus:border-[#FF5A36]"
+                  className="w-full input-cozy h-10 pr-10"
                 />
                 <button
                   onClick={() => handleSubmitPrompt(inputMsg)}
                   disabled={isAiResponding || !inputMsg.trim()}
-                  className="absolute right-2 grid size-7 place-items-center rounded-lg bg-[#FF5A36] text-white hover:bg-[#ff7d5e] transition"
+                  className="absolute right-2 grid size-7 place-items-center rounded-lg bg-primary text-white hover:bg-primary-hover transition"
                 >
                   <Send size={11} fill="currentColor" />
                 </button>

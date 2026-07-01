@@ -329,7 +329,7 @@ export default function NotesPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#FAF8F4] text-[#2C2A29] flex">
+    <div className="min-h-screen bg-background text-foreground flex">
       {/* Sidebar Navigation */}
       <WorkspaceSidebar active="Notes" />
 
@@ -337,50 +337,50 @@ export default function NotesPage() {
       <main className="flex-1 min-w-0 flex h-screen overflow-hidden">
         
         {/* Notes sidebar */}
-        <section className="w-64 border-r border-[#EBE8E2] bg-white flex flex-col shrink-0">
-          <div className="p-4 border-b border-[#EBE8E2] space-y-3">
+        <section className="w-64 border-r border-border bg-surface flex flex-col shrink-0">
+          <div className="p-4 border-b border-border space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-overline text-[#aaa6b5] block">Your Notes</span>
+              <span className="text-overline text-muted block">Your Notes</span>
               <button
                 onClick={handleCreateNote}
                 disabled={creating}
-                className="p-1.5 bg-[#FFE8E2] text-[#FF5A36] rounded-xl hover:bg-[#FF5A36] hover:text-white transition"
+                className="btn-secondary size-8 p-0 flex items-center justify-center"
               >
                 {creating ? <Loader2 size={13} className="animate-spin" /> : <Plus size={13} />}
               </button>
             </div>
             <div className="relative">
-              <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#aaa6b5]" />
+              <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted" />
               <input
                 type="text"
                 placeholder="Search notes..."
                 value={noteSearch}
                 onChange={(e) => setNoteSearch(e.target.value)}
-                className="w-full h-8 bg-[#FAF8F4] border border-[#EBE8E2] rounded-lg pl-8 pr-2.5 text-input-val outline-none focus:border-[#FF5A36]"
+                className="pl-8 input-cozy h-8 rounded-lg"
               />
             </div>
           </div>
 
           <div className="flex-grow overflow-y-auto p-2 space-y-1">
             {loading ? (
-              <div className="flex items-center justify-center py-10 text-caption font-semibold text-[#aaa6b5]">
-                <Loader2 size={13} className="animate-spin text-[#FF5A36] mr-1.5" /> Loading...
+              <div className="flex items-center justify-center py-10 text-caption font-semibold text-muted">
+                <Loader2 size={13} className="animate-spin text-primary mr-1.5" /> Loading...
               </div>
             ) : filteredNotes.length === 0 ? (
-              <p className="text-caption font-semibold text-[#aaa6b5] text-center py-6">No notes found.</p>
+              <p className="text-caption font-semibold text-muted text-center py-6">No notes found.</p>
             ) : (
               filteredNotes.map((note) => (
                 <button
                   key={note.id}
                   onClick={() => setActiveNote(note)}
                   className={`w-full flex items-center gap-2.5 p-2 rounded-xl text-left transition ${
-                    activeNote?.id === note.id ? "bg-[#FFE8E2]/60 text-[#FF5A36]" : "hover:bg-[#fbfaff]"
+                    activeNote?.id === note.id ? "bg-primary-soft text-primary" : "hover:bg-hover-overlay"
                   }`}
                 >
                   <span className="size-2 rounded-full shrink-0" style={{ backgroundColor: note.color }} />
                   <div className="min-w-0 flex-1">
                     <p className="text-body-sm font-bold truncate">{note.title}</p>
-                    <p className="text-caption text-[#aaa6b5] truncate mt-0.5 font-semibold">
+                    <p className="text-caption text-muted truncate mt-0.5 font-semibold">
                       {note.plainText || "Empty note"}
                     </p>
                   </div>
@@ -392,35 +392,35 @@ export default function NotesPage() {
         </section>
 
         {/* Note editor panel */}
-        <section className="flex-grow bg-[#FAF8F4] flex flex-col min-w-0 h-full overflow-hidden">
+        <section className="flex-grow bg-background flex flex-col min-w-0 h-full overflow-hidden">
           {activeNote ? (
             <>
               {/* Note Header toolbar */}
-              <div className="flex h-[64px] items-center gap-3 border-b border-[#EBE8E2] px-6 shrink-0 bg-white/80 backdrop-blur-xl">
+              <div className="flex h-[64px] items-center gap-3 border-b border-border px-6 shrink-0 bg-surface/80 backdrop-blur-xl">
                 <input
                   type="text"
                   value={activeNote.title}
                   onChange={(e) => handleUpdateTitle(e.target.value)}
-                  className="text-h3 text-[#2C2A29] outline-none border-b border-transparent focus:border-[#EBE8E2] flex-grow max-w-sm bg-transparent"
+                  className="text-h3 text-foreground outline-none border-b border-transparent focus:border-border flex-grow max-w-sm bg-transparent font-bold"
                 />
 
                 {saving && (
-                  <span className="text-caption text-[#aaa6b5] font-semibold flex items-center animate-pulse gap-1">
+                  <span className="text-caption text-muted font-semibold flex items-center animate-pulse gap-1">
                     <Clock size={11} /> Saving
                   </span>
                 )}
 
                 <div className="ml-auto flex items-center gap-2">
-                  <button onClick={handleToggleFavorite} className={`p-1.5 rounded-lg border transition ${activeNote.isFavorite ? "border-yellow-100 bg-yellow-50/20 text-yellow-600" : "border-[#EBE8E2] bg-white text-[#aaa6b5] hover:text-[#2C2A29]"}`}>
+                  <button onClick={handleToggleFavorite} className={`p-1.5 rounded-lg border transition ${activeNote.isFavorite ? "border-yellow-100 bg-yellow-50/20 text-yellow-600" : "border-border bg-surface text-muted hover:text-foreground"}`}>
                     <Star size={14} fill={activeNote.isFavorite ? "currentColor" : "none"} />
                   </button>
-                  <button onClick={handleTogglePin} className={`p-1.5 rounded-lg border transition ${activeNote.isPinned ? "border-amber-100 bg-amber-50/20 text-amber-600" : "border-[#EBE8E2] bg-white text-[#aaa6b5] hover:text-[#2C2A29]"}`}>
+                  <button onClick={handleTogglePin} className={`p-1.5 rounded-lg border transition ${activeNote.isPinned ? "border-amber-100 bg-amber-50/20 text-amber-600" : "border-border bg-surface text-muted hover:text-foreground"}`}>
                     <Sparkles size={14} />
                   </button>
-                  <button onClick={handleDuplicateNote} className="p-1.5 rounded-lg border border-[#EBE8E2] bg-white text-[#5E5B5A] hover:text-[#FF5A36]">
+                  <button onClick={handleDuplicateNote} className="btn-icon size-8 flex items-center justify-center text-muted hover:text-primary">
                     <Copy size={14} />
                   </button>
-                  <button onClick={handleTrashNote} className="p-1.5 rounded-lg border border-[#EBE8E2] bg-white text-[#5E5B5A] hover:text-red-500">
+                  <button onClick={handleTrashNote} className="btn-icon size-8 flex items-center justify-center text-muted hover:text-danger">
                     <Trash2 size={14} />
                   </button>
                 </div>
@@ -428,7 +428,7 @@ export default function NotesPage() {
 
               {/* Note Body */}
               <div className="flex-1 flex min-w-0 overflow-hidden">
-                <div className="flex-1 overflow-y-auto px-8 py-6 bg-white prose max-w-none">
+                <div className="flex-1 overflow-y-auto px-8 py-6 bg-surface prose max-w-none">
                   
                   {/* Colors selector bar */}
                   <div className="flex items-center gap-1.5 mb-4">
@@ -436,29 +436,29 @@ export default function NotesPage() {
                       <button
                         key={cHex}
                         onClick={() => handleUpdateColor(cHex)}
-                        className={`size-4 rounded-full border border-white transition relative flex items-center justify-center shrink-0 ${activeNote.color === cHex ? "ring-2 ring-[#FF5A36]" : ""}`}
+                        className={`size-4 rounded-full border border-white transition relative flex items-center justify-center shrink-0 ${activeNote.color === cHex ? "ring-2 ring-primary" : ""}`}
                         style={{ backgroundColor: cHex }}
                       />
                     ))}
                   </div>
 
-                  <EditorContent editor={editor} className="outline-none min-h-[300px] text-body text-[#2C2A29]" />
+                  <EditorContent editor={editor} className="outline-none min-h-[300px] text-body text-foreground" />
                 </div>
 
                 {/* Editor features sidebar */}
-                <div className="w-80 border-l border-[#EBE8E2] p-5 space-y-6 flex flex-col bg-[#FAF8F4] shrink-0">
+                <div className="w-80 border-l border-border p-5 space-y-6 flex flex-col bg-background shrink-0">
                   
                   {/* Voice Note stream AssemblyAI */}
-                  <div className="bg-white border border-[#EBE8E2] p-4 rounded-2xl shadow-sm space-y-3">
-                    <h5 className="text-label-val text-[#FF5A36] uppercase tracking-wider block">Voice Notes</h5>
-                    <p className="text-caption text-[#5E5B5A]">Dictate your text. Audio will transcribe directly at cursor:</p>
+                  <div className="bg-surface border border-border p-4 rounded-2xl shadow-sm space-y-3">
+                    <h5 className="text-label-val text-primary uppercase tracking-wider block font-bold">Voice Notes</h5>
+                    <p className="text-caption text-muted">Dictate your text. Audio will transcribe directly at cursor:</p>
                     
                     <button
                       onClick={isRecording ? stopVoiceRecording : startVoiceRecording}
-                      className={`h-9.5 w-full rounded-xl text-btn flex items-center justify-center gap-1.5 shadow-sm transition ${
+                      className={`h-9.5 w-full btn-secondary text-btn flex items-center justify-center gap-1.5 shadow-sm transition ${
                         isRecording
                           ? "bg-red-500 hover:bg-red-600 text-white animate-pulse"
-                          : "bg-[#FFE8E2] hover:bg-[#FF5A36] text-[#FF5A36] hover:text-white"
+                          : "hover:bg-primary hover:text-white"
                       }`}
                     >
                       {isRecording ? (
@@ -472,28 +472,28 @@ export default function NotesPage() {
                       )}
                     </button>
                     {transcript && (
-                      <div className="p-2.5 bg-slate-50 border border-dashed border-[#EBE8E2] text-caption text-[#8b879c] rounded-xl italic font-semibold">
+                      <div className="p-2.5 bg-background border border-dashed border-border text-caption text-muted rounded-xl italic font-semibold">
                         &quot;{transcript}&quot;
                       </div>
                     )}
                   </div>
 
                   {/* Gemini refine panel */}
-                  <div className="bg-white border border-[#EBE8E2] p-4 rounded-2xl shadow-sm space-y-3">
-                    <h5 className="text-label-val text-[#FF5A36] uppercase tracking-wider block">AI Edit &amp; Refine</h5>
-                    <p className="text-caption text-[#5E5B5A]">Select some text or type your custom editing request below:</p>
+                  <div className="bg-surface border border-border p-4 rounded-2xl shadow-sm space-y-3">
+                    <h5 className="text-label-val text-primary uppercase tracking-wider block font-bold">AI Edit &amp; Refine</h5>
+                    <p className="text-caption text-muted">Select some text or type your custom editing request below:</p>
                     
                     <textarea
                       placeholder="e.g. Translate to Spanish, fix grammar, rewrite professionally..."
                       value={aiPrompt}
                       onChange={(e) => setAiPrompt(e.target.value)}
-                      className="w-full h-20 p-2 border border-[#EBE8E2] text-input-val rounded-xl outline-none resize-none focus:border-[#FF5A36]"
+                      className="w-full h-20 p-2 border border-border text-input-val rounded-xl outline-none resize-none focus:border-primary bg-background text-foreground"
                     />
 
                     <button
                       onClick={handleAIRefine}
                       disabled={refining || !aiPrompt.trim()}
-                      className="h-9.5 w-full bg-[#FF5A36] hover:bg-[#ff7d5e] text-white font-bold rounded-xl text-btn flex items-center justify-center gap-1 transition"
+                      className="w-full btn-primary h-9.5"
                     >
                       {refining ? (
                         <>
@@ -514,7 +514,7 @@ export default function NotesPage() {
               <StickyNote size={48} className="text-slate-300" />
               <h4 className="text-body-sm font-bold text-slate-500">No active notes selected</h4>
               <p className="text-caption max-w-xs text-slate-400">Select an existing note or click the plus icon to start writing.</p>
-              <button onClick={handleCreateNote} className="h-9.5 px-4 bg-[#FF5A36] hover:bg-[#ff7d5e] text-white rounded-xl text-btn">
+              <button onClick={handleCreateNote} className="btn-primary h-9.5 px-4">
                 Create a Note
               </button>
             </div>

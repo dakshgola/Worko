@@ -68,26 +68,26 @@ export function WorkspaceSidebar({ active }: WorkspaceSidebarProps) {
 
   if (!isLoaded) {
     return (
-      <aside className="w-[224px] border-r border-[#EBE8E2] bg-[#FAF8F4] shrink-0" />
+      <aside className="w-[224px] border-r border-border bg-background shrink-0" />
     );
   }
 
   return (
     <>
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex shrink-0 flex-col border-r border-[#EBE8E2] bg-[#FAF8F4] transition-all duration-300 ${
+        className={`fixed inset-y-0 left-0 z-40 flex shrink-0 flex-col border-r border-border bg-background transition-all duration-300 ${
           collapsed ? "w-[68px]" : "w-[224px]"
         }`}
       >
-        <div className="flex h-[64px] items-center border-b border-[#EBE8E2] px-3.5">
+        <div className="flex h-[64px] items-center border-b border-border px-3.5">
           <div className="flex min-w-0 items-center gap-3">
             <div className="grid size-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[#FF5A36] to-[#ff7d5e] text-white shadow-sm ring-1 ring-white/30">
               <Zap size={16} fill="currentColor" />
             </div>
             {!collapsed && (
               <div className="min-w-0">
-                <p className="truncate text-h4 text-[#2C2A29]">Worko</p>
-                <p className="truncate text-overline text-[#aaa6b5]">
+                <p className="truncate text-h4 text-foreground">Worko</p>
+                <p className="truncate text-overline text-muted">
                   Workspace
                 </p>
               </div>
@@ -99,7 +99,7 @@ export function WorkspaceSidebar({ active }: WorkspaceSidebarProps) {
           {sections.map((section) => (
             <div key={section.label}>
               {!collapsed && (
-                <p className="mb-1.5 px-2.5 text-overline text-[#aaa6b5] block">
+                <p className="mb-1.5 px-2.5 text-overline text-muted block">
                   {section.label}
                 </p>
               )}
@@ -112,12 +112,12 @@ export function WorkspaceSidebar({ active }: WorkspaceSidebarProps) {
                       href={href}
                       className={`group relative flex h-9.5 w-full items-center gap-2.5 rounded-xl px-2 text-sidebar transition-all duration-200 ${
                         isActive
-                          ? "bg-white text-[#FF5A36] shadow-sm border border-[#EBE8E2]"
-                          : "text-[#6f6b7b] hover:translate-x-0.5 hover:bg-white hover:text-[#2C2A29]"
+                          ? "bg-surface text-primary shadow-sm border border-border"
+                          : "text-muted hover:translate-x-0.5 hover:bg-surface hover:text-foreground"
                       } ${collapsed ? "justify-center px-0" : ""}`}
                     >
-                      {isActive && <span className="absolute left-0 h-4 w-0.5 rounded-full bg-[#FF5A36]" />}
-                      <span className={`grid size-6 shrink-0 place-items-center rounded-lg ${isActive ? "bg-[#FFE8E2] text-[#FF5A36]" : `${iconBg} ${color}`}`}>
+                      {isActive && <span className="absolute left-0 h-4 w-0.5 rounded-full bg-primary" />}
+                      <span className={`grid size-6 shrink-0 place-items-center rounded-lg ${isActive ? "bg-primary-soft text-primary" : `${iconBg} ${color}`}`}>
                         <Icon size={13} />
                       </span>
                       {!collapsed && <span>{label}</span>}
@@ -129,15 +129,15 @@ export function WorkspaceSidebar({ active }: WorkspaceSidebarProps) {
           ))}
         </nav>
 
-        <div className="border-t border-[#EBE8E2] p-2.5">
-          <div className="flex items-center gap-2.5 rounded-xl border border-[#EBE8E2] bg-white p-1.5 shadow-sm">
+        <div className="border-t border-border p-2.5">
+          <div className="flex items-center gap-2.5 rounded-xl border border-border bg-surface p-1.5 shadow-sm">
             <div className="grid size-8 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[#ffad72] to-[#ef6688] text-[10px] font-bold text-white uppercase">
               {user?.firstName ? user.firstName.substring(0, 2) : "DG"}
             </div>
             {!collapsed && (
               <div className="min-w-0 flex-1">
-                <p className="truncate text-label-val text-[#2C2A29]">{user?.fullName || "Daksh Gola"}</p>
-                <p className="truncate text-caption text-[#aaa6b5] uppercase tracking-wider font-semibold">Workspace</p>
+                <p className="truncate text-label-val text-foreground">{user?.fullName || "Daksh Gola"}</p>
+                <p className="truncate text-caption text-muted uppercase tracking-wider font-semibold">Workspace</p>
               </div>
             )}
           </div>
@@ -145,7 +145,7 @@ export function WorkspaceSidebar({ active }: WorkspaceSidebarProps) {
 
         <button
           onClick={toggleCollapse}
-          className="absolute -right-3 top-[78px] grid size-6 place-items-center rounded-full border border-[#EBE8E2] bg-white text-[#8b879c] shadow-sm hover:scale-105"
+          className="absolute -right-3 top-[78px] grid size-6 place-items-center rounded-full border border-border bg-surface text-muted shadow-sm hover:scale-105"
           aria-label="Toggle navigation collapse"
         >
           {collapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}

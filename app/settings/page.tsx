@@ -146,21 +146,21 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F4] text-[#2C2A29] flex">
+    <div className="min-h-screen bg-background text-foreground flex">
       {/* Sidebar Navigation */}
       <WorkspaceSidebar active="Settings" />
 
       <main className="flex-1 min-w-0 p-6 lg:p-10 space-y-8 overflow-y-auto max-h-screen">
         <section className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="mb-1.5 text-overline text-[#aaa6b5] block">Workspace Settings</p>
-            <h1 className="text-h2 text-[#2C2A29]">Control your rhythm.</h1>
-            <p className="mt-1.5 text-body-sm text-[#5E5B5A] font-semibold">Manage profile details, theme visual toggles, category labels, and AI assist parameters.</p>
+            <p className="mb-1.5 text-overline text-muted block">Workspace Settings</p>
+            <h1 className="text-h2 text-foreground">Control your rhythm.</h1>
+            <p className="mt-1.5 text-body-sm text-muted font-semibold">Manage profile details, theme visual toggles, category labels, and AI assist parameters.</p>
           </div>
         </section>
 
         {/* Settings Tab headers */}
-        <div className="flex gap-2 border-b border-[#EBE8E2] pb-3 text-btn shrink-0">
+        <div className="flex gap-2 border-b border-border pb-3 text-btn shrink-0">
           {[
             { id: "profile", label: "Profile Info", icon: User },
             { id: "preferences", label: "App Preferences", icon: SlidersHorizontal },
@@ -172,8 +172,8 @@ export default function SettingsPage() {
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-xl transition ${
                 activeTab === tab.id
-                  ? "bg-[#FFE8E2] text-[#FF5A36] border border-[#EBE8E2] shadow-sm"
-                  : "text-[#5E5B5A] hover:bg-slate-100"
+                  ? "bg-primary-soft text-primary border border-border shadow-sm"
+                  : "text-muted hover:bg-hover-overlay"
               }`}
             >
               <tab.icon size={13.5} />
@@ -183,7 +183,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Tab content panel */}
-        <section className="max-w-2xl bg-white border border-[#EBE8E2] p-6 rounded-2xl shadow-sm">
+        <section className="max-w-2xl bg-surface border border-border p-6 rounded-2xl shadow-sm">
           {activeTab === "profile" && (
             <div className="space-y-6">
               <div className="flex items-center gap-4">
@@ -191,34 +191,34 @@ export default function SettingsPage() {
                   {user?.firstName ? user.firstName.substring(0, 2).toUpperCase() : "DG"}
                 </div>
                 <div>
-                  <h3 className="text-body-sm font-extrabold text-[#2C2A29]">{user?.fullName || "Daksh Gola"}</h3>
-                  <p className="text-caption text-[#5E5B5A] mt-0.5 font-semibold">{user?.primaryEmailAddress?.emailAddress}</p>
+                  <h3 className="text-body-sm font-extrabold text-foreground">{user?.fullName || "Daksh Gola"}</h3>
+                  <p className="text-caption text-muted mt-0.5 font-semibold">{user?.primaryEmailAddress?.emailAddress}</p>
                 </div>
               </div>
 
-              <div className="border-t border-[#EBE8E2] pt-4 space-y-3">
+              <div className="border-t border-border pt-4 space-y-3">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-label-val uppercase text-[#aaa6b5] mb-1">First Name</label>
-                    <input type="text" readOnly value={user?.firstName || ""} className="w-full h-9 px-3 border border-[#EBE8E2] bg-[#FAF8F4] rounded-lg outline-none cursor-not-allowed text-input-val text-[#5E5B5A]" />
+                    <label className="block text-label-val uppercase text-muted mb-1">First Name</label>
+                    <input type="text" readOnly value={user?.firstName || ""} className="w-full h-9 px-3 border border-border bg-background rounded-lg outline-none cursor-not-allowed text-input-val text-muted" />
                   </div>
                   <div>
-                    <label className="block text-label-val uppercase text-[#aaa6b5] mb-1">Last Name</label>
-                    <input type="text" readOnly value={user?.lastName || ""} className="w-full h-9 px-3 border border-[#EBE8E2] bg-[#FAF8F4] rounded-lg outline-none cursor-not-allowed text-input-val text-[#5E5B5A]" />
+                    <label className="block text-label-val uppercase text-muted mb-1">Last Name</label>
+                    <input type="text" readOnly value={user?.lastName || ""} className="w-full h-9 px-3 border border-border bg-background rounded-lg outline-none cursor-not-allowed text-input-val text-muted" />
                   </div>
                 </div>
               </div>
 
-              <div className="border-t border-[#EBE8E2] pt-4 space-y-3">
+              <div className="border-t border-border pt-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="text-body-sm font-bold text-[#2C2A29]">Manage Account</h4>
-                    <p className="text-caption text-[#5E5B5A] mt-0.5 font-semibold">Securely sign out of your workspace session.</p>
+                    <h4 className="text-body-sm font-bold text-foreground">Manage Account</h4>
+                    <p className="text-caption text-muted mt-0.5 font-semibold">Securely sign out of your workspace session.</p>
                   </div>
                   <button
                     onClick={() => setShowLogoutConfirm(true)}
                     type="button"
-                    className="h-9 px-4 rounded-xl border border-red-200 text-red-500 hover:bg-red-50 text-btn flex items-center gap-1.5 transition"
+                    className="h-9 px-4 rounded-xl border border-danger-soft text-danger hover:bg-danger-soft text-btn flex items-center gap-1.5 transition"
                   >
                     <LogOut size={13.5} /> Log Out
                   </button>
@@ -230,17 +230,17 @@ export default function SettingsPage() {
           {activeTab === "preferences" && (
             <div className="space-y-6">
               {loadingPrefs ? (
-                <div className="text-center py-6 text-caption font-semibold text-[#aaa6b5]"><Loader2 size={12} className="animate-spin mr-1 inline" /> Loading...</div>
+                <div className="text-center py-6 text-caption font-semibold text-muted"><Loader2 size={12} className="animate-spin mr-1 inline" /> Loading...</div>
               ) : (
-                <div className="space-y-4 text-input-val text-[#2C2A29]">
+                <div className="space-y-4 text-input-val text-foreground">
                   {/* Dropdowns */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-label-val uppercase text-[#aaa6b5] mb-1.5">Active Theme</label>
+                      <label className="block text-label-val uppercase text-muted mb-1.5">Active Theme</label>
                       <select
                         value={preferences.theme}
                         onChange={(e) => handleSaveTextPreference("theme", e.target.value)}
-                        className="w-full h-9 px-2 border border-[#EBE8E2] rounded-lg outline-none text-[#5E5B5A]"
+                        className="w-full h-9 px-2 border border-border bg-background text-foreground rounded-lg outline-none"
                       >
                         <option value="system">System Default</option>
                         <option value="light">Light Cozy Mode</option>
@@ -249,11 +249,11 @@ export default function SettingsPage() {
                     </div>
 
                     <div>
-                      <label className="block text-label-val uppercase text-[#aaa6b5] mb-1.5">AI Engine model</label>
+                      <label className="block text-label-val uppercase text-muted mb-1.5">AI Engine model</label>
                       <select
                         value={preferences.aiModel}
                         onChange={(e) => handleSaveTextPreference("aiModel", e.target.value)}
-                        className="w-full h-9 px-2 border border-[#EBE8E2] rounded-lg outline-none text-[#5E5B5A]"
+                        className="w-full h-9 px-2 border border-border bg-background text-foreground rounded-lg outline-none"
                       >
                         <option value="Gemini">Gemini 2.5 Flash</option>
                         <option value="Pro">Gemini 2.5 Pro</option>
@@ -262,38 +262,38 @@ export default function SettingsPage() {
                   </div>
 
                   {/* Toggle list */}
-                  <div className="border-t border-[#EBE8E2] pt-4 space-y-4">
-                    <h4 className="text-overline text-[#aaa6b5] block mb-2">AI Assistant Preferences</h4>
+                  <div className="border-t border-border pt-4 space-y-4">
+                    <h4 className="text-overline text-muted block mb-2">AI Assistant Preferences</h4>
                     {[
                       { key: "aiSummaries", label: "Perform auto-summarization on Note saves" },
                       { key: "aiRefine", label: "Enable AI Refine sidebars" },
                       { key: "aiWhiteboard", label: "Enable visual diagram generation layout" },
                     ].map((pref) => (
-                      <label key={pref.key} className="flex items-center justify-between p-1 cursor-pointer text-[#5E5B5A] font-semibold text-caption">
+                      <label key={pref.key} className="flex items-center justify-between p-1 cursor-pointer text-muted font-semibold text-caption">
                         <span>{pref.label}</span>
                         <input
                           type="checkbox"
                           checked={preferences[pref.key]}
                           onChange={() => handleTogglePreference(pref.key)}
-                          className="rounded text-[#FF5A36] focus:ring-[#FF5A36] size-4"
+                          className="rounded text-primary focus:ring-primary size-4"
                         />
                       </label>
                     ))}
                   </div>
 
-                  <div className="border-t border-[#EBE8E2] pt-4 space-y-4">
-                    <h4 className="text-overline text-[#aaa6b5] block mb-2">Workspace Notices</h4>
+                  <div className="border-t border-border pt-4 space-y-4">
+                    <h4 className="text-overline text-muted block mb-2">Workspace Notices</h4>
                     {[
                       { key: "emailNotifications", label: "Email alerts for task deadliness" },
                       { key: "pushNotifications", label: "Receive push notices for events schedules" },
                     ].map((pref) => (
-                      <label key={pref.key} className="flex items-center justify-between p-1 cursor-pointer text-[#5E5B5A] font-semibold text-caption">
+                      <label key={pref.key} className="flex items-center justify-between p-1 cursor-pointer text-muted font-semibold text-caption">
                         <span>{pref.label}</span>
                         <input
                           type="checkbox"
                           checked={preferences[pref.key]}
                           onChange={() => handleTogglePreference(pref.key)}
-                          className="rounded text-[#FF5A36] focus:ring-[#FF5A36] size-4"
+                          className="rounded text-primary focus:ring-primary size-4"
                         />
                       </label>
                     ))}
@@ -307,22 +307,22 @@ export default function SettingsPage() {
             <div className="space-y-6">
               <form onSubmit={handleCreateCategorySubmit} className="flex gap-3 items-end">
                 <div className="flex-1 text-input-val">
-                  <label className="block text-label-val uppercase text-[#aaa6b5] mb-1">New Category Label</label>
+                  <label className="block text-label-val uppercase text-muted mb-1">New Category Label</label>
                   <input
                     type="text"
                     required
                     value={newCatName}
                     onChange={(e) => setNewCatName(e.target.value)}
                     placeholder="e.g. Design Sync, Urgent Review..."
-                    className="w-full h-9 px-3 border border-[#EBE8E2] rounded-lg outline-none text-[#5E5B5A]"
+                    className="w-full h-9 px-3 border border-border bg-background text-foreground rounded-lg outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-label-val uppercase text-[#aaa6b5] mb-1">Accent</label>
+                  <label className="block text-label-val uppercase text-muted mb-1">Accent</label>
                   <select
                     value={newCatColor}
                     onChange={(e) => setNewCatColor(e.target.value)}
-                    className="h-9 px-2 border border-[#EBE8E2] rounded-lg outline-none text-caption text-[#5E5B5A]"
+                    className="h-9 px-2 border border-border bg-background text-foreground rounded-lg outline-none text-caption"
                   >
                     <option value="#FF5A36">Coral Orange</option>
                     <option value="#3e9b68">Green Forest</option>
@@ -330,26 +330,26 @@ export default function SettingsPage() {
                     <option value="#e49a3a">Amber Yellow</option>
                   </select>
                 </div>
-                <button type="submit" className="h-9 px-4 bg-[#FF5A36] hover:bg-[#ff7d5e] text-white rounded-xl text-btn flex items-center justify-center shrink-0 shadow-sm">
+                <button type="submit" className="btn-primary h-9 px-4 flex items-center justify-center shrink-0">
                   Add Label
                 </button>
               </form>
 
-              <div className="border-t border-[#EBE8E2] pt-4 space-y-2">
-                <h4 className="text-overline text-[#aaa6b5] block mb-2">Existing Category Labels</h4>
+              <div className="border-t border-border pt-4 space-y-2">
+                <h4 className="text-overline text-muted block mb-2">Existing Category Labels</h4>
                 {loadingCats ? (
-                  <div className="text-caption font-semibold text-[#aaa6b5] py-3">Loading labels...</div>
+                  <div className="text-caption font-semibold text-muted py-3">Loading labels...</div>
                 ) : categories.length === 0 ? (
-                  <div className="text-caption font-semibold text-[#aaa6b5] py-3">0 categories.</div>
+                  <div className="text-caption font-semibold text-muted py-3">0 categories.</div>
                 ) : (
                   <div className="grid grid-cols-2 gap-2">
                     {categories.map((c) => (
-                      <div key={c.id} className="p-2.5 border border-[#EBE8E2] rounded-xl bg-[#FAF8F4] flex items-center justify-between">
+                      <div key={c.id} className="p-2.5 border border-border rounded-xl bg-background flex items-center justify-between">
                         <div className="flex items-center gap-2 text-body-sm font-bold">
                           <span className="size-2 rounded-full shrink-0" style={{ backgroundColor: c.color }} />
                           <span>{c.name}</span>
                         </div>
-                        <button onClick={() => handleDeleteCategory(c.id)} className="text-slate-400 hover:text-red-500 transition">
+                        <button onClick={() => handleDeleteCategory(c.id)} className="text-muted hover:text-danger transition">
                           <Trash2 size={11} />
                         </button>
                       </div>
@@ -362,32 +362,32 @@ export default function SettingsPage() {
 
           {activeTab === "subscription" && (
             <div className="space-y-6">
-              <div className="p-4 bg-gradient-to-br from-[#FFE8E2] to-[#ffded6] border border-[#ffcfc4] rounded-2xl flex items-center justify-between">
+              <div className="p-4 bg-primary-soft border border-primary-soft rounded-2xl flex items-center justify-between">
                 <div>
-                  <h4 className="text-body-sm font-extrabold text-[#FF5A36] flex items-center gap-1.5">
+                  <h4 className="text-body-sm font-extrabold text-primary flex items-center gap-1.5">
                     <Zap size={14} fill="currentColor" /> Worko Free Tier
                   </h4>
-                  <p className="text-caption text-[#5E5B5A] mt-0.5 font-semibold">Workspace account initialized.</p>
+                  <p className="text-caption text-muted mt-0.5 font-semibold">Workspace account initialized.</p>
                 </div>
-                <span className="px-3 py-1 bg-white text-[#FF5A36] font-bold rounded-lg text-badge-val shadow-sm">
+                <span className="px-3 py-1 bg-surface text-primary border border-border font-bold rounded-lg text-badge-val shadow-sm">
                   Active
                 </span>
               </div>
 
-              <div className="border-t border-[#EBE8E2] pt-4 space-y-3">
-                <h4 className="text-overline text-[#aaa6b5] block mb-2">Limits Usage</h4>
+              <div className="border-t border-border pt-4 space-y-3">
+                <h4 className="text-overline text-muted block mb-2">Limits Usage</h4>
                 {[
                   { label: "Notes limits usage", value: "Unlimited", usage: 15 },
                   { label: "Visual canvas templates", value: "3 of 5", usage: 60 },
                   { label: "Spaces folders limit", value: "2 of 3", usage: 66 },
                 ].map((lim, i) => (
-                  <div key={i} className="space-y-1 text-caption font-semibold text-[#5E5B5A]">
+                  <div key={i} className="space-y-1 text-caption font-semibold text-muted">
                     <div className="flex justify-between">
                       <span>{lim.label}</span>
-                      <span className="text-[#FF5A36]">{lim.value}</span>
+                      <span className="text-primary">{lim.value}</span>
                     </div>
-                    <div className="h-1.5 bg-[#FAF8F4] border border-[#EBE8E2] rounded-full overflow-hidden">
-                      <div className="h-full bg-[#FF5A36] rounded-full" style={{ width: `${lim.usage}%` }} />
+                    <div className="h-1.5 bg-background border border-border rounded-full overflow-hidden">
+                      <div className="h-full bg-primary rounded-full" style={{ width: `${lim.usage}%` }} />
                     </div>
                   </div>
                 ))}
@@ -399,22 +399,22 @@ export default function SettingsPage() {
 
       {showLogoutConfirm && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl border border-[#EBE8E2] w-full max-w-sm p-6 shadow-2xl space-y-4">
+          <div className="bg-surface rounded-2xl border border-border w-full max-w-sm p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b pb-3 border-red-50">
-              <h4 className="text-body-sm font-black text-[#2C2A29] flex items-center gap-1.5">
-                <LogOut size={16} className="text-red-500" />
+              <h4 className="text-body-sm font-black text-foreground flex items-center gap-1.5">
+                <LogOut size={16} className="text-danger" />
                 Confirm Log Out
               </h4>
               <button type="button" onClick={() => setShowLogoutConfirm(false)}><X size={15} /></button>
             </div>
-            <p className="text-caption text-[#5E5B5A] leading-relaxed font-semibold">
+            <p className="text-caption text-muted leading-relaxed font-semibold">
               Are you sure you want to sign out of your Worko workspace? You will need to authenticate again to access your dashboard.
             </p>
-            <div className="flex justify-end gap-2 border-t border-slate-100 pt-3">
+            <div className="flex justify-end gap-2 border-t border-border pt-3">
               <button
                 type="button"
                 onClick={() => setShowLogoutConfirm(false)}
-                className="h-8.5 px-4 bg-slate-50 border border-[#EBE8E2] rounded-xl text-btn text-[#5E5B5A]"
+                className="btn-outline h-8.5 px-4"
               >
                 Cancel
               </button>
@@ -424,7 +424,7 @@ export default function SettingsPage() {
                   signOut();
                   window.location.href = "/";
                 }}
-                className="h-8.5 px-4 bg-red-500 hover:bg-red-600 text-white rounded-xl text-btn text-center"
+                className="btn-danger h-8.5 px-4 text-center"
               >
                 Sign Out
               </button>

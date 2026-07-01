@@ -339,20 +339,20 @@ export default function WhiteboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F4] text-[#2C2A29] flex">
+    <div className="min-h-screen bg-background text-foreground flex">
       {/* Sidebar Navigation */}
       <WorkspaceSidebar active="Whiteboard" />
 
       <main className="flex-grow min-w-0 flex h-screen overflow-hidden">
         
         {/* Left canvas selector panel */}
-        <section className="w-56 border-r border-[#EBE8E2] bg-white flex flex-col shrink-0">
-          <div className="p-4 border-b border-[#EBE8E2] flex items-center justify-between">
-            <span className="text-overline text-[#aaa6b5] block">Canvas list</span>
+        <section className="w-56 border-r border-border bg-surface flex flex-col shrink-0">
+          <div className="p-4 border-b border-border flex items-center justify-between">
+            <span className="text-overline text-muted block">Canvas list</span>
             <button
               onClick={handleCreateBoard}
               disabled={creating}
-              className="p-1 bg-[#FFE8E2] text-[#FF5A36] rounded-lg"
+              className="btn-secondary size-8 p-0 flex items-center justify-center"
             >
               {creating ? <Loader2 size={13} className="animate-spin" /> : <Plus size={13} />}
             </button>
@@ -367,7 +367,7 @@ export default function WhiteboardPage() {
                   key={b.id}
                   onClick={() => handleSelectBoard(b)}
                   className={`w-full text-left p-2 rounded-xl text-body-sm font-bold truncate ${
-                    activeBoard?.id === b.id ? "bg-[#FFE8E2]/60 text-[#FF5A36]" : "hover:bg-slate-50"
+                    activeBoard?.id === b.id ? "bg-primary-soft text-primary" : "hover:bg-hover-overlay"
                   }`}
                 >
                   {b.name}
@@ -378,19 +378,19 @@ export default function WhiteboardPage() {
         </section>
 
         {/* Center drawing area */}
-        <section className="flex-1 bg-[#FAF8F4] flex flex-col min-w-0 h-full relative">
+        <section className="flex-1 bg-background flex flex-col min-w-0 h-full relative">
           {activeBoard ? (
             <>
               {/* Toolbar header */}
-              <div className="h-[68px] bg-white border-b border-[#EBE8E2] flex items-center px-6 gap-4 shrink-0 shadow-sm z-10">
+              <div className="h-[68px] bg-surface border-b border-border flex items-center px-6 gap-4 shrink-0 shadow-sm z-10">
                 <input
                   type="text"
                   value={activeBoard.name}
                   onChange={(e) => handleUpdateName(e.target.value)}
-                  className="text-h3 font-black text-[#2C2A29] outline-none max-w-xs border-b border-transparent focus:border-slate-200 bg-transparent"
+                  className="text-h3 font-black text-foreground outline-none max-w-xs border-b border-transparent focus:border-slate-200 bg-transparent"
                 />
 
-                <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl ml-auto">
+                <div className="flex items-center gap-1.5 bg-background border border-border p-1 rounded-xl ml-auto">
                   {[
                     { tool: "select", icon: MousePointer },
                     { tool: "rectangle", icon: Square },
@@ -401,7 +401,7 @@ export default function WhiteboardPage() {
                       key={t.tool}
                       onClick={() => setTool(t.tool as any)}
                       className={`p-1.5 rounded-lg transition ${
-                        tool === t.tool ? "bg-white text-[#FF5A36] shadow-sm" : "text-[#5E5B5A] hover:text-[#2C2A29]"
+                        tool === t.tool ? "bg-surface text-primary shadow-sm" : "text-muted hover:text-foreground"
                       }`}
                     >
                       <t.icon size={14} />
@@ -412,7 +412,7 @@ export default function WhiteboardPage() {
                 {selectedId && (
                   <button
                     onClick={handleDeleteSelected}
-                    className="p-1.5 rounded-lg border border-red-200 text-red-500 hover:bg-red-50"
+                    className="p-1.5 rounded-lg border border-danger-soft text-danger hover:bg-danger-soft"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -557,13 +557,13 @@ export default function WhiteboardPage() {
                 </svg>
 
                 {/* Left floating color tag select */}
-                <div className="absolute left-4 top-4 bg-white border border-[#EBE8E2] rounded-xl p-2 shadow-sm space-y-1.5 flex flex-col z-20">
+                <div className="absolute left-4 top-4 bg-surface border border-border rounded-xl p-2 shadow-sm space-y-1.5 flex flex-col z-20">
                   {["#FF5A36", "#3e9b68", "#ef6688", "#e49a3a", "#3b82f6"].map((hex) => (
                     <button
                       key={hex}
                       onClick={() => setDrawingColor(hex)}
                       className={`size-4 rounded-full border border-white shrink-0 ${
-                        drawingColor === hex ? "ring-2 ring-[#FF5A36]" : ""
+                        drawingColor === hex ? "ring-2 ring-primary" : ""
                       }`}
                       style={{ backgroundColor: hex }}
                     />
@@ -571,13 +571,13 @@ export default function WhiteboardPage() {
                 </div>
 
                 {/* Bottom template quick presets loaders */}
-                <div className="absolute bottom-4 left-4 right-4 bg-white border border-[#EBE8E2] rounded-xl p-3 shadow-md z-20 flex items-center justify-between">
-                  <span className="text-overline text-[#aaa6b5] block">Canvas templates</span>
+                <div className="absolute bottom-4 left-4 right-4 bg-surface border border-border rounded-xl p-3 shadow-md z-20 flex items-center justify-between">
+                  <span className="text-overline text-muted block">Canvas templates</span>
                   <div className="flex gap-2">
-                    <button onClick={() => loadPredefinedTemplate("flowchart")} className="px-2.5 py-1 bg-[#FFE8E2] text-[#FF5A36] text-caption font-bold rounded-lg transition hover:bg-[#FF5A36] hover:text-white">
+                    <button onClick={() => loadPredefinedTemplate("flowchart")} className="btn-secondary text-caption hover:bg-primary hover:text-white px-2.5 py-1">
                       Flowchart Presets
                     </button>
-                    <button onClick={() => loadPredefinedTemplate("mindmap")} className="px-2.5 py-1 bg-[#FFE8E2] text-[#FF5A36] text-caption font-bold rounded-lg transition hover:bg-[#FF5A36] hover:text-white">
+                    <button onClick={() => loadPredefinedTemplate("mindmap")} className="btn-secondary text-caption hover:bg-primary hover:text-white px-2.5 py-1">
                       Mindmap Canvas
                     </button>
                   </div>
@@ -589,7 +589,7 @@ export default function WhiteboardPage() {
               <PenTool size={48} className="text-slate-300" />
               <h4 className="text-body-sm font-bold text-slate-500">No active whiteboard chosen</h4>
               <p className="text-caption max-w-xs text-slate-400">Initialize a creative canvas sheet to outline diagrams.</p>
-              <button onClick={handleCreateBoard} className="h-9.5 px-4 bg-[#FF5A36] hover:bg-[#ff7d5e] text-white rounded-xl text-btn">
+              <button onClick={handleCreateBoard} className="btn-primary h-9.5 px-4">
                 Initialize Whiteboard
               </button>
             </div>
@@ -597,24 +597,24 @@ export default function WhiteboardPage() {
         </section>
 
         {/* Right side AI generator */}
-        <section className="w-80 border-l border-[#EBE8E2] bg-[#FAF8F4] p-5 shrink-0 flex flex-col justify-between">
+        <section className="w-80 border-l border-border bg-background p-5 shrink-0 flex flex-col justify-between">
           <div className="space-y-4">
             <div>
-              <h4 className="text-label-val text-[#FF5A36] uppercase tracking-wider block">AI Diagram Generator</h4>
-              <p className="text-caption text-[#5E5B5A] mt-0.5">Describe your flow process. Gemini will append vector node shapes immediately:</p>
+              <h4 className="text-label-val text-primary uppercase tracking-wider block font-bold">AI Diagram Generator</h4>
+              <p className="text-caption text-muted mt-0.5 font-semibold">Describe your flow process. Gemini will append vector node shapes immediately:</p>
             </div>
 
             <textarea
               placeholder="e.g. User authentication flow, OAuth handshake process, task lifecycle..."
               value={aiPrompt}
               onChange={(e) => setAiPrompt(e.target.value)}
-              className="w-full h-24 p-3 bg-white border border-[#EBE8E2] text-input-val rounded-xl outline-none resize-none focus:border-[#FF5A36]"
+              className="w-full h-24 p-3 bg-surface border border-border text-input-val rounded-xl outline-none resize-none focus:border-primary text-foreground"
             />
 
             <button
               onClick={handleAIGenerateDiagram}
               disabled={generating || !aiPrompt.trim()}
-              className="h-9.5 w-full bg-[#FF5A36] hover:bg-[#ff7d5e] text-white font-bold rounded-xl text-btn flex items-center justify-center gap-1 transition"
+              className="w-full btn-primary h-9.5"
             >
               {generating ? (
                 <>
