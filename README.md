@@ -107,21 +107,3 @@ ASSEMBLYAI_API_KEY=your_assemblyai_key
 npm run dev
 ```
 Open `http://localhost:3000` in your web browser.
-
----
-
-## 🚀 Future Roadmap
-- 📊 Advanced Gantt timeline dashboards widgets.
-- 📱 Native iOS and Android notifications sync.
-- 🔒 Custom SAML SSO enterprise sign-in configurations.
-
----
-
-## 📄 License
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
-
----
-
-## 👥 Authors & Social Links
-- **GitHub**: [dakshgola](https://github.com/dakshgola)
-- **LinkedIn**: [Daksh Gola](https://linkedin.com/in/dakshgola)
