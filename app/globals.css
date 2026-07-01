@@ -5,11 +5,67 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
   --color-border: var(--border);
+  --color-border-muted: var(--border-muted);
   --color-ring: var(--ring);
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-soft-hover: var(--primary-soft-hover);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-secondary-soft: var(--secondary-soft);
+
+  --color-muted: var(--muted);
+  --color-muted-hover: var(--muted-hover);
+  --color-muted-soft: var(--muted-soft);
+
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+
+  --color-success: var(--success);
+  --color-success-hover: var(--success-hover);
+  --color-success-soft: var(--success-soft);
+
+  --color-warning: var(--warning);
+  --color-warning-hover: var(--warning-hover);
+  --color-warning-soft: var(--warning-soft);
+
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-danger-soft: var(--danger-soft);
+
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+
+  --spacing-0-5: var(--space-0-5);
+  --spacing-1: var(--space-1);
+  --spacing-1-5: var(--space-1-5);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-8: var(--space-8);
+  --spacing-10: var(--space-10);
+  --spacing-12: var(--space-12);
+  --spacing-16: var(--space-16);
 
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-display: "General Sans", "Satoshi", "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
@@ -17,11 +73,135 @@
 }
 
 :root {
+  /* Spacing Scale (4px base) */
+  --space-0-5: 0.125rem; /* 2px */
+  --space-1: 0.25rem;    /* 4px */
+  --space-1-5: 0.375rem; /* 6px */
+  --space-2: 0.5rem;     /* 8px */
+  --space-3: 0.75rem;    /* 12px */
+  --space-4: 1rem;       /* 16px */
+  --space-5: 1.25rem;    /* 20px */
+  --space-6: 1.5rem;     /* 24px */
+  --space-8: 2rem;       /* 32px */
+  --space-10: 2.5rem;    /* 40px */
+  --space-12: 3rem;      /* 48px */
+  --space-16: 4rem;      /* 64px */
+
+  /* Radius Scale */
+  --radius-xs: 0.25rem;  /* 4px */
+  --radius-sm: 0.5rem;   /* 8px */
+  --radius-md: 0.75rem;  /* 12px */
+  --radius-lg: 1rem;     /* 16px */
+  --radius-xl: 1.25rem;  /* 20px */
+  --radius-2xl: 1.5rem;  /* 24px */
+  --radius-full: 9999px;
+
+  /* Transitions & Animations */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Light Theme Color Palette */
   --background: #FAF8F4;
   --foreground: #2C2A29;
+  --surface: #FFFFFF;
+  --surface-elevated: #FAF8F4;
   --border: #EBE8E2;
+  --border-muted: #F2EFEA;
+  
+  --primary: #FF5A36;
+  --primary-hover: #E04825;
+  --primary-soft: #FFE8E2;
+  --primary-soft-hover: #FFD4C9;
+
+  --secondary: #6C5CE7;
+  --secondary-hover: #5B4CC4;
+  --secondary-soft: #EEEAFF;
+  
+  --muted: #8B879C;
+  --muted-hover: #726E83;
+  --muted-soft: #FAF9F6;
+
+  --accent: #ef6688;
+  --accent-soft: #FFF0F3;
+  
+  --success: #3e9b68;
+  --success-hover: #317C52;
+  --success-soft: #ECFDF5;
+  
+  --warning: #e49a3a;
+  --warning-hover: #C5812B;
+  --warning-soft: #FFFBEB;
+  
+  --danger: #EF4444;
+  --danger-hover: #DC2626;
+  --danger-soft: #FEF2F2;
+
+  --info: #3b82f6;
+  --info-soft: #EFF6FF;
+
+  --hover-overlay: rgba(0, 0, 0, 0.03);
+  --selected-overlay: rgba(255, 90, 54, 0.08);
   --ring: #FF5A36;
+  --focus-ring: rgba(255, 90, 54, 0.15);
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  
   --radius: 1.25rem;
+}
+
+/* Dark Theme Color Palette */
+.dark {
+  --background: #11100F;
+  --foreground: #F5F4F0;
+  --surface: #1B1A18;
+  --surface-elevated: #242220;
+  --border: #2E2C2A;
+  --border-muted: #1F1E1C;
+
+  --primary: #FF7D5E;
+  --primary-hover: #FF5A36;
+  --primary-soft: #2D1A15;
+  --primary-soft-hover: #3D221D;
+
+  --secondary: #8778FF;
+  --secondary-hover: #6C5CE7;
+  --secondary-soft: #1E1A33;
+
+  --muted: #9E9AA8;
+  --muted-hover: #B7B4C2;
+  --muted-soft: #181716;
+
+  --accent: #F48BA4;
+  --accent-soft: #2D141A;
+
+  --success: #52C288;
+  --success-hover: #3e9b68;
+  --success-soft: #0E2419;
+
+  --warning: #F5B05C;
+  --warning-hover: #e49a3a;
+  --warning-soft: #2D1E0C;
+
+  --danger: #F87171;
+  --danger-hover: #EF4444;
+  --danger-soft: #311515;
+
+  --info: #60A5FA;
+  --info-soft: #111827;
+
+  --hover-overlay: rgba(255, 255, 255, 0.04);
+  --selected-overlay: rgba(255, 125, 94, 0.12);
+  --ring: #FF7D5E;
+  --focus-ring: rgba(255, 90, 54, 0.25);
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.25), 0 4px 6px -4px rgba(0, 0, 0, 0.25);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.35), 0 8px 10px -6px rgba(0, 0, 0, 0.35);
 }
 
 * {
@@ -317,4 +497,338 @@ button {
   font-size: 0.6875rem; /* 11px */
   font-weight: 600;
   letter-spacing: -0.01em;
+}
+
+
+/* ==========================================================
+   BUTTONS COMPONENT SYSTEM (Standard CSS Classes)
+   ========================================================== */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5rem; /* 40px */
+  padding: 0 1.25rem;
+  background-color: var(--primary);
+  color: #FFFFFF;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  box-shadow: var(--shadow-sm);
+  transition: background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+  border: 1px solid transparent;
+  outline: none;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+  transform: translateY(-0.5px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-primary:focus-visible {
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--primary);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5rem;
+  padding: 0 1.25rem;
+  background-color: var(--primary-soft);
+  color: var(--primary);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+  border: 1px solid transparent;
+  outline: none;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--primary-soft-hover);
+  transform: translateY(-0.5px);
+}
+
+.btn-secondary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-secondary:focus-visible {
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--primary);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5rem;
+  padding: 0 1.25rem;
+  background-color: transparent;
+  color: var(--foreground);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+  border: 1px solid transparent;
+  outline: none;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background-color: var(--hover-overlay);
+  color: var(--foreground);
+}
+
+.btn-ghost:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5rem;
+  padding: 0 1.25rem;
+  background-color: var(--surface);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+  outline: none;
+}
+
+.btn-outline:hover:not(:disabled) {
+  background-color: var(--hover-overlay);
+  border-color: var(--muted);
+  transform: translateY(-0.5px);
+}
+
+.btn-outline:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-outline:focus-visible {
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ring);
+}
+
+.btn-outline:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5rem;
+  padding: 0 1.25rem;
+  background-color: var(--danger);
+  color: #FFFFFF;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+  border: 1px solid transparent;
+  outline: none;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: var(--danger-hover);
+  transform: translateY(-0.5px);
+}
+
+.btn-danger:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-danger:focus-visible {
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--danger);
+}
+
+.btn-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: var(--surface);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+  outline: none;
+}
+
+.btn-icon:hover:not(:disabled) {
+  background-color: var(--hover-overlay);
+  border-color: var(--muted);
+  transform: translateY(-0.5px);
+}
+
+.btn-icon:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-floating {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 3rem; /* 48px */
+  padding: 0 1.5rem;
+  background-color: var(--primary);
+  color: #FFFFFF;
+  border-radius: var(--radius-full);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-xl);
+  transition: background-color var(--transition-normal), transform var(--transition-normal), box-shadow var(--transition-normal);
+  border: 1px solid transparent;
+  outline: none;
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 40;
+}
+
+.btn-floating:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 20px 30px -5px rgba(255, 90, 54, 0.3);
+}
+
+.btn-floating:active {
+  transform: translateY(0) scale(1);
+}
+
+
+/* ==========================================================
+   CARDS COMPONENT SYSTEM (Standard CSS Classes)
+   ========================================================== */
+
+.card-cozy {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl); /* 24px corner radius */
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-cozy:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
+}
+
+.card-glass {
+  background-color: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-2xl);
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.03);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.card-glass:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.05);
+}
+
+.dark .card-glass {
+  background-color: rgba(27, 26, 24, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+
+/* ==========================================================
+   INPUTS COMPONENT SYSTEM (Standard CSS Classes)
+   ========================================================== */
+
+.input-cozy {
+  width: 100%;
+  height: 2.625rem; /* 42px */
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md); /* 12px */
+  background-color: var(--background);
+  color: var(--foreground);
+  padding: 0 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  outline: none;
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+}
+
+.input-cozy::placeholder {
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+.input-cozy:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+.input-cozy:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--border-muted);
+}
+
+
+/* ==========================================================
+   GLASSMORPHISM & GENERAL UTILITIES
+   ========================================================== */
+
+.glass-effect {
+  background-color: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .glass-effect {
+  background-color: rgba(27, 26, 24, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
