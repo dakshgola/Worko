@@ -37,6 +37,8 @@ import {
   Github,
   ChevronRight,
   ChevronLeft,
+  Mic,
+  MousePointer,
 } from "lucide-react";
 import { getDashboardData } from "@/lib/dashboard/actions";
 import { createNote } from "@/lib/notes/actions";
@@ -82,61 +84,120 @@ export default function Home() {
 }
 
 // ==========================================
-// 1. PUBLIC LANDING PAGE
+// 1. PORTFOLIO-GRADE SaaS LANDING PAGE
 // ==========================================
+const LANDING_FEATURES = [
+  { title: "AI Conversational Assistant", desc: "Speak or chat with Gemini to query metrics, write documentation drafts, or outline database tasks.", icon: Bot, bg: "from-amber-500 to-orange-600", accent: "rgba(245, 176, 92, 0.15)" },
+  { title: "Neon Postgres Calendar", desc: "Drag-and-drop meetings agendas directly synced to your real-time database.", icon: CalendarDays, bg: "from-sky-500 to-indigo-600", accent: "rgba(96, 165, 250, 0.15)" },
+  { title: "Collaborative Kanban Tasks", desc: "Organize check-lists, track deadliness, and drag tasks between customizable boards columns.", icon: SquareKanban, bg: "from-emerald-500 to-teal-600", accent: "rgba(82, 194, 136, 0.15)" },
+  { title: "TipTap Specs Wiki Documents", desc: "Structure rich-text specs documents and sub-pages to build team-shared knowledge bases.", icon: StickyNote, bg: "from-orange-500 to-red-600", accent: "rgba(255, 90, 54, 0.15)" },
+  { title: "SVG Whiteboards", desc: "Draw mindmaps, flows, and shapes with collaborative pointers on an infinite canvas sheet.", icon: PenTool, bg: "from-pink-500 to-rose-600", accent: "rgba(244, 139, 164, 0.15)" },
+  { title: "Voice Notes Dictation", desc: "Dictate transcriptions directly at cursor using AssemblyAI streaming sockets.", icon: StickyNote, bg: "from-violet-500 to-purple-600", accent: "rgba(135, 120, 255, 0.15)" },
+  { title: "AI Custom App Builder", desc: "Describe custom trackers app layouts and compile schema JSONs config immediately.", icon: WandSparkles, bg: "from-rose-500 to-pink-600", accent: "rgba(244, 139, 164, 0.15)" },
+  { title: "Global Search Engine", desc: "Instant matching overlay across notes, board cards, checklists, and calendar events.", icon: Search, bg: "from-indigo-500 to-blue-600", accent: "rgba(108, 92, 231, 0.15)" },
+];
+
+const LANDING_FAQS = [
+  { q: "What is Worko and how does the AI assist?", a: "Worko combines your notes, tasks, calendar agendas, and creative whiteboards into a single collaborative workspace. The built-in AI orchestrator automates your routine tasks: scheduling calendar meetings, structuring task lists, creating pages templates, and analyzing notes automatically." },
+  { q: "Is the real-time collaboration feature secure?", a: "Yes, absolutely. Worko uses secure WebSockets and PostgreSQL schemas to sync documents, whiteboards, and canvas elements instantly with clerk-protected authentication." },
+  { q: "Can I self-host Worko or run it locally?", a: "Worko is fully open-source and easy to run. You can clone the GitHub repository, plug in your Neon DB credentials and Gemini API Key, and spin it up in seconds." },
+  { q: "How does the voice-to-text notes dictation work?", a: "Worko integrates AssemblyAI streaming sockets to transcribe audio directly at your cursor in real-time. Simply click the microphone icon and start speaking." }
+];
+
 function LandingPage() {
-  const [demoActiveTab, setDemoActiveTab] = useState<"notes" | "whiteboard" | "kanban">("notes");
-  const [aiChatVal, setAiChatVal] = useState("");
-  const [aiReplies, setAiReplies] = useState<string[]>([
-    "Hello! I can compile today's schedules, refine notes, or generate mini habit tracker apps. Describe your request."
-  ]);
-  const [typing, setTyping] = useState(false);
+  const [activeShowcaseTab, setActiveShowcaseTab] = useState<"dashboard" | "ai" | "voice" | "collab" | "whiteboard">("dashboard");
+  const [faqOpenIdx, setFaqOpenIdx] = useState<number | null>(null);
 
-  const handleDemoAiSubmit = () => {
-    if (!aiChatVal.trim()) return;
-    const userQuery = aiChatVal;
-    setAiReplies((prev) => [...prev, `User: ${userQuery}`]);
-    setAiChatVal("");
-    setTyping(true);
+  // AI Prompt Showcase State
+  const [aiShowcaseQuery, setAiShowcaseQuery] = useState("");
+  const [aiShowcaseOutput, setAiShowcaseOutput] = useState("Hello! Select a query or type ideas below to simulate real-time AI responses.");
+  const [aiShowcaseTyping, setAiShowcaseTyping] = useState(false);
 
-    setTimeout(() => {
-      setTyping(false);
-      setAiReplies((prev) => [
-        ...prev,
-        `AI: Understood! I have processed "${userQuery}" and set up a workspace reflection layout inside your dashboard.`
-      ]);
-    }, 1200);
+  // Soundwave voice state
+  const [simulatedRecording, setSimulatedRecording] = useState(false);
+  const [dictatedText, setDictatedText] = useState("");
+
+  const triggerAiShowcase = (query: string) => {
+    if (aiShowcaseTyping) return;
+    setAiShowcaseQuery(query);
+    setAiShowcaseTyping(true);
+    setAiShowcaseOutput("");
+
+    const response = query.includes("checklist")
+      ? "AI: Created task board config for Sprint Launch! Generated columns: [Backlog, Build, Launch]. Added 3 tasks."
+      : "AI: I've summarized your strategic notes. Key points: 1) Deploy next Monday, 2) Sync calendar items, 3) Track limits metrics.";
+
+    let idx = 0;
+    const interval = setInterval(() => {
+      setAiShowcaseOutput((prev) => prev + response.charAt(idx));
+      idx++;
+      if (idx >= response.length) {
+        clearInterval(interval);
+        setAiShowcaseTyping(false);
+      }
+    }, 25);
+  };
+
+  const triggerVoiceDictation = () => {
+    if (simulatedRecording) {
+      setSimulatedRecording(false);
+      return;
+    }
+    setSimulatedRecording(true);
+    setDictatedText("");
+    const speechText = "Draft: Let's launch the custom template builder app on Monday at 10:00. Check calendar sync and verify database indexes.";
+    let idx = 0;
+    const interval = setInterval(() => {
+      setDictatedText((prev) => prev + speechText.charAt(idx));
+      idx++;
+      if (idx >= speechText.length) {
+        clearInterval(interval);
+        setSimulatedRecording(false);
+      }
+    }, 35);
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-[#FFE8E2] selection:text-[#C23B1E] overflow-hidden relative">
-      {/* Layered radial glow backgrounds */}
-      <div className="absolute top-[-10%] left-[-20%] w-[60%] h-[60%] rounded-full bg-gradient-to-br from-primary/10 to-transparent blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-gradient-to-br from-secondary/5 to-transparent blur-[120px] pointer-events-none" />
+    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-[#FFE8E2] selection:text-[#C23B1E] overflow-hidden relative pb-10">
+      
+      {/* Dynamic Animated Mesh Gradients Backdrop */}
+      <div className="absolute top-[-10%] left-[-15%] w-[80%] h-[70%] rounded-full bg-gradient-to-br from-primary/8 via-secondary/4 to-transparent blur-[160px] pointer-events-none animate-pulse duration-[8s]" />
+      <div className="absolute top-[30%] right-[-10%] w-[60%] h-[60%] rounded-full bg-gradient-to-tr from-accent-soft via-primary/5 to-transparent blur-[160px] pointer-events-none" />
+      <div className="absolute bottom-[10%] left-[-20%] w-[70%] h-[60%] rounded-full bg-gradient-to-tr from-secondary/5 via-[#ff9b84]/5 to-transparent blur-[160px] pointer-events-none" />
+
+      {/* Grid Pattern Overlay */}
+      <div 
+        className="absolute inset-0 z-[-2] pointer-events-none opacity-[0.015]"
+        style={{
+          backgroundImage: `radial-gradient(var(--foreground) 1px, transparent 1px)`,
+          backgroundSize: "24px 24px"
+        }}
+      />
 
       {/* Navigation header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-surface/85 backdrop-blur-md px-6 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-50 border-b border-border/70 bg-surface/80 backdrop-blur-xl px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="grid size-9.5 place-items-center rounded-xl bg-gradient-to-br from-primary to-[#ff7d5e] text-white shadow-sm ring-1 ring-white/20">
             <Zap size={16} fill="currentColor" />
           </div>
           <div>
             <span className="text-h4 text-foreground">Worko</span>
-            <span className="ml-1.5 px-1.5 py-0.5 rounded-md bg-primary-soft text-primary text-badge-val">AI Hub</span>
+            <span className="ml-1.5 px-1.5 py-0.5 rounded-md bg-primary-soft text-primary text-badge-val font-bold">SaaS Pro</span>
           </div>
         </div>
 
-        <nav className="hidden md:flex items-center gap-8 text-nav text-muted">
-          <a href="#features" className="hover:text-primary transition">Features</a>
-          <a href="#demo" className="hover:text-primary transition">Interactive Showcase</a>
-          <a href="#pricing" className="hover:text-primary transition">Pricing</a>
+        <nav className="hidden md:flex items-center gap-8 text-nav text-muted font-semibold">
+          <a href="#features" className="hover:text-primary transition-colors">Features</a>
+          <a href="#showcase" className="hover:text-primary transition-colors">Workspace Showcase</a>
+          <a href="#pricing" className="hover:text-primary transition-colors">Pricing Plans</a>
+          <a href="#faq" className="hover:text-primary transition-colors">FAQ</a>
           <a href="https://github.com/dakshgola/Worko" target="_blank" className="hover:text-primary transition flex items-center gap-1">
             <Github size={13} /> GitHub
           </a>
         </nav>
 
         <div className="flex items-center gap-3">
-          <a href="/sign-in" className="text-btn text-muted hover:text-foreground transition px-3 py-2">
+          <a href="/sign-in" className="text-btn text-muted hover:text-foreground transition-colors px-3 py-2">
             Sign In
           </a>
           <a
@@ -148,281 +209,363 @@ function LandingPage() {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="max-w-6xl mx-auto px-6 pt-16 lg:pt-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative">
-        <div className="lg:col-span-6 space-y-8 text-left">
-          <div className="flex flex-wrap gap-2 pt-2">
-            {[
-              { label: "AI Assistant", style: "border-[#e0d6ff] text-[#6c5ce7] bg-[#f4f0ff]" },
-              { label: "Real-time Collaboration", style: "border-emerald-100 text-emerald-700 bg-emerald-50" },
-              { label: "Smart Workspace", style: "border-rose-100 text-rose-700 bg-rose-50" }
-            ].map((tag) => (
-              <span key={tag.label} className={`px-3 py-1 rounded-full border text-badge-val ${tag.style}`}>
-                {tag.label}
-              </span>
-            ))}
+      {/* 1. Hero Section */}
+      <section className="max-w-6xl mx-auto px-6 pt-16 lg:pt-24 text-center space-y-8 relative">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="space-y-6"
+        >
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary-soft/50 text-primary text-badge-val font-bold">
+            <Sparkles size={10} className="animate-spin duration-[3s]" />
+            Introducing Worko Workspace 2.0
           </div>
 
-          <h1 className="display-lg text-foreground">
-            Your AI-powered workspace for{" "}
-            <span className="bg-gradient-to-r from-primary via-[#ff7d5e] to-pink-500 bg-clip-text text-transparent">
-              notes, tasks, whiteboards,
-            </span>{" "}
-            and team collaboration.
+          <h1 className="display-lg text-foreground tracking-tight max-w-4xl mx-auto leading-[1.05]">
+            Where ideas connect, plans align, and{" "}
+            <span className="bg-gradient-to-r from-primary via-[#ff7d5e] to-secondary bg-clip-text text-transparent">
+              AI drives collaboration.
+            </span>
           </h1>
 
-          <p className="text-body-lg text-muted max-w-xl">
-            Flowbase combines Notion-style notes, Miro-style whiteboards, Kanban boards, calendar planning, AI assistance, template building, and real-time collaboration in one modern workspace.
+          <p className="text-body-lg text-muted max-w-2xl mx-auto font-medium">
+            Bring your team's wiki specifications, task lists, calendar planning agendas, infinite drawings whiteboard canvas, and AssemblyAI dictation together in a premium cohesive workflow hub.
           </p>
 
-          <div className="flex flex-wrap gap-3 pt-2">
+          <div className="flex justify-center gap-3.5 pt-2">
             <a
               href="/sign-up"
-              className="h-11 px-7 rounded-xl bg-primary hover:bg-primary-hover text-btn text-white shadow-lg flex items-center justify-center hover:-translate-y-0.5 transition"
+              className="h-11 px-7 rounded-xl bg-primary hover:bg-primary-hover text-btn text-white shadow-lg flex items-center justify-center hover:-translate-y-0.5 transition duration-200"
             >
-              Get Started <ArrowRight size={14} className="ml-1" />
+              Get Started Free <ArrowRight size={14} className="ml-1" />
             </a>
             <a
-              href="#demo"
-              className="h-11 px-7 rounded-xl bg-surface border border-border text-btn text-muted flex items-center justify-center gap-1.5 hover:bg-slate-50 transition"
+              href="#showcase"
+              className="h-11 px-7 rounded-xl bg-surface border border-border text-btn text-muted flex items-center justify-center gap-1.5 hover:bg-slate-50 transition duration-200"
             >
-              <Play size={12} fill="currentColor" /> Watch Demo
+              <Play size={11} fill="currentColor" /> Live Showcase
             </a>
           </div>
-        </div>
+        </motion.div>
+      </section>
 
-        {/* Mock Flowbase Showcase Card (matches screenshot) */}
-        <div className="lg:col-span-6">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="rounded-[24px] border border-border bg-surface p-6 shadow-xl space-y-6 relative overflow-hidden"
-          >
-            {/* Command center header */}
-            <div className="flex items-center justify-between border-b border-background pb-4">
-              <div className="space-y-0.5">
-                <span className="text-overline text-primary">Flowbase Command Center</span>
-                <h4 className="text-h3 text-foreground">Launch workspace</h4>
-              </div>
-              
-              {/* User initials bubble stack */}
-              <div className="flex -space-x-2 font-sans">
-                {["MC", "ER", "PR"].map((init, i) => (
-                  <div
-                    key={init}
-                    className={`size-7 rounded-full border border-white text-[8px] font-black flex items-center justify-center text-white shadow-sm ${
-                      i === 0 ? "bg-primary" : i === 1 ? "bg-emerald-500" : "bg-violet-500"
-                    }`}
-                  >
-                    {init}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Metrics cards grid */}
-            <div className="grid grid-cols-3 gap-3">
+      {/* 2. Interactive / Animated Dashboard Showcase Panel */}
+      <section id="showcase" className="max-w-5xl mx-auto px-6 pt-16 pb-12">
+        <div className="bg-surface border border-border/80 rounded-[32px] p-2.5 shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
+          
+          {/* Tabs switch selectors header */}
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3 px-4 pt-3.5 relative z-10">
+            <div className="flex items-center gap-1.5 bg-background p-1.5 rounded-2xl border border-border">
               {[
-                { title: "Tasks completed", val: "42", badge: "on track", color: "text-success bg-success-soft border-emerald-150" },
-                { title: "AI drafts", val: "18", badge: "on track", color: "text-[#6c5ce7] bg-[#f2efff] border-[#e1dbff]" },
-                { title: "This week", val: "9 events", badge: "on track", color: "text-primary bg-primary-soft border-[#ffd5cc]" }
-              ].map((m, i) => (
-                <div key={i} className="bg-background border border-border rounded-2xl p-3.5 space-y-2">
-                  <span className="text-label-val text-muted leading-tight block">{m.title}</span>
-                  <p className="text-h3 text-foreground">{m.val}</p>
-                  <span className={`inline-block px-2 py-0.5 text-badge-val rounded-md border ${m.color}`}>
-                    {m.badge}
-                  </span>
-                </div>
+                { id: "dashboard", label: "Dashboard Widget", icon: LayoutDashboard },
+                { id: "ai", label: "Gemini AI assistant", icon: Bot },
+                { id: "voice", label: "Voice note waveforms", icon: StickyNote },
+                { id: "collab", label: "Realtime Collab", icon: Activity },
+                { id: "whiteboard", label: "Mindmap Whiteboard", icon: PenTool }
+              ].map((tb) => (
+                <button
+                  key={tb.id}
+                  onClick={() => setActiveShowcaseTab(tb.id as any)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-caption font-bold transition-all ${
+                    activeShowcaseTab === tb.id
+                      ? "bg-surface text-primary shadow-sm border border-border"
+                      : "text-muted hover:text-foreground"
+                  }`}
+                >
+                  <tb.icon size={11} />
+                  {tb.label}
+                </button>
               ))}
             </div>
 
-            {/* AI Brief and quick board columns mockup */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* AI Brief panel */}
-              <div className="bg-background border border-border rounded-2xl p-4 space-y-3 text-left">
-                <div className="flex items-center justify-between border-b border-border/50 pb-2">
-                  <span className="text-label-val text-foreground">Al brief</span>
-                  <Bot size={13} className="text-primary" />
-                </div>
-                <div className="space-y-2 text-caption text-[#5E5B5A] font-semibold">
-                  {[
-                    "Create launch tasks",
-                    "Summarize notes",
-                    "Draft reminders"
-                  ].map((chk, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <span className="grid size-4 place-items-center rounded bg-emerald-500 text-white"><Check size={9} strokeWidth={3} /></span>
-                      <span>{chk}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            <div className="flex items-center gap-1 text-caption text-muted font-bold">
+              <span className="size-2 rounded-full bg-success animate-pulse" /> Live Simulation
+            </div>
+          </div>
 
-              {/* Columns mockup */}
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { col: "Plan", cards: ["Launch checklist", "Research notes"] },
-                  { col: "Build", cards: ["AI task flow", "Whiteboard map"] },
-                  { col: "Review", cards: ["Team comments", "Calendar sync"] }
-                ].map((col, i) => (
-                  <div key={i} className="space-y-1.5">
-                    <span className="text-overline text-muted block text-center">{col.col}</span>
-                    {col.cards.map((c, ci) => (
-                      <div key={ci} className="bg-surface border border-border p-2 rounded-xl text-[10px] font-bold text-foreground shadow-sm leading-tight text-center">
-                        {c}
+          {/* Interactive tabs preview body */}
+          <div className="p-6 bg-background/50 rounded-[24px] min-h-[360px] flex flex-col justify-between relative z-10">
+            <AnimatePresence mode="wait">
+              {activeShowcaseTab === "dashboard" && (
+                <motion.div
+                  key="dashboard"
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-6 text-left"
+                >
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h4 className="text-h3 text-foreground font-black">Workspace Reflection</h4>
+                      <p className="text-caption text-muted font-semibold">Toggled dashboard layout preview</p>
+                    </div>
+                    <span className="px-3.5 py-1 rounded-xl bg-primary-soft text-primary text-badge-val font-bold border border-primary/10">Active Agendas</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[
+                      { title: "Weekly productivty Score", value: "94%", detail: "+4% vs last week", color: "text-success bg-success-soft" },
+                      { title: "Completed Agile cards", value: "32 Tasks", detail: "Sprint deadline met", color: "text-primary bg-primary-soft" },
+                      { title: "Next strategic Sync", value: "10:00 AM", detail: "Tomorrow schedule", color: "text-[#6c5ce7] bg-[#eeeaff]" }
+                    ].map((st, i) => (
+                      <div key={i} className="bg-surface border border-border p-4 rounded-2xl shadow-sm space-y-2">
+                        <span className="text-label-val text-muted block">{st.title}</span>
+                        <h5 className="text-h2 text-foreground font-extrabold">{st.value}</h5>
+                        <span className={`inline-block px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider ${st.color}`}>
+                          {st.detail}
+                        </span>
                       </div>
                     ))}
                   </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
+
+                  <div className="p-4 bg-surface border border-border rounded-2xl flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="size-2.5 rounded-full bg-primary animate-pulse" />
+                      <span className="text-body-sm font-bold">Strategic launch sync scheduled.</span>
+                    </div>
+                    <a href="/calendar" className="text-caption text-primary hover:underline font-bold flex items-center gap-0.5">Go to Calendar <ArrowUpRight size={10} /></a>
+                  </div>
+                </motion.div>
+              )}
+
+              {activeShowcaseTab === "ai" && (
+                <motion.div
+                  key="ai"
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-4 text-left max-w-2xl mx-auto"
+                >
+                  <div>
+                    <h4 className="text-h3 text-foreground font-black flex items-center gap-2">
+                      <Bot size={20} className="text-primary" />
+                      Orchestrator Gemini Prompt Simulator
+                    </h4>
+                    <p className="text-caption text-muted font-semibold">Select quick ideas below to watch typewriter responses:</p>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button onClick={() => triggerAiShowcase("Draft launch checklist tasks")} className="px-3 py-1 rounded-lg border border-border bg-surface text-caption font-bold hover:border-primary text-foreground transition-all">
+                      &quot;Draft sprint launch task checklist&quot;
+                    </button>
+                    <button onClick={() => triggerAiShowcase("Summarize weekly team reflection notes")} className="px-3 py-1 rounded-lg border border-border bg-surface text-caption font-bold hover:border-primary text-foreground transition-all">
+                      &quot;Summarize strategic specs wiki&quot;
+                    </button>
+                  </div>
+
+                  <div className="p-4 bg-surface border border-border rounded-2xl min-h-[140px] text-body-sm font-medium leading-relaxed font-mono relative flex flex-col justify-between">
+                    {aiShowcaseTyping && (
+                      <div className="flex items-center gap-1.5 mb-2">
+                        <span className="ai-dot-indicator" />
+                        <span className="ai-dot-indicator" />
+                        <span className="ai-dot-indicator" />
+                      </div>
+                    )}
+                    <div className="flex-1 text-[#2C2A29] dark:text-[#F5F4F0]">
+                      {aiShowcaseOutput}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {activeShowcaseTab === "voice" && (
+                <motion.div
+                  key="voice"
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-4 text-left max-w-xl mx-auto"
+                >
+                  <div>
+                    <h4 className="text-h3 text-foreground font-black">AssemblyAI Waveforms Stream</h4>
+                    <p className="text-caption text-muted font-semibold">Trigger speech recording to watch audio wave translation:</p>
+                  </div>
+
+                  <button
+                    onClick={triggerVoiceDictation}
+                    className={`w-full h-11 rounded-xl font-bold flex items-center justify-center gap-2 border shadow-sm transition ${
+                      simulatedRecording ? "bg-red-500 text-white animate-pulse" : "btn-secondary"
+                    }`}
+                  >
+                    <Mic size={14} />
+                    {simulatedRecording ? "Recording Speech... Click to Stop" : "Record Dictation Simulation"}
+                  </button>
+
+                  {simulatedRecording && (
+                    <div className="flex justify-center py-2.5">
+                      <div className="voice-wave-container">
+                        <span className="voice-wave-bar" />
+                        <span className="voice-wave-bar" />
+                        <span className="voice-wave-bar" />
+                        <span className="voice-wave-bar" />
+                        <span className="voice-wave-bar" />
+                      </div>
+                    </div>
+                  )}
+
+                  {dictatedText && (
+                    <div className="p-4 bg-surface border border-dashed border-border rounded-xl italic text-body-sm font-semibold leading-relaxed">
+                      &quot;{dictatedText}&quot;
+                    </div>
+                  )}
+                </motion.div>
+              )}
+
+              {activeShowcaseTab === "collab" && (
+                <motion.div
+                  key="collab"
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-5 text-left relative"
+                >
+                  <div>
+                    <h4 className="text-h3 text-foreground font-black">Multiplayer Document Sync</h4>
+                    <p className="text-caption text-muted font-semibold">Cursors outline check lists dynamically:</p>
+                  </div>
+
+                  {/* Simulated cursors */}
+                  <div className="absolute top-[80px] left-[40%] bg-indigo-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow z-20 flex items-center gap-1 animate-bounce">
+                    <MousePointer size={10} /> Jessica
+                  </div>
+                  <div className="absolute top-[160px] right-[25%] bg-primary text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow z-20 flex items-center gap-1 animate-pulse">
+                    <MousePointer size={10} /> Marcus
+                  </div>
+
+                  <div className="bg-surface border border-border rounded-2xl p-5 space-y-3.5 max-w-md mx-auto">
+                    <span className="text-overline text-muted">Specifications checklist</span>
+                    <div className="space-y-2.5">
+                      {[
+                        { text: "Launch database indexes on Neon", checked: true, user: "Jessica" },
+                        { text: "Confirm Clerk user hooks trigger", checked: true, user: "Marcus" },
+                        { text: "Check static paths page builder renders", checked: false, user: "You" }
+                      ].map((item, i) => (
+                        <div key={i} className="flex items-center justify-between text-body-sm p-1">
+                          <div className="flex items-center gap-2">
+                            <span className={`grid size-4 place-items-center rounded border ${
+                              item.checked ? "bg-success text-white border-success" : "border-border"
+                            }`}>
+                              {item.checked && <Check size={10} strokeWidth={3} />}
+                            </span>
+                            <span className={item.checked ? "line-through text-muted" : "font-bold"}>{item.text}</span>
+                          </div>
+                          <span className="text-[9px] px-1.5 py-0.5 bg-background rounded border text-muted font-semibold">{item.user}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {activeShowcaseTab === "whiteboard" && (
+                <motion.div
+                  key="whiteboard"
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-4 text-left"
+                >
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h4 className="text-h3 text-foreground font-black">SVG Infinite Canvas</h4>
+                      <p className="text-caption text-muted font-semibold">Predefined flowchart vector templates</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-surface border border-border rounded-2xl p-6 min-h-[220px] flex items-center justify-center gap-6 relative">
+                    <div className="p-4 border border-primary bg-primary-soft/50 rounded-xl font-bold text-center w-36 shadow-sm">
+                      <p className="text-overline text-primary">Input</p>
+                      <p className="text-caption mt-1">Dictation</p>
+                    </div>
+                    <span className="text-muted text-lg">&rarr;</span>
+                    <div className="p-4 border border-secondary bg-[#eeeaff] rounded-xl font-bold text-center w-36 shadow-sm">
+                      <p className="text-overline text-[#6c5ce7]">Process</p>
+                      <p className="text-caption mt-1">AI Transcribe</p>
+                    </div>
+                    <span className="text-muted text-lg">&rarr;</span>
+                    <div className="p-4 border border-success bg-success-soft rounded-xl font-bold text-center w-36 shadow-sm animate-pulse">
+                      <p className="text-overline text-success">Output</p>
+                      <p className="text-caption mt-1">Calendar Sync</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </section>
 
-      {/* Features Grid */}
+      {/* 3. Features Grid */}
       <section id="features" className="max-w-6xl mx-auto px-6 py-20 space-y-12">
-        <div className="text-center space-y-2 max-w-xl mx-auto">
-          <span className="text-label-val text-primary uppercase tracking-wider block">Features grid</span>
-          <h2 className="text-h2 text-foreground">
-            Everything you need in a unified knowledge workspace
+        <div className="text-center space-y-2.5 max-w-xl mx-auto">
+          <span className="text-label-val text-primary uppercase tracking-wider block font-bold">Uncapped parameters</span>
+          <h2 className="text-h2 text-foreground font-extrabold leading-tight">
+            All your collaborative tools packed in one workspace hub
           </h2>
-          <p className="text-body-sm text-[#5E5B5A]">
-            Ditch multiple application subscriptions. Access everything inside Worko.
+          <p className="text-body-sm text-muted font-semibold">
+            Cut down multiple dashboard tools subscriptions. Focus on shipping features instead.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            { title: "AI Assistant", desc: "Streaming conversational answers and instant database actions.", icon: Bot, bg: "bg-amber-500" },
-            { title: "Neon Calendar", desc: "Interactive drag-and-drop agendas synced directly to PostgreSQL.", icon: CalendarDays, bg: "bg-sky-500" },
-            { title: "Kanban Board", desc: "Task tracking, priorities levels, and check-list logs.", icon: SquareKanban, bg: "bg-emerald-500" },
-            { title: "Collab Notes", desc: "TipTap rich text editor with auto-saves, favors and duplication.", icon: StickyNote, bg: "bg-orange-500" },
-            { title: "Whiteboard Canvas", desc: "Interactive SVG vectors drawing tool with templates and layouts.", icon: PenTool, bg: "bg-pink-500" },
-            { title: "Spaces Wiki", desc: "Nest folder-like spaces and sub-pages to build wikis.", icon: PanelTop, bg: "bg-violet-500" },
-            { title: "AI Builder", desc: "Describe custom trackers and generate structural JSON configs.", icon: WandSparkles, bg: "bg-rose-500" },
-            { title: "Global Search", desc: "Instant matching overlay across notes, pages, and checklists.", icon: Search, bg: "bg-indigo-500" },
-          ].map((feat, i) => (
+          {LANDING_FEATURES.map((feat, i) => (
             <div
               key={i}
-              className="bg-surface border border-border rounded-[20px] p-5 shadow-sm hover:shadow-md transition hover:-translate-y-0.5 space-y-3 group"
+              className="bg-surface border border-border rounded-[24px] p-6 shadow-sm hover:shadow-md transition hover:-translate-y-0.5 flex flex-col justify-between min-h-[190px] group"
             >
-              <div className={`size-10 rounded-xl flex items-center justify-center text-white ${feat.bg} shadow-sm group-hover:scale-105 transition`}>
-                <feat.icon size={18} strokeWidth={2.25} />
+              <div className="space-y-3">
+                <div className={`size-10 rounded-xl bg-gradient-to-br ${feat.bg} flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition duration-200`}>
+                  <feat.icon size={16} strokeWidth={2.25} />
+                </div>
+                <h4 className="text-body-sm font-extrabold text-foreground">{feat.title}</h4>
+                <p className="text-caption text-muted leading-relaxed font-semibold">{feat.desc}</p>
               </div>
-              <h4 className="text-h4 text-foreground">{feat.title}</h4>
-              <p className="text-body-sm text-[#5E5B5A] leading-relaxed font-semibold">{feat.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Interactive Showcase */}
-      <section id="demo" className="max-w-6xl mx-auto px-6 py-16 space-y-8 bg-surface border border-border rounded-3xl shadow-sm">
-        <div className="text-center space-y-2 max-w-lg mx-auto">
-          <span className="text-label-val text-primary uppercase tracking-wider block">Showcase</span>
-          <h3 className="text-h2 text-foreground">Try the AI Assistant simulation</h3>
-          <p className="text-body-sm text-[#5E5B5A]">Type query ideas to simulate instant voice translation streams.</p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center max-w-4xl mx-auto pt-4">
-          <div className="space-y-4">
-            <h4 className="text-h3 text-foreground">Unified AI Assistant interface</h4>
-            <p className="text-body-sm text-[#5E5B5A] leading-relaxed font-semibold">
-              Speak into your microphone or key in commands. Worko AI Assistant transcribes, processes workspace requests, and generates dynamic confirmations on the fly.
-            </p>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setAiChatVal("Schedule strategic planning tomorrow at 10:00")}
-                className="px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 text-caption font-bold rounded-lg hover:bg-amber-100 transition"
-              >
-                &quot;Schedule sync&quot;
-              </button>
-              <button
-                onClick={() => setAiChatVal("Create a priority research note draft")}
-                className="px-2.5 py-1 bg-indigo-50 text-indigo-700 border border-indigo-200 text-caption font-bold rounded-lg hover:bg-indigo-100 transition"
-              >
-                &quot;Create note&quot;
-              </button>
-            </div>
-          </div>
-
-          <div className="bg-background border border-border rounded-2xl p-4 space-y-3 text-left">
-            <div className="flex items-center gap-2 pb-2 border-b border-border">
-              <span className="grid size-7 place-items-center rounded-lg bg-amber-100 text-amber-600"><Bot size={13} /></span>
-              <span className="text-label-val text-foreground">Worko Bot</span>
-            </div>
-            
-            <div className="space-y-2 max-h-48 overflow-y-auto text-caption leading-relaxed font-medium">
-              {aiReplies.map((r, i) => (
-                <div
-                  key={i}
-                  className={`p-2.5 rounded-xl font-semibold ${
-                    r.startsWith("User:") ? "bg-primary text-white ml-6" : "bg-surface border border-border mr-6"
-                  }`}
-                >
-                  {r}
-                </div>
-              ))}
-              {typing && <div className="text-[10px] text-slate-400 italic">Gemini is typing...</div>}
-            </div>
-
-            <div className="flex gap-2 border-t border-border pt-2">
-              <input
-                type="text"
-                placeholder="Ask simulator..."
-                value={aiChatVal}
-                onChange={(e) => setAiChatVal(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleDemoAiSubmit()}
-                className="flex-1 bg-surface border border-border rounded-lg px-2 text-input-val outline-none focus:border-primary"
-              />
-              <button
-                onClick={handleDemoAiSubmit}
-                className="px-3.5 bg-primary hover:bg-primary-hover text-white font-bold rounded-lg text-btn"
-              >
-                Send
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
+      {/* 4. Pricing Plans Section */}
       <section id="pricing" className="max-w-6xl mx-auto px-6 py-20 space-y-12">
-        <div className="text-center space-y-2 max-w-xl mx-auto">
-          <span className="text-label-val text-primary uppercase tracking-wider block">Pricing plan</span>
-          <h3 className="text-h2 text-foreground">Pricing plans designed for everyone</h3>
-          <p className="text-body-sm text-[#5E5B5A]">Start free, scale boundaries as your group processes grow.</p>
+        <div className="text-center space-y-2.5 max-w-xl mx-auto">
+          <span className="text-label-val text-primary uppercase tracking-wider block font-bold">Flexible Plans</span>
+          <h2 className="text-h2 text-foreground font-black">Cozy prices for every organization</h2>
+          <p className="text-body-sm text-muted font-semibold">Get started free of charge, upgrade tiers as limits usage scale.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
           {[
-            { plan: "Free Tier", price: "$0", desc: "Perfect to kickstart wiki entries & notes database.", features: ["Unlimited collaborative notes", "Up to 5 Whiteboards", "Postgres Calendar Events"] },
-            { plan: "Pro Plan", price: "$12", desc: "Best for growing teams seeking custom layouts.", features: ["Everything in Free Tier", "Unlimited AI Assist actions", "Uncapped spaces & custom app templates", "Priority support"] },
-            { plan: "Enterprise", price: "Custom", desc: "Tailored to larger collaborative businesses.", features: ["Uncapped usage", "Dedicated account managers", "Custom analytics integrations", "SAML SSO auth configurations"] }
+            { plan: "Workspace Free", price: "$0", desc: "For developers seeking local specs wikis.", features: ["Infinite Tiptap note saves", "Up to 5 Whiteboards templates", "Clerk authentication protecting", "Basic dashboard widget layout"] },
+            { plan: "Cozy Pro", price: "$12", desc: "Best for growing creators teams.", features: ["Uncapped whiteboards drawing", "Priority AI refinement assists", "Speech waveforms dictation", "Custom widgets order save"] },
+            { plan: "Enterprise Team", price: "Custom", desc: "Tailored to larger corporate groups.", features: ["Uncapped workspace entries", "SAML SSO custom auth setups", "Dedicated Postgres support", "Custom metrics analytics logs"] }
           ].map((prc, idx) => (
             <div
               key={idx}
-              className={`bg-surface border rounded-[24px] p-6 space-y-6 flex flex-col justify-between hover:shadow-md transition relative ${
-                idx === 1 ? "border-2 border-primary shadow-sm" : "border-border"
+              className={`bg-surface border rounded-[28px] p-6.5 space-y-6 flex flex-col justify-between hover:shadow-md transition relative ${
+                idx === 1 ? "border-2 border-primary shadow-sm shadow-primary/5" : "border-border"
               }`}
             >
               {idx === 1 && (
-                <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-gradient-to-r from-primary to-[#ff7d5e] text-white text-badge-val uppercase rounded-full">
-                  Popular Choice
+                <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-gradient-to-r from-primary to-[#ff7d5e] text-white text-badge-val uppercase rounded-full font-bold">
+                  Recommended Choice
                 </span>
               )}
-              <div className="space-y-4">
-                <span className="text-overline text-slate-400 block">{prc.plan}</span>
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-h1 text-foreground">{prc.price}</span>
-                  {idx !== 2 && <span className="text-caption text-[#5E5B5A] font-bold">/ month</span>}
+              <div className="space-y-4 text-left">
+                <span className="text-overline text-slate-450 block font-bold">{prc.plan}</span>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-h1 text-foreground font-black">{prc.price}</span>
+                  {idx !== 2 && <span className="text-caption text-muted font-bold">/ month</span>}
                 </div>
-                <p className="text-body-sm text-[#5E5B5A] font-semibold">{prc.desc}</p>
-                <div className="border-t border-border/85 my-3" />
-                <ul className="space-y-2.5 text-body-sm font-semibold text-[#5E5B5A]">
+                <p className="text-caption text-muted leading-relaxed font-semibold">{prc.desc}</p>
+                <div className="border-t border-border my-3" />
+                <ul className="space-y-2.5 text-caption font-semibold text-muted">
                   {prc.features.map((feat, fidx) => (
                     <li key={fidx} className="flex items-center gap-2">
                       <span className="size-1.5 rounded-full bg-primary" />
@@ -434,8 +577,8 @@ function LandingPage() {
 
               <a
                 href="/sign-up"
-                className={`h-9.5 w-full font-extrabold text-btn rounded-xl flex items-center justify-center transition ${
-                  idx === 1 ? "bg-primary text-white" : "bg-[#f3f1f6] text-[#5E5B5A] hover:bg-slate-100"
+                className={`h-9.5 w-full font-bold text-btn rounded-xl flex items-center justify-center transition ${
+                  idx === 1 ? "bg-primary text-white hover:bg-primary-hover" : "bg-[#f3f1f6] text-[#5E5B5A] hover:bg-slate-100"
                 }`}
               >
                 Choose {prc.plan}
@@ -445,11 +588,11 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="bg-surface border-y border-border py-16 text-center space-y-10">
+      {/* 5. Testimonials Section */}
+      <section className="bg-surface border-y border-border/80 py-20 text-center space-y-10">
         <div className="max-w-lg mx-auto space-y-2 px-6">
-          <span className="text-label-val text-primary uppercase tracking-wider block">Wall of Love</span>
-          <h3 className="text-h2 text-foreground">Trusted by developers globally</h3>
+          <span className="text-label-val text-primary uppercase tracking-wider block font-bold">Wall of Love</span>
+          <h3 className="text-h2 text-foreground font-black">Trusted by creators globally</h3>
         </div>
 
         <div className="flex flex-wrap justify-center gap-4 max-w-5xl mx-auto px-6">
@@ -457,8 +600,8 @@ function LandingPage() {
             { name: "Jessica Carter", role: "Product Manager, Stripe", text: "The TipTap autosave and Excalidraw whiteboards are flawless. The AI Template builder helps us prototype structures in minutes." },
             { name: "Marcus Chen", role: "Frontend Architect, Vercel", text: "Worko compiles beautifully on React 19. The PostgreSQL calendar events sync dynamically without sluggish API calls." }
           ].map((tst, i) => (
-            <div key={i} className="max-w-md bg-background border border-border rounded-2xl p-5 text-left space-y-3 shadow-sm flex-grow">
-              <p className="text-body text-[#5E5B5A] italic">
+            <div key={i} className="max-w-md bg-background border border-border rounded-2xl p-5 text-left space-y-3.5 shadow-sm flex-grow">
+              <p className="text-body-sm text-[#5E5B5A] italic font-semibold leading-relaxed">
                 &quot;{tst.text}&quot;
               </p>
               <div className="flex items-center gap-2 pt-2 border-t border-border">
@@ -466,7 +609,7 @@ function LandingPage() {
                   {tst.name.substring(0, 2).toUpperCase()}
                 </div>
                 <div>
-                  <h5 className="text-label-val text-foreground">{tst.name}</h5>
+                  <h5 className="text-label-val text-foreground font-bold">{tst.name}</h5>
                   <p className="text-caption text-muted font-semibold">{tst.role}</p>
                 </div>
               </div>
@@ -475,26 +618,122 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border bg-surface py-12 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-muted font-bold">
-          <div className="flex items-center gap-2.5">
-            <div className="grid size-7 place-items-center rounded-lg bg-primary text-white">
-              <Zap size={13} fill="currentColor" />
+      {/* 6. FAQ Section */}
+      <section id="faq" className="max-w-3xl mx-auto px-6 py-20 space-y-12">
+        <div className="text-center space-y-2.5">
+          <span className="text-label-val text-primary uppercase tracking-wider block font-bold">FAQ Section</span>
+          <h2 className="text-h2 text-foreground font-black">Frequently Asked Questions</h2>
+          <p className="text-body-sm text-muted font-semibold">Everything you need to know about setting up and running your Worko workspaces.</p>
+        </div>
+
+        <div className="space-y-3 text-left">
+          {LANDING_FAQS.map((fq, idx) => {
+            const isOpen = faqOpenIdx === idx;
+            return (
+              <div key={idx} className="bg-surface border border-border rounded-2xl overflow-hidden transition-all shadow-sm">
+                <button
+                  onClick={() => setFaqOpenIdx(isOpen ? null : idx)}
+                  className="w-full flex items-center justify-between p-4.5 text-body-sm font-bold text-foreground hover:bg-background/20"
+                >
+                  <span>{fq.q}</span>
+                  <span className={`text-muted transition-transform duration-200 ${isOpen ? "rotate-90 text-primary" : ""}`}>
+                    &rarr;
+                  </span>
+                </button>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="border-t border-border bg-background/10"
+                    >
+                      <p className="p-4.5 text-caption text-[#5E5B5A] leading-relaxed font-semibold">
+                        {fq.a}
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 7. Dramatic Call to Action Section */}
+      <section className="max-w-4xl mx-auto px-6 py-12">
+        <div className="bg-gradient-to-br from-primary via-[#ff7d5e] to-secondary rounded-[32px] p-8 md:p-12 text-center text-white relative overflow-hidden shadow-xl">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.15),transparent)]" />
+          <div className="relative z-10 space-y-6">
+            <h3 className="text-h2 font-black leading-tight">Ready to orchestrate your workspace?</h3>
+            <p className="text-body-sm opacity-90 max-w-lg mx-auto font-medium">
+              Join thousands of developers and managers deploying specs notes, agile tasks, interactive whiteboards, and calendar syncs in seconds.
+            </p>
+            <div className="flex justify-center pt-2">
+              <a
+                href="/sign-up"
+                className="h-11 px-8 bg-white hover:bg-slate-50 text-[#C23B1E] font-bold text-btn rounded-xl shadow-md flex items-center justify-center hover:-translate-y-0.5 transition duration-200"
+              >
+                Get Started Instantly
+              </a>
             </div>
-            <span className="text-h4 text-foreground">Worko</span>
+          </div>
+        </div>
+      </section>
+
+      {/* 8. Modern Multi-Column Footer */}
+      <footer className="border-t border-border/80 bg-surface/50 py-16 px-6 mt-12">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 text-left">
+          
+          {/* Logo stack */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2.5">
+              <div className="grid size-8 place-items-center rounded-xl bg-gradient-to-br from-primary to-[#ff7d5e] text-white">
+                <Zap size={14} fill="currentColor" />
+              </div>
+              <span className="text-h4 text-foreground font-black">Worko</span>
+            </div>
+            <p className="text-caption text-muted font-semibold leading-relaxed">
+              The premium knowledge hub and AI workspace manager designed for high-performance builders.
+            </p>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-6 text-btn">
-            <a href="https://github.com/dakshgola/Worko" target="_blank" className="hover:text-primary transition">GitHub</a>
-            <a href="#features" className="hover:text-primary transition">Features</a>
-            <a href="#pricing" className="hover:text-primary transition">Pricing</a>
-            <a href="/settings" className="hover:text-primary transition">Settings</a>
+          {/* Nav columns */}
+          <div>
+            <h5 className="text-overline text-foreground mb-3.5 font-bold">Workspace modules</h5>
+            <ul className="space-y-2 text-caption font-semibold text-muted">
+              <li><a href="/notes" className="hover:text-primary transition-colors">Specifications Wiki</a></li>
+              <li><a href="/kanban" className="hover:text-primary transition-colors">Kanban Tasks</a></li>
+              <li><a href="/calendar" className="hover:text-primary transition-colors">Neon Calendars</a></li>
+              <li><a href="/whiteboard" className="hover:text-primary transition-colors">Infinite Whiteboard</a></li>
+            </ul>
           </div>
 
-          <p className="text-caption font-semibold text-[#c0bac8]">
-            &copy; {new Date().getFullYear()} Worko Corp. Built with love and cozy gradients.
-          </p>
+          <div>
+            <h5 className="text-overline text-foreground mb-3.5 font-bold">Generators</h5>
+            <ul className="space-y-2 text-caption font-semibold text-muted">
+              <li><a href="/ai-assistant" className="hover:text-primary transition-colors">Gemini Orchestrator</a></li>
+              <li><a href="/ai-template-builder" className="hover:text-primary transition-colors">AI Apps Builders</a></li>
+              <li><a href="https://github.com/dakshgola/Worko" target="_blank" className="hover:text-primary transition-colors">GitHub Sources</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h5 className="text-overline text-foreground mb-3.5 font-bold">Account</h5>
+            <ul className="space-y-2 text-caption font-semibold text-muted">
+              <li><a href="/settings" className="hover:text-primary transition-colors">Preferences</a></li>
+              <li><a href="/settings" className="hover:text-primary transition-colors">Plans Billing</a></li>
+              <li><a href="/sign-in" className="hover:text-primary transition-colors">Sign In</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="max-w-6xl mx-auto border-t border-border mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-caption font-semibold text-[#c0bac8]">
+          <p>&copy; {new Date().getFullYear()} Worko Corp. All rights reserved.</p>
+          <div className="flex gap-4">
+            <a href="https://github.com/dakshgola/Worko" target="_blank" className="hover:text-primary transition-colors flex items-center gap-1"><Github size={12} /> GitHub Repository</a>
+          </div>
         </div>
       </footer>
     </div>
