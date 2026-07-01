@@ -181,8 +181,7 @@ function LandingPage() {
             <Zap size={16} fill="currentColor" />
           </div>
           <div>
-            <span className="text-h4 text-foreground">Worko</span>
-            <span className="ml-1.5 px-1.5 py-0.5 rounded-md bg-primary-soft text-primary text-badge-val font-bold">SaaS Pro</span>
+            <span className="text-h4 text-foreground font-black tracking-tight">Worko</span>
           </div>
         </div>
 
