@@ -372,7 +372,7 @@ export default function SpacesPage() {
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ duration: 0.15 }}
               onSubmit={handleCreateSpaceSubmit}
-              className="bg-surface rounded-2xl border-2 border-primary w-full max-w-sm p-6 shadow-2xl space-y-4"
+              className="bg-surface rounded-2xl border border-border w-full max-w-sm p-6 shadow-2xl space-y-4"
             >
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h4 className="font-black text-sm text-foreground flex items-center gap-1.5">
