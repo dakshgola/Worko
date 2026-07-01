@@ -37,6 +37,7 @@ import {
   deleteGeneratedApp,
 } from "@/lib/ai-builder/actions";
 import { WorkspaceSidebar } from "@/components/WorkspaceSidebar";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AiTemplateBuilderPage() {
   const { user } = useUser();
@@ -191,7 +192,12 @@ Output ONLY the raw JSON string. Do not wrap in markdown code blocks.`;
       {/* Sidebar Navigation */}
       <WorkspaceSidebar active="AI Builder" />
 
-      <main className="flex-grow min-w-0 p-6 lg:p-10 space-y-8 overflow-y-auto max-h-screen">
+      <motion.main
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
+        className="flex-grow min-w-0 p-6 lg:p-10 space-y-8 overflow-y-auto max-h-screen"
+      >
         <section className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="mb-1.5 text-overline text-muted block">Workspace generator</p>
@@ -218,9 +224,11 @@ Output ONLY the raw JSON string. Do not wrap in markdown code blocks.`;
                 className="btn-primary h-10 px-6 ml-auto gap-1.5"
               >
                 {generating ? (
-                  <>
-                    <Loader2 size={13} className="animate-spin" /> Generating Config
-                  </>
+                  <div className="flex items-center justify-center gap-1 py-1.5 px-3">
+                    <span className="ai-dot-indicator" />
+                    <span className="ai-dot-indicator" />
+                    <span className="ai-dot-indicator" />
+                  </div>
                 ) : (
                   <>
                     <Sparkles size={14} /> Generate App Template
@@ -318,7 +326,7 @@ Output ONLY the raw JSON string. Do not wrap in markdown code blocks.`;
             </div>
           </div>
         </section>
-      </main>
+      </motion.main>
     </div>
   );
 }
