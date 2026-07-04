@@ -15,6 +15,12 @@ import {
 
 import { Note } from "@/db/schema";
 import { Editor } from "@tiptap/react";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 
 interface NoteEditorProps {
   activeNote: Note | null;
@@ -86,18 +92,67 @@ export function NoteEditor({
             )}
 
             <div className="ml-auto flex items-center gap-2">
-              <button onClick={handleToggleFavorite} className={`p-1.5 rounded-lg border transition ${activeNote.isFavorite ? "border-yellow-100 bg-yellow-50/20 text-yellow-600" : "border-border bg-surface text-muted hover:text-foreground"}`}>
-                <Star size={14} fill={activeNote.isFavorite ? "currentColor" : "none"} />
-              </button>
-              <button onClick={handleTogglePin} className={`p-1.5 rounded-lg border transition ${activeNote.isPinned ? "border-amber-100 bg-amber-50/20 text-amber-600" : "border-border bg-surface text-muted hover:text-foreground"}`}>
-                <Sparkles size={14} />
-              </button>
-              <button onClick={handleDuplicateNote} className="btn-icon size-8 flex items-center justify-center text-muted hover:text-primary">
-                <Copy size={14} />
-              </button>
-              <button onClick={handleTrashNote} className="btn-icon size-8 flex items-center justify-center text-muted hover:text-danger">
-                <Trash2 size={14} />
-              </button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      aria-label="Toggle favorite"
+                      onClick={handleToggleFavorite}
+                      className={`p-1.5 rounded-lg border transition focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
+                        activeNote.isFavorite
+                          ? "border-yellow-100 bg-yellow-50/20 text-yellow-600"
+                          : "border-border bg-surface text-muted hover:text-foreground"
+                      }`}
+                    >
+                      <Star size={14} fill={activeNote.isFavorite ? "currentColor" : "none"} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>Toggle favorite</TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      aria-label="Toggle pin"
+                      onClick={handleTogglePin}
+                      className={`p-1.5 rounded-lg border transition focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
+                        activeNote.isPinned
+                          ? "border-amber-100 bg-amber-50/20 text-amber-600"
+                          : "border-border bg-surface text-muted hover:text-foreground"
+                      }`}
+                    >
+                      <Sparkles size={14} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>Toggle pin</TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      aria-label="Duplicate note"
+                      onClick={handleDuplicateNote}
+                      className="btn-icon size-8 flex items-center justify-center text-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+                    >
+                      <Copy size={14} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>Duplicate note</TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      aria-label="Delete note"
+                      onClick={handleTrashNote}
+                      className="btn-icon size-8 flex items-center justify-center text-muted hover:text-danger focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete note</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
 

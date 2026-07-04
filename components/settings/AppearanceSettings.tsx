@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface AppearanceSettingsProps {
   preferences: any;
@@ -10,15 +11,19 @@ export function AppearanceSettings({ preferences, handleSaveTextPreference }: Ap
   return (
     <div>
       <label className="block text-label-val uppercase text-muted mb-1.5">Active Theme</label>
-      <select
+      <Select
         value={preferences.theme}
-        onChange={(e) => handleSaveTextPreference("theme", e.target.value)}
-        className="w-full h-9 px-2 border border-border bg-background text-foreground rounded-lg outline-none"
+        onValueChange={(val) => handleSaveTextPreference("theme", val)}
       >
-        <option value="system">System Default</option>
-        <option value="light">Light Cozy Mode</option>
-        <option value="dark">Dark Theme</option>
-      </select>
+        <SelectTrigger className="w-full h-9 border border-border bg-background text-foreground rounded-lg focus:ring-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none">
+          <SelectValue placeholder="Select active theme" />
+        </SelectTrigger>
+        <SelectContent className="bg-surface border border-border">
+          <SelectItem value="system">System Default</SelectItem>
+          <SelectItem value="light">Light Cozy Mode</SelectItem>
+          <SelectItem value="dark">Dark Theme</SelectItem>
+        </SelectContent>
+      </Select>
     </div>
   );
 }

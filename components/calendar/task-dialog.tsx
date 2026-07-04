@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { BellRing, CalendarDays, Check, Clock3, Repeat2, X } from "lucide-react";
 import { categoryStyles, type TaskCategory, type TaskFormData, type TaskPriority } from "./types";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const blankForm: TaskFormData = {
   title: "",
@@ -32,27 +33,18 @@ export function TaskDialog({
     if (open) setForm({ ...blankForm, date: initialDate });
   }, [open, initialDate]);
 
-  if (!open) return null;
-
   const update = <K extends keyof TaskFormData>(key: K, value: TaskFormData[K]) => setForm((current) => ({ ...current, [key]: value }));
   const canSave = form.title.trim().length > 0;
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-[#2d2938]/25 p-4 backdrop-blur-[3px]" onMouseDown={onClose}>
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label="Create a task"
-        onMouseDown={(event) => event.stopPropagation()}
-        className="max-h-[92vh] w-full max-w-[660px] overflow-y-auto rounded-[24px] border border-white/80 bg-white shadow-[0_28px_80px_rgba(48,40,78,0.22)]"
-      >
+    <Dialog open={open} onOpenChange={(val) => { if (!val) onClose(); }}>
+      <DialogContent className="max-h-[92vh] w-full max-w-[660px] overflow-y-auto border border-white/80 bg-white p-0 shadow-[0_28px_80px_rgba(48,40,78,0.22)] sm:rounded-[24px]">
         <div className="sticky top-0 z-10 flex items-center border-b border-[#ece9f1] bg-white/95 px-5 py-4 backdrop-blur">
           <div className="grid size-10 place-items-center rounded-[13px] bg-[#eeeaff] text-[#6454d4]"><CalendarDays size={18} /></div>
           <div className="ml-3">
-            <h2 className="text-base font-bold tracking-[-0.03em]">Create a new task</h2>
-            <p className="mt-0.5 text-[10px] text-[#9992a2]">Give your next move a calm place to land.</p>
+            <DialogTitle className="text-base font-bold tracking-[-0.03em]">Create a new task</DialogTitle>
+            <DialogDescription className="mt-0.5 text-[10px] text-[#9992a2]">Give your next move a calm place to land.</DialogDescription>
           </div>
-          <button onClick={onClose} className="ml-auto grid size-8 place-items-center rounded-lg text-[#9d96a6] hover:bg-[#f4f1f6]"><X size={16} /></button>
         </div>
 
         <div className="space-y-4 p-5">
@@ -126,8 +118,8 @@ export function TaskDialog({
           <button disabled={!canSave} onClick={() => onSave(form, true)} className="h-9 rounded-xl border border-[#ddd8e5] px-4 text-[10px] font-bold text-[#716979] transition hover:bg-[#f6f4f8] disabled:opacity-40">Save as draft</button>
           <button disabled={!canSave || !form.date} onClick={() => onSave(form, false)} className="h-9 rounded-xl bg-gradient-to-r from-[#6556db] to-[#7b5fe7] px-4 text-[10px] font-bold text-white shadow-[0_6px_16px_rgba(103,87,220,0.25)] transition hover:-translate-y-0.5 disabled:opacity-40">Schedule task</button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

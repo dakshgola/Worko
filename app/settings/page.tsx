@@ -28,6 +28,8 @@ import { AISettings } from "@/components/settings/AISettings";
 import { NotificationSettings } from "@/components/settings/NotificationSettings";
 import { CategoriesSettings } from "@/components/settings/CategoriesSettings";
 import { SubscriptionSettings } from "@/components/settings/SubscriptionSettings";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export default function SettingsPage() {
   const { user } = useUser();
@@ -169,141 +171,113 @@ export default function SettingsPage() {
           </div>
         </section>
 
-        {/* Settings Tab headers */}
-        <div className="flex gap-2 border-b border-border pb-3 text-btn shrink-0 overflow-x-auto max-w-full no-scrollbar">
-          {[
-            { id: "profile", label: "Profile Info", icon: User },
-            { id: "preferences", label: "App Preferences", icon: SlidersHorizontal },
-            { id: "categories", label: "Work Categories", icon: Sliders },
-            { id: "subscription", label: "Plan & Billing", icon: CreditCard },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl transition ${
-                activeTab === tab.id
-                  ? "bg-primary-soft text-primary border border-border shadow-sm"
-                  : "text-muted hover:bg-hover-overlay"
-              }`}
-            >
-              <tab.icon size={13.5} />
-              <span>{tab.label}</span>
-            </button>
-          ))}
-        </div>
+        <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as any)} className="space-y-8 w-full">
+          {/* Settings Tab headers */}
+          <TabsList className="flex gap-2 border-b border-border pb-3 bg-transparent h-auto p-0 rounded-none w-full justify-start overflow-x-auto no-scrollbar">
+            {[
+              { id: "profile", label: "Profile Info", icon: User },
+              { id: "preferences", label: "App Preferences", icon: SlidersHorizontal },
+              { id: "categories", label: "Work Categories", icon: Sliders },
+              { id: "subscription", label: "Plan & Billing", icon: CreditCard },
+            ].map((tab) => (
+              <TabsTrigger
+                key={tab.id}
+                value={tab.id}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl transition text-btn text-muted hover:bg-hover-overlay data-[state=active]:bg-primary-soft data-[state=active]:text-primary data-[state=active]:border data-[state=active]:border-border data-[state=active]:shadow-sm cursor-pointer shadow-none"
+              >
+                <tab.icon size={13.5} />
+                <span>{tab.label}</span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-        {/* Tab content panel */}
-        <section className="max-w-2xl bg-surface border border-border p-6 rounded-2xl shadow-sm">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.15 }}
-            >
-              {activeTab === "profile" && (
-                <ProfileSettings user={user} setShowLogoutConfirm={setShowLogoutConfirm} />
-              )}
+          {/* Tab content panel */}
+          <section className="max-w-2xl bg-surface border border-border p-6 rounded-2xl shadow-sm mt-0">
+            <TabsContent value="profile" className="mt-0 outline-none">
+              <ProfileSettings user={user} setShowLogoutConfirm={setShowLogoutConfirm} />
+            </TabsContent>
 
-              {activeTab === "preferences" && (
-                <div className="space-y-6">
-                  {loadingPrefs ? (
-                    <div className="text-center py-6 text-caption font-semibold text-muted"><Loader2 size={12} className="animate-spin mr-1 inline" /> Loading...</div>
-                  ) : (
-                    <div className="space-y-6 text-input-val text-foreground">
-                      <AppearanceSettings
-                        preferences={preferences}
-                        handleSaveTextPreference={handleSaveTextPreference}
-                      />
-                      <AISettings
-                        preferences={preferences}
-                        handleTogglePreference={handleTogglePreference}
-                        handleSaveTextPreference={handleSaveTextPreference}
-                      />
-                      <NotificationSettings
-                        preferences={preferences}
-                        handleTogglePreference={handleTogglePreference}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
+            <TabsContent value="preferences" className="mt-0 outline-none">
+              <div className="space-y-6">
+                {loadingPrefs ? (
+                  <div className="text-center py-6 text-caption font-semibold text-muted"><Loader2 size={12} className="animate-spin mr-1 inline" /> Loading...</div>
+                ) : (
+                  <div className="space-y-6 text-input-val text-foreground">
+                    <AppearanceSettings
+                      preferences={preferences}
+                      handleSaveTextPreference={handleSaveTextPreference}
+                    />
+                    <AISettings
+                      preferences={preferences}
+                      handleTogglePreference={handleTogglePreference}
+                      handleSaveTextPreference={handleSaveTextPreference}
+                    />
+                    <NotificationSettings
+                      preferences={preferences}
+                      handleTogglePreference={handleTogglePreference}
+                    />
+                  </div>
+                )}
+              </div>
+            </TabsContent>
 
-              {activeTab === "categories" && (
-                <CategoriesSettings
-                  categories={categories}
-                  loadingCats={loadingCats}
-                  newCatName={newCatName}
-                  setNewCatName={setNewCatName}
-                  newCatColor={newCatColor}
-                  setNewCatColor={setNewCatColor}
-                  handleCreateCategorySubmit={handleCreateCategorySubmit}
-                  handleDeleteCategory={handleDeleteCategory}
-                />
-              )}
+            <TabsContent value="categories" className="mt-0 outline-none">
+              <CategoriesSettings
+                categories={categories}
+                loadingCats={loadingCats}
+                newCatName={newCatName}
+                setNewCatName={setNewCatName}
+                newCatColor={newCatColor}
+                setNewCatColor={setNewCatColor}
+                handleCreateCategorySubmit={handleCreateCategorySubmit}
+                handleDeleteCategory={handleDeleteCategory}
+              />
+            </TabsContent>
 
-              {activeTab === "subscription" && (
-                <SubscriptionSettings />
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </section>
+            <TabsContent value="subscription" className="mt-0 outline-none">
+              <SubscriptionSettings />
+            </TabsContent>
+          </section>
+        </Tabs>
       </main>
 
-      <AnimatePresence>
-        {showLogoutConfirm && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              className="bg-surface rounded-2xl border border-border w-full max-w-sm p-6 shadow-2xl space-y-4"
+      <Dialog open={showLogoutConfirm} onOpenChange={(val) => { if (!val) setShowLogoutConfirm(false); }}>
+        <DialogContent className="bg-surface border border-border w-full max-w-sm p-6 shadow-2xl dark:border-border dark:bg-surface sm:rounded-2xl gap-4">
+          <div className="flex items-center justify-between border-b pb-3 border-red-50 dark:border-border">
+            <DialogTitle className="text-body-sm font-black text-foreground flex items-center gap-1.5">
+              <LogOut size={16} className="text-danger" />
+              Confirm Log Out
+            </DialogTitle>
+          </div>
+          <DialogDescription className="text-caption text-muted leading-relaxed font-semibold">
+            Are you sure you want to sign out of your Worko workspace? You will need to authenticate again to access your dashboard.
+          </DialogDescription>
+          <div className="flex justify-end gap-2 border-t border-border pt-3">
+            <button
+              type="button"
+              disabled={loggingOut}
+              onClick={() => setShowLogoutConfirm(false)}
+              className="btn-outline h-8.5 px-4 disabled:opacity-50"
             >
-              <div className="flex items-center justify-between border-b pb-3 border-red-50">
-                <h4 className="text-body-sm font-black text-foreground flex items-center gap-1.5">
-                  <LogOut size={16} className="text-danger" />
-                  Confirm Log Out
-                </h4>
-                <button type="button" onClick={() => setShowLogoutConfirm(false)}><X size={15} /></button>
-              </div>
-              <p className="text-caption text-muted leading-relaxed font-semibold">
-                Are you sure you want to sign out of your Worko workspace? You will need to authenticate again to access your dashboard.
-              </p>
-              <div className="flex justify-end gap-2 border-t border-border pt-3">
-                <button
-                  type="button"
-                  disabled={loggingOut}
-                  onClick={() => setShowLogoutConfirm(false)}
-                  className="btn-outline h-8.5 px-4 disabled:opacity-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  disabled={loggingOut}
-                  onClick={handleSignOut}
-                  className="btn-danger h-8.5 px-4 text-center flex items-center justify-center gap-1.5 disabled:opacity-50 min-w-[90px]"
-                >
-                  {loggingOut ? (
-                    <>
-                      <Loader2 size={13} className="animate-spin text-white" /> Signing Out
-                    </>
-                  ) : (
-                    "Sign Out"
-                  )}
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              Cancel
+            </button>
+            <button
+              type="button"
+              disabled={loggingOut}
+              onClick={handleSignOut}
+              className="btn-danger h-8.5 px-4 text-center flex items-center justify-center gap-1.5 disabled:opacity-50 min-w-[90px]"
+            >
+              {loggingOut ? (
+                <>
+                  <Loader2 size={13} className="animate-spin text-white" /> Signing Out
+                </>
+              ) : (
+                "Sign Out"
+              )}
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -3,6 +3,12 @@ import React from "react";
 import { ChevronLeft, Trash2, MousePointer, Square, Circle, Type } from "lucide-react";
 
 import { Whiteboard } from "@/db/schema";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 
 interface WhiteboardToolbarProps {
   activeBoard: Whiteboard;
@@ -65,31 +71,46 @@ export function WhiteboardToolbar({
       </div>
 
       <div className="flex items-center gap-1.5 bg-background border border-border p-1 rounded-xl ml-auto">
-        {[
-          { tool: "select", icon: MousePointer },
-          { tool: "rectangle", icon: Square },
-          { tool: "circle", icon: Circle },
-          { tool: "text", icon: Type },
-        ].map((t) => (
-          <button
-            key={t.tool}
-            onClick={() => setTool(t.tool as "select" | "rectangle" | "circle" | "text")}
-            className={`p-1.5 rounded-lg transition ${
-              tool === t.tool ? "bg-surface text-primary shadow-sm" : "text-muted hover:text-foreground"
-            }`}
-          >
-            <t.icon size={14} />
-          </button>
-        ))}
+        <TooltipProvider>
+          {[
+            { tool: "select", icon: MousePointer, label: "Select element" },
+            { tool: "rectangle", icon: Square, label: "Draw rectangle" },
+            { tool: "circle", icon: Circle, label: "Draw circle" },
+            { tool: "text", icon: Type, label: "Insert text label" },
+          ].map((t) => (
+            <Tooltip key={t.tool}>
+              <TooltipTrigger asChild>
+                <button
+                  aria-label={t.label}
+                  onClick={() => setTool(t.tool as "select" | "rectangle" | "circle" | "text")}
+                  className={`p-1.5 rounded-lg transition focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
+                    tool === t.tool ? "bg-surface text-primary shadow-sm" : "text-muted hover:text-foreground"
+                  }`}
+                >
+                  <t.icon size={14} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>{t.label}</TooltipContent>
+            </Tooltip>
+          ))}
+        </TooltipProvider>
       </div>
 
       {selectedId && (
-        <button
-          onClick={handleDeleteSelected}
-          className="p-1.5 rounded-lg border border-danger-soft text-danger hover:bg-danger-soft"
-        >
-          <Trash2 size={14} />
-        </button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                aria-label="Delete selected shape"
+                onClick={handleDeleteSelected}
+                className="p-1.5 rounded-lg border border-danger-soft text-danger hover:bg-danger-soft focus-visible:ring-2 focus-visible:ring-danger focus-visible:outline-none"
+              >
+                <Trash2 size={14} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>Delete selected shape</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       )}
     </div>
   );

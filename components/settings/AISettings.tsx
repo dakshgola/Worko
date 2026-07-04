@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface AISettingsProps {
   preferences: any;
@@ -12,14 +13,18 @@ export function AISettings({ preferences, handleTogglePreference, handleSaveText
     <div className="space-y-4">
       <div>
         <label className="block text-label-val uppercase text-muted mb-1.5">AI Engine model</label>
-        <select
+        <Select
           value={preferences.aiModel}
-          onChange={(e) => handleSaveTextPreference("aiModel", e.target.value)}
-          className="w-full h-9 px-2 border border-border bg-background text-foreground rounded-lg outline-none"
+          onValueChange={(val) => handleSaveTextPreference("aiModel", val)}
         >
-          <option value="Gemini">Gemini 2.5 Flash</option>
-          <option value="Pro">Gemini 2.5 Pro</option>
-        </select>
+          <SelectTrigger className="w-full h-9 border border-border bg-background text-foreground rounded-lg focus:ring-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none">
+            <SelectValue placeholder="Select AI model" />
+          </SelectTrigger>
+          <SelectContent className="bg-surface border border-border">
+            <SelectItem value="Gemini">Gemini 2.5 Flash</SelectItem>
+            <SelectItem value="Pro">Gemini 2.5 Pro</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="border-t border-border pt-4 space-y-4">

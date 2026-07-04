@@ -24,6 +24,7 @@ import { DashboardRecentActivity } from "@/components/dashboard/DashboardRecentA
 import { DashboardKanbanWidget } from "@/components/dashboard/DashboardKanbanWidget";
 import { DashboardData, DashboardTask } from "@/lib/dashboard/types";
 import { KanbanBoardDb, Notification } from "@/db/schema";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 import {
   listNotifications,
@@ -668,186 +669,133 @@ function DashboardView() {
       </div>
 
       {/* Widget Layout Settings Modal */}
-      <AnimatePresence>
-        {showCustomizer && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-surface border border-border rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-4"
-            >
-              <div className="flex items-center justify-between border-b pb-3 border-border">
-                <h4 className="text-body-sm font-extrabold text-foreground">Configure Workspace Dashboard widgets</h4>
-                <button onClick={() => setShowCustomizer(false)}><X size={15} /></button>
+      <Dialog open={showCustomizer} onOpenChange={(val) => { if (!val) setShowCustomizer(false); }}>
+        <DialogContent className="bg-surface border border-border w-full max-w-md p-6 shadow-2xl dark:border-border dark:bg-surface sm:rounded-3xl gap-4">
+          <div className="flex items-center justify-between border-b pb-3 border-border">
+            <DialogTitle className="text-body-sm font-extrabold text-foreground">Configure Workspace Dashboard widgets</DialogTitle>
+          </div>
+          <DialogDescription className="sr-only">Customize visibility of dashboard segments</DialogDescription>
+          <div className="space-y-3">
+            {widgetsList.map((wid, idx) => (
+              <div key={wid.id} className="flex items-center justify-between p-1.5 border border-border bg-background rounded-xl">
+                <span className="text-caption font-bold">{wid.name}</span>
+                <input
+                  type="checkbox"
+                  checked={wid.visible}
+                  onChange={() => {
+                    const copy = [...widgetsList];
+                    copy[idx].visible = !copy[idx].visible;
+                    setWidgetsList(copy);
+                    localStorage.setItem("worko-dashboard-layout", JSON.stringify(copy));
+                  }}
+                  className="rounded text-primary focus:ring-primary size-4"
+                />
               </div>
-              <div className="space-y-3">
-                {widgetsList.map((wid, idx) => (
-                  <div key={wid.id} className="flex items-center justify-between p-1.5 border border-border bg-background rounded-xl">
-                    <span className="text-caption font-bold">{wid.name}</span>
-                    <input
-                      type="checkbox"
-                      checked={wid.visible}
-                      onChange={() => {
-                        const copy = [...widgetsList];
-                        copy[idx].visible = !copy[idx].visible;
-                        setWidgetsList(copy);
-                        localStorage.setItem("worko-dashboard-layout", JSON.stringify(copy));
-                      }}
-                      className="rounded text-primary focus:ring-primary size-4"
-                    />
-                  </div>
-                ))}
-              </div>
-              <div className="flex justify-end pt-3 border-t border-border">
-                <button onClick={() => setShowCustomizer(false)} className="btn-primary h-9 px-4 text-btn">Save Configurations</button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            ))}
+          </div>
+          <div className="flex justify-end pt-3 border-t border-border">
+            <button onClick={() => setShowCustomizer(false)} className="btn-primary h-9 px-4 text-btn">Save Configurations</button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Create Task Modal */}
-      <AnimatePresence>
-        {showCreateTaskModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          >
-            <motion.form
-              onSubmit={handleTaskSubmit}
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-surface border border-border rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-4 text-[#2C2A29] dark:text-[#F5F4F0]"
-            >
-              <div className="flex items-center justify-between border-b pb-3 border-border">
-                <h4 className="text-body-sm font-extrabold text-foreground">Schedule Task Checklist</h4>
-                <button type="button" onClick={() => setShowCreateTaskModal(false)}><X size={15} /></button>
+      <Dialog open={showCreateTaskModal} onOpenChange={(val) => { if (!val) setShowCreateTaskModal(false); }}>
+        <DialogContent className="bg-surface border border-border w-full max-w-md p-6 shadow-2xl dark:border-border dark:bg-surface sm:rounded-3xl gap-4">
+          <form onSubmit={handleTaskSubmit} className="space-y-4 text-[#2C2A29] dark:text-[#F5F4F0] w-full">
+            <div className="flex items-center justify-between border-b pb-3 border-border">
+              <DialogTitle className="text-body-sm font-extrabold text-foreground">Schedule Task Checklist</DialogTitle>
+            </div>
+            <DialogDescription className="sr-only">Add a task to your workspace dashboard</DialogDescription>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-label-val uppercase text-muted mb-1">Task Title</label>
+                <input
+                  type="text"
+                  required
+                  value={taskForm.title}
+                  onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
+                  placeholder="Deploy index schemas..."
+                  className="input-cozy"
+                />
               </div>
-              <div className="space-y-3">
-                <div>
-                  <label className="block text-label-val uppercase text-muted mb-1">Task Title</label>
-                  <input
-                    type="text"
-                    required
-                    value={taskForm.title}
-                    onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
-                    placeholder="Deploy index schemas..."
-                    className="input-cozy"
-                  />
-                </div>
-                <div>
-                  <label className="block text-label-val uppercase text-muted mb-1">Description</label>
-                  <textarea
-                    value={taskForm.description}
-                    onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
-                    placeholder="Provide details..."
-                    className="w-full h-16 p-2 border border-border text-input-val rounded-xl outline-none resize-none focus:border-primary"
-                  />
-                </div>
+              <div>
+                <label className="block text-label-val uppercase text-muted mb-1">Description</label>
+                <textarea
+                  value={taskForm.description}
+                  onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
+                  placeholder="Provide details..."
+                  className="w-full h-16 p-2 border border-border text-input-val rounded-xl outline-none resize-none focus:border-primary bg-background text-foreground"
+                />
               </div>
-              <div className="flex justify-end gap-2 border-t border-border pt-3">
-                <button type="button" onClick={() => setShowCreateTaskModal(false)} className="btn-outline h-9 px-4 text-btn text-muted">Cancel</button>
-                <button type="submit" className="btn-primary h-9 px-4 text-btn">Save Task</button>
-              </div>
-            </motion.form>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </div>
+            <div className="flex justify-end gap-2 border-t border-border pt-3">
+              <button type="button" onClick={() => setShowCreateTaskModal(false)} className="btn-outline h-9 px-4 text-btn text-muted">Cancel</button>
+              <button type="submit" className="btn-primary h-9 px-4 text-btn">Save Task</button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* Create Event Modal */}
-      <AnimatePresence>
-        {showCreateEventModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          >
-            <motion.form
-              onSubmit={handleEventSubmit}
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-surface border border-border rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-4 text-[#2C2A29] dark:text-[#F5F4F0]"
-            >
-              <div className="flex items-center justify-between border-b pb-3 border-border">
-                <h4 className="text-body-sm font-extrabold text-foreground">Schedule Agenda Event</h4>
-                <button type="button" onClick={() => setShowCreateEventModal(false)}><X size={15} /></button>
+      <Dialog open={showCreateEventModal} onOpenChange={(val) => { if (!val) setShowCreateEventModal(false); }}>
+        <DialogContent className="bg-surface border border-border w-full max-w-md p-6 shadow-2xl dark:border-border dark:bg-surface sm:rounded-3xl gap-4">
+          <form onSubmit={handleEventSubmit} className="space-y-4 text-[#2C2A29] dark:text-[#F5F4F0] w-full">
+            <div className="flex items-center justify-between border-b pb-3 border-border">
+              <DialogTitle className="text-body-sm font-extrabold text-foreground">Schedule Agenda Event</DialogTitle>
+            </div>
+            <DialogDescription className="sr-only">Add an event reminder to dashboard</DialogDescription>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-label-val uppercase text-muted mb-1">Event Title</label>
+                <input
+                  type="text"
+                  required
+                  value={eventForm.title}
+                  onChange={(e) => setEventForm({ ...eventForm, title: e.target.value })}
+                  placeholder="Weekly Sync Meet..."
+                  className="input-cozy"
+                />
               </div>
-              <div className="space-y-3">
-                <div>
-                  <label className="block text-label-val uppercase text-muted mb-1">Event Title</label>
-                  <input
-                    type="text"
-                    required
-                    value={eventForm.title}
-                    onChange={(e) => setEventForm({ ...eventForm, title: e.target.value })}
-                    placeholder="Weekly Sync Meet..."
-                    className="input-cozy"
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end gap-2 border-t border-border pt-3">
-                <button type="button" onClick={() => setShowCreateEventModal(false)} className="btn-outline h-9 px-4 text-btn text-muted">Cancel</button>
-                <button type="submit" disabled={creatingItem} className="btn-primary h-9 px-4 text-btn">
-                  {creatingItem ? "Saving..." : "Save Event"}
-                </button>
-              </div>
-            </motion.form>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </div>
+            <div className="flex justify-end gap-2 border-t border-border pt-3">
+              <button type="button" onClick={() => setShowCreateEventModal(false)} className="btn-outline h-9 px-4 text-btn text-muted">Cancel</button>
+              <button type="submit" disabled={creatingItem} className="btn-primary h-9 px-4 text-btn">
+                {creatingItem ? "Saving..." : "Save Event"}
+              </button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* Create Board Modal */}
-      <AnimatePresence>
-        {showCreateBoardModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          >
-            <motion.form
-              onSubmit={handleBoardSubmit}
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-surface border border-border rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-4 text-[#2C2A29] dark:text-[#F5F4F0]"
-            >
-              <div className="flex items-center justify-between border-b pb-3 border-border">
-                <h4 className="text-body-sm font-extrabold text-foreground">Add Kanban Column Board</h4>
-                <button type="button" onClick={() => setShowCreateBoardModal(false)}><X size={15} /></button>
+      <Dialog open={showCreateBoardModal} onOpenChange={(val) => { if (!val) setShowCreateBoardModal(false); }}>
+        <DialogContent className="bg-surface border border-border w-full max-w-md p-6 shadow-2xl dark:border-border dark:bg-surface sm:rounded-3xl gap-4">
+          <form onSubmit={handleBoardSubmit} className="space-y-4 text-[#2C2A29] dark:text-[#F5F4F0] w-full">
+            <div className="flex items-center justify-between border-b pb-3 border-border">
+              <DialogTitle className="text-body-sm font-extrabold text-foreground">Add Kanban Column Board</DialogTitle>
+            </div>
+            <DialogDescription className="sr-only">Create a new kanban board workspace</DialogDescription>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-label-val uppercase text-muted mb-1">Board Name</label>
+                <input
+                  type="text"
+                  required
+                  value={boardForm.name}
+                  onChange={(e) => setBoardForm({ ...boardForm, name: e.target.value })}
+                  placeholder="Design Sprint #2..."
+                  className="input-cozy"
+                />
               </div>
-              <div className="space-y-3">
-                <div>
-                  <label className="block text-label-val uppercase text-muted mb-1">Board Name</label>
-                  <input
-                    type="text"
-                    required
-                    value={boardForm.name}
-                    onChange={(e) => setBoardForm({ ...boardForm, name: e.target.value })}
-                    placeholder="Design Sprint #2..."
-                    className="input-cozy"
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end gap-2 border-t border-border pt-3">
-                <button type="button" onClick={() => setShowCreateBoardModal(false)} className="btn-outline h-9 px-4 text-btn text-muted">Cancel</button>
-                <button type="submit" className="btn-primary h-9 px-4 text-btn">Add Board</button>
-              </div>
-            </motion.form>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </div>
+            <div className="flex justify-end gap-2 border-t border-border pt-3">
+              <button type="button" onClick={() => setShowCreateBoardModal(false)} className="btn-outline h-9 px-4 text-btn text-muted">Cancel</button>
+              <button type="submit" className="btn-primary h-9 px-4 text-btn">Add Board</button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

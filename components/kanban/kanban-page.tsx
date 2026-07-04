@@ -18,6 +18,12 @@ import { TaskModal } from "./task-modal";
 import type { KanbanBoard, KanbanTask, Priority, TaskFormData } from "./types";
 import { WorkspaceSidebar } from "@/components/WorkspaceSidebar";
 import { syncKanbanData } from "@/lib/kanban/actions";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
 const iconMap = { Rocket, Sparkles, Briefcase: BriefcaseBusiness, Sun };
 const priorityStyles: Record<Priority, string> = { Low: "bg-success-soft text-success", Medium: "bg-primary-soft text-primary", High: "bg-danger-soft text-danger" };
@@ -158,7 +164,31 @@ function TaskCard({ task, board, onEdit }: { task: KanbanTask; board: KanbanBoar
   const complete = task.checklist.filter((item) => item.completed).length;
   const progress = task.checklist.length ? Math.round(complete / task.checklist.length * 100) : 0;
   return <article ref={sortable.setNodeRef} style={{ transform: CSS.Transform.toString(sortable.transform), transition: sortable.transition }} className={`group rounded-[16px] border border-border bg-surface p-3 shadow-sm transition hover:-translate-y-0.5 hover:border-primary hover:shadow-md ${sortable.isDragging ? "opacity-50" : ""}`}>
-    <div className="mb-2 flex items-start gap-2"><button {...sortable.attributes} {...sortable.listeners} className="mt-0.5 cursor-grab text-muted opacity-0 group-hover:opacity-100"><GripVertical size={12} /></button><button onClick={onEdit} className="min-w-0 flex-1 text-left text-body-sm font-bold text-foreground leading-4">{task.title}</button><div className="relative"><button className="peer grid size-5 place-items-center rounded-md text-muted hover:bg-hover-overlay"><MoreHorizontal size={13} /></button><div className="invisible absolute right-0 top-5 z-20 w-28 rounded-xl border border-border bg-surface p-1 opacity-0 shadow-lg transition peer-focus:visible peer-focus:opacity-100 hover:visible hover:opacity-100"><Action label="Edit" icon={Pencil} onClick={onEdit} /><Action label="Duplicate" icon={Copy} onClick={() => store.duplicateTask(board.id, task.id)} /><Action label="Archive" icon={Archive} onClick={() => store.archiveTask(board.id, task.id)} /><Action label="Delete" icon={Trash2} onClick={() => store.deleteTask(board.id, task.id)} /></div></div></div>
+    <div className="mb-2 flex items-start gap-2">
+      <button {...sortable.attributes} {...sortable.listeners} className="mt-0.5 cursor-grab text-muted opacity-0 group-hover:opacity-100" aria-label="Drag task card"><GripVertical size={12} /></button>
+      <button onClick={onEdit} className="min-w-0 flex-1 text-left text-body-sm font-bold text-foreground leading-4">{task.title}</button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="grid size-5 place-items-center rounded-md text-muted hover:bg-hover-overlay" aria-label="Task options">
+            <MoreHorizontal size={13} />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-28 bg-surface border border-border p-1 shadow-lg rounded-xl">
+          <DropdownMenuItem onClick={onEdit} className="flex h-7 w-full items-center gap-2 rounded-lg px-2 text-caption font-bold text-muted hover:bg-primary-soft hover:text-primary cursor-pointer">
+            <Pencil size={10} /> Edit
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => store.duplicateTask(board.id, task.id)} className="flex h-7 w-full items-center gap-2 rounded-lg px-2 text-caption font-bold text-muted hover:bg-primary-soft hover:text-primary cursor-pointer">
+            <Copy size={10} /> Duplicate
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => store.archiveTask(board.id, task.id)} className="flex h-7 w-full items-center gap-2 rounded-lg px-2 text-caption font-bold text-muted hover:bg-primary-soft hover:text-primary cursor-pointer">
+            <Archive size={10} /> Archive
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => store.deleteTask(board.id, task.id)} className="flex h-7 w-full items-center gap-2 rounded-lg px-2 text-caption font-bold text-muted hover:bg-[#ffe5e5] hover:text-danger cursor-pointer">
+            <Trash2 size={10} /> Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
     {task.description && <p className="mb-2 line-clamp-2 text-caption leading-relaxed text-muted font-semibold">{task.description}</p>}
     <div className="mb-2 flex flex-wrap gap-1">{task.labels.slice(0, 3).map((label) => <span key={label.id} className="rounded-full px-2 py-0.5 text-[7px] font-bold text-white" style={{ background: label.color }}>{label.name}</span>)}</div>
     {task.checklist.length > 0 && <div className="mb-2"><div className="mb-1 flex justify-between text-badge-val text-muted"><span>Progress</span><span>{complete}/{task.checklist.length}</span></div><div className="h-1 overflow-hidden rounded-full bg-background border border-border"><div className="h-full rounded-full bg-primary" style={{ width: `${progress}%` }} /></div></div>}

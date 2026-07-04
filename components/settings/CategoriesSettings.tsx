@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { Trash2 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface CategoriesSettingsProps {
   categories: any[];
@@ -39,16 +40,20 @@ export function CategoriesSettings({
         </div>
         <div>
           <label className="block text-label-val uppercase text-muted mb-1">Accent</label>
-          <select
+          <Select
             value={newCatColor}
-            onChange={(e) => setNewCatColor(e.target.value)}
-            className="h-9 px-2 border border-border bg-background text-foreground rounded-lg outline-none text-caption"
+            onValueChange={(val) => setNewCatColor(val)}
           >
-            <option value="#FF5A36">Coral Orange</option>
-            <option value="#3e9b68">Green Forest</option>
-            <option value="#ef6688">Pink Rose</option>
-            <option value="#e49a3a">Amber Yellow</option>
-          </select>
+            <SelectTrigger className="h-9 w-32 border border-border bg-background text-foreground rounded-lg focus:ring-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none text-caption">
+              <SelectValue placeholder="Color" />
+            </SelectTrigger>
+            <SelectContent className="bg-surface border border-border">
+              <SelectItem value="#FF5A36">Coral Orange</SelectItem>
+              <SelectItem value="#3e9b68">Green Forest</SelectItem>
+              <SelectItem value="#ef6688">Pink Rose</SelectItem>
+              <SelectItem value="#e49a3a">Amber Yellow</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <button type="submit" className="btn-primary h-9 px-4 flex items-center justify-center shrink-0">
           Add Label
