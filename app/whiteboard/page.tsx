@@ -343,10 +343,10 @@ export default function WhiteboardPage() {
       {/* Sidebar Navigation */}
       <WorkspaceSidebar active="Whiteboard" />
 
-      <main className="flex-grow min-w-0 flex h-screen overflow-hidden">
+      <main className="flex-grow min-w-0 flex h-screen overflow-hidden pt-[64px] lg:pt-0">
         
         {/* Left canvas selector panel */}
-        <section className="w-56 border-r border-border bg-surface flex flex-col shrink-0">
+        <section className={`w-full lg:w-56 border-r border-border bg-surface flex flex-col shrink-0 ${activeBoard ? "hidden lg:flex" : "flex"}`}>
           <div className="p-4 border-b border-border flex items-center justify-between">
             <span className="text-overline text-muted block">Canvas list</span>
             <button
@@ -378,11 +378,18 @@ export default function WhiteboardPage() {
         </section>
 
         {/* Center drawing area */}
-        <section className="flex-1 bg-background flex flex-col min-w-0 h-full relative">
+        <section className={`flex-1 bg-background flex flex-col min-w-0 h-full relative ${!activeBoard ? "hidden lg:flex" : "flex"}`}>
           {activeBoard ? (
             <>
               {/* Toolbar header */}
               <div className="h-[68px] bg-surface border-b border-border flex items-center px-6 gap-4 shrink-0 shadow-sm z-10">
+                <button
+                  onClick={() => setActiveBoard(null)}
+                  className="mr-1.5 grid size-8.5 place-items-center rounded-xl border border-border bg-surface text-muted shadow-xs hover:bg-hover-overlay lg:hidden shrink-0"
+                  aria-label="Back to whiteboards list"
+                >
+                  <ChevronLeft size={14} />
+                </button>
                 <input
                   type="text"
                   value={activeBoard.name}
@@ -597,7 +604,7 @@ export default function WhiteboardPage() {
         </section>
 
         {/* Right side AI generator */}
-        <section className="w-80 border-l border-border bg-background p-5 shrink-0 flex flex-col justify-between">
+        <section className="w-80 border-l border-border bg-background p-5 shrink-0 flex flex-col justify-between hidden lg:flex">
           <div className="space-y-4">
             <div>
               <h4 className="text-label-val text-primary uppercase tracking-wider block font-bold">AI Diagram Generator</h4>

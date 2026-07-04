@@ -324,9 +324,9 @@ export default function AiAssistantPage() {
       {/* Sidebar Navigation */}
       <WorkspaceSidebar active="AI Assistant" />
 
-      <main className="flex-grow min-w-0 flex h-screen overflow-hidden">
+      <main className="flex-grow min-w-0 flex h-screen overflow-hidden pt-[64px] lg:pt-0">
         {/* Left conversations list */}
-        <section className="w-60 border-r border-border bg-surface flex flex-col shrink-0">
+        <section className={`w-full lg:w-60 border-r border-border bg-surface flex flex-col shrink-0 ${activeChat ? "hidden lg:flex" : "flex"}`}>
           <div className="p-4 border-b border-border flex items-center justify-between">
             <span className="text-overline text-muted block">Conversations</span>
             <button onClick={() => handleCreateChat()} className="btn-secondary size-8 p-0 flex items-center justify-center">
@@ -359,9 +359,18 @@ export default function AiAssistantPage() {
         </section>
 
         {/* Right Chat Board */}
-        <section className="flex-grow flex flex-col bg-background relative h-full">
+        <section className={`flex-grow flex flex-col bg-background relative h-full ${!activeChat ? "hidden lg:flex" : "flex"}`}>
           {/* Header */}
           <div className="h-[68px] bg-surface border-b border-border flex items-center px-6 gap-3 shrink-0">
+            {activeChat && (
+              <button
+                onClick={() => setActiveChat(null)}
+                className="mr-1.5 grid size-8.5 place-items-center rounded-xl border border-border bg-surface text-muted shadow-xs hover:bg-hover-overlay lg:hidden shrink-0"
+                aria-label="Back to conversations list"
+              >
+                <ChevronLeft size={14} />
+              </button>
+            )}
             <div className="flex items-center gap-2">
               <span className="grid size-8 place-items-center bg-primary-soft text-primary rounded-xl"><Bot size={15} /></span>
               <div>

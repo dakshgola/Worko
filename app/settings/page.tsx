@@ -163,7 +163,7 @@ export default function SettingsPage() {
       {/* Sidebar Navigation */}
       <WorkspaceSidebar active="Settings" />
 
-      <main className="flex-1 min-w-0 p-6 lg:p-10 space-y-8 overflow-y-auto max-h-screen">
+      <main className="flex-grow min-w-0 p-6 lg:p-10 space-y-8 overflow-y-auto max-h-screen pt-[88px] lg:pt-10">
         <section className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="mb-1.5 text-overline text-muted block">Workspace Settings</p>
@@ -173,7 +173,7 @@ export default function SettingsPage() {
         </section>
 
         {/* Settings Tab headers */}
-        <div className="flex gap-2 border-b border-border pb-3 text-btn shrink-0">
+        <div className="flex gap-2 border-b border-border pb-3 text-btn shrink-0 overflow-x-auto max-w-full no-scrollbar">
           {[
             { id: "profile", label: "Profile Info", icon: User },
             { id: "preferences", label: "App Preferences", icon: SlidersHorizontal },

@@ -334,10 +334,10 @@ export default function NotesPage() {
       <WorkspaceSidebar active="Notes" />
 
       {/* Workspace notes list & editor */}
-      <main className="flex-1 min-w-0 flex h-screen overflow-hidden">
+      <main className="flex-1 min-w-0 flex h-screen overflow-hidden pt-[64px] lg:pt-0">
         
         {/* Notes sidebar */}
-        <section className="w-64 border-r border-border bg-surface flex flex-col shrink-0">
+        <section className={`w-full lg:w-64 border-r border-border bg-surface flex flex-col shrink-0 ${activeNote ? "hidden lg:flex" : "flex"}`}>
           <div className="p-4 border-b border-border space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-overline text-muted block">Your Notes</span>
@@ -392,11 +392,18 @@ export default function NotesPage() {
         </section>
 
         {/* Note editor panel */}
-        <section className="flex-grow bg-background flex flex-col min-w-0 h-full overflow-hidden">
+        <section className={`flex-grow bg-background flex flex-col min-w-0 h-full overflow-hidden ${!activeNote ? "hidden lg:flex" : "flex"}`}>
           {activeNote ? (
             <>
               {/* Note Header toolbar */}
               <div className="flex h-[64px] items-center gap-3 border-b border-border px-6 shrink-0 bg-surface/80 backdrop-blur-xl">
+                <button
+                  onClick={() => setActiveNote(null)}
+                  className="mr-1.5 grid size-8.5 place-items-center rounded-xl border border-border bg-surface text-muted shadow-xs hover:bg-hover-overlay lg:hidden shrink-0"
+                  aria-label="Back to notes list"
+                >
+                  <ChevronLeft size={14} />
+                </button>
                 <input
                   type="text"
                   value={activeNote.title}
@@ -446,7 +453,7 @@ export default function NotesPage() {
                 </div>
 
                 {/* Editor features sidebar */}
-                <div className="w-80 border-l border-border p-5 space-y-6 flex flex-col bg-background shrink-0">
+                <div className="w-80 border-l border-border p-5 space-y-6 flex flex-col bg-background shrink-0 hidden lg:flex">
                   
                   {/* Voice Note stream AssemblyAI */}
                   <div className="bg-surface border border-border p-4 rounded-2xl shadow-sm space-y-3">

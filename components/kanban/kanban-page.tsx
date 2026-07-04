@@ -62,8 +62,8 @@ export function KanbanPage() {
   return (
     <div className="min-h-screen bg-background text-foreground flex">
       <WorkspaceSidebar active="Tasks" />
-      <main className="flex-1 min-w-0 min-h-screen">
-        <header className="sticky top-0 z-30 flex h-[68px] items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-xl lg:px-6">
+      <main className="flex-grow min-w-0 min-h-screen pt-[64px] lg:pt-0">
+        <header className="sticky top-[64px] lg:top-0 z-30 flex h-[68px] items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-xl lg:px-6">
           <div className="relative hidden max-w-[330px] flex-1 sm:block"><Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" /><input value={taskSearch} onChange={(e) => setTaskSearch(e.target.value)} placeholder="Search tasks and labels..." className="pl-9 input-cozy" /></div>
           <div className="ml-auto flex items-center gap-2">
             <button className="btn-icon text-muted relative"><Bell size={15} /><span className="absolute right-2 top-2 size-1.5 rounded-full bg-primary ring-2 ring-white" /></button>
