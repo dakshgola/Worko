@@ -8,13 +8,31 @@ export async function POST(request: Request) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const { prompt, history } = await request.json();
+    const body = await request.json();
+    let prompt = body.prompt;
+    let history = body.history;
+
+    if (body.messages && Array.isArray(body.messages)) {
+      const msgs = body.messages;
+      if (msgs.length > 0) {
+        prompt = prompt || msgs[msgs.length - 1]?.content;
+        history = history || msgs.slice(0, -1);
+      }
+    }
+
     if (!prompt) {
       return new NextResponse("Missing prompt", { status: 400 });
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
+    const isApiKeyPlaceholder = !apiKey || 
+      apiKey.trim() === "" ||
+      apiKey === "your-api-key" || 
+      apiKey === "placeholder" || 
+      apiKey === "undefined" || 
+      apiKey === "null";
+
+    if (isApiKeyPlaceholder) {
       const simulatedText = `[Simulated Response to: "${prompt}"]\n\nI can help you organize tasks, build layout templates, summarize note blocks, or schedule calendar events. Since the Gemini API key is missing in your config, I am responding in demo mode!`;
       return createSimulatedStream(simulatedText);
     }
@@ -29,7 +47,7 @@ export async function POST(request: Request) {
           contents: [
             ...(history || []).map((msg: any) => ({
               role: msg.role === "user" ? "user" : "model",
-              parts: [{ text: msg.content }],
+              parts: [{ text: msg.content || msg.text || "" }],
             })),
             { role: "user", parts: [{ text: prompt }] },
           ],
@@ -39,8 +57,21 @@ export async function POST(request: Request) {
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error("Gemini API call failed:", errText);
-      return new NextResponse("Failed to call Gemini API", { status: 500 });
+      console.error(`Gemini API call failed with status ${response.status}:`, errText);
+
+      // If unauthorized, invalid, or bad API key, gracefully fallback to simulated demo mode stream
+      if (
+        response.status === 400 ||
+        response.status === 401 ||
+        response.status === 403 ||
+        errText.toLowerCase().includes("api key")
+      ) {
+        console.warn("Invalid or unauthorized API key. Falling back to Demo Mode simulated response.");
+        const simulatedText = `[Simulated Response to: "${prompt}"]\n\nI can help you organize tasks, build layout templates, summarize note blocks, or schedule calendar events. Since the Gemini API key is invalid or unauthorized in your config, I am responding in demo mode!`;
+        return createSimulatedStream(simulatedText);
+      }
+
+      return new NextResponse("Failed to call Gemini API", { status: response.status });
     }
 
     const resData = await response.json();
@@ -57,7 +88,6 @@ function createSimulatedStream(text: string) {
   const encoder = new TextEncoder();
   const customStream = new ReadableStream({
     async start(controller) {
-      // Split by words/chars to yield a smooth typing sensation
       const words = text.split(" ");
       for (let i = 0; i < words.length; i++) {
         controller.enqueue(encoder.encode(words[i] + (i === words.length - 1 ? "" : " ")));
