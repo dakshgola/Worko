@@ -6,81 +6,109 @@ import { eq, and, desc } from "drizzle-orm";
 import { currentUser } from "@clerk/nextjs/server";
 
 export async function listWhiteboards() {
-  const user = await currentUser();
-  if (!user) throw new Error("Unauthorized");
+  try {
+    const user = await currentUser();
+    if (!user) throw new Error("Unauthorized");
 
-  return db
-    .select()
-    .from(whiteboards)
-    .where(and(eq(whiteboards.userId, user.id), eq(whiteboards.isTrashed, false)))
-    .orderBy(desc(whiteboards.updatedAt));
+    return await db
+      .select()
+      .from(whiteboards)
+      .where(and(eq(whiteboards.userId, user.id), eq(whiteboards.isTrashed, false)))
+      .orderBy(desc(whiteboards.updatedAt));
+  } catch (error: any) {
+    console.error("Error in listWhiteboards:", error);
+    throw new Error(error.message || "Failed to list whiteboards");
+  }
 }
 
 export async function createWhiteboard(name?: string) {
-  const user = await currentUser();
-  if (!user) throw new Error("Unauthorized");
+  try {
+    const user = await currentUser();
+    if (!user) throw new Error("Unauthorized");
 
-  const newId = "wb_" + crypto.randomUUID();
-  const newBoard = {
-    id: newId,
-    userId: user.id,
-    name: name || "Untitled Whiteboard",
-    color: "#6c5ce7",
-    isFavorite: false,
-    isTrashed: false,
-    elements: "[]",
-  };
+    const newId = "wb_" + crypto.randomUUID();
+    const newBoard = {
+      id: newId,
+      userId: user.id,
+      name: name || "Untitled Whiteboard",
+      color: "#6c5ce7",
+      isFavorite: false,
+      isTrashed: false,
+      elements: "[]",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      trashedAt: null as Date | null,
+    };
 
-  await db.insert(whiteboards).values(newBoard);
-  return newBoard;
+    await db.insert(whiteboards).values(newBoard);
+    return newBoard;
+  } catch (error: any) {
+    console.error("Error in createWhiteboard:", error);
+    throw new Error(error.message || "Failed to create whiteboard");
+  }
 }
 
 export async function updateWhiteboardElements(boardId: string, elementsJson: string) {
-  const user = await currentUser();
-  if (!user) throw new Error("Unauthorized");
+  try {
+    const user = await currentUser();
+    if (!user) throw new Error("Unauthorized");
 
-  await db
-    .update(whiteboards)
-    .set({
-      elements: elementsJson,
-      updatedAt: new Date(),
-    })
-    .where(and(eq(whiteboards.id, boardId), eq(whiteboards.userId, user.id)));
+    await db
+      .update(whiteboards)
+      .set({
+        elements: elementsJson,
+        updatedAt: new Date(),
+      })
+      .where(and(eq(whiteboards.id, boardId), eq(whiteboards.userId, user.id)));
 
-  return { success: true };
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error in updateWhiteboardElements:", error);
+    throw new Error(error.message || "Failed to update whiteboard elements");
+  }
 }
 
 export async function updateWhiteboardMetadata(
   boardId: string,
   data: { name?: string; color?: string; isFavorite?: boolean; isTrashed?: boolean }
 ) {
-  const user = await currentUser();
-  if (!user) throw new Error("Unauthorized");
+  try {
+    const user = await currentUser();
+    if (!user) throw new Error("Unauthorized");
 
-  const updateData: any = { ...data, updatedAt: new Date() };
-  if (data.isTrashed === true) {
-    updateData.trashedAt = new Date();
-  } else if (data.isTrashed === false) {
-    updateData.trashedAt = null;
+    const updateData: any = { ...data, updatedAt: new Date() };
+    if (data.isTrashed === true) {
+      updateData.trashedAt = new Date();
+    } else if (data.isTrashed === false) {
+      updateData.trashedAt = null;
+    }
+
+    await db
+      .update(whiteboards)
+      .set(updateData)
+      .where(and(eq(whiteboards.id, boardId), eq(whiteboards.userId, user.id)));
+
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error in updateWhiteboardMetadata:", error);
+    throw new Error(error.message || "Failed to update whiteboard metadata");
   }
-
-  await db
-    .update(whiteboards)
-    .set(updateData)
-    .where(and(eq(whiteboards.id, boardId), eq(whiteboards.userId, user.id)));
-
-  return { success: true };
 }
 
 export async function deleteWhiteboardForever(boardId: string) {
-  const user = await currentUser();
-  if (!user) throw new Error("Unauthorized");
+  try {
+    const user = await currentUser();
+    if (!user) throw new Error("Unauthorized");
 
-  await db
-    .delete(whiteboards)
-    .where(and(eq(whiteboards.id, boardId), eq(whiteboards.userId, user.id)));
+    await db
+      .delete(whiteboards)
+      .where(and(eq(whiteboards.id, boardId), eq(whiteboards.userId, user.id)));
 
-  return { success: true };
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error in deleteWhiteboardForever:", error);
+    throw new Error(error.message || "Failed to delete whiteboard permanently");
+  }
 }
 
 export async function generateAIDiagram(prompt: string): Promise<string> {

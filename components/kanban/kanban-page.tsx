@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 import { DndContext, DragEndEvent, PointerSensor, useDroppable, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, horizontalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -25,8 +26,11 @@ export function KanbanPage() {
   const store = useKanbanStore();
 
   useEffect(() => {
-    if (store.boards) {
-      syncKanbanData(store.boards).catch((err) => console.error("Kanban sync failed:", err));
+    if (store.boards && store.boards.length > 0) {
+      syncKanbanData(store.boards).catch((err) => {
+        console.error("Kanban sync failed:", err);
+        toast.error("Failed to sync Kanban data");
+      });
     }
   }, [store.boards]);
 

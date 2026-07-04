@@ -6,140 +6,186 @@ import { eq, and, desc } from "drizzle-orm";
 import { currentUser } from "@clerk/nextjs/server";
 
 export async function listNotes() {
-  const user = await currentUser();
-  if (!user) throw new Error("Unauthorized");
+  try {
+    const user = await currentUser();
+    if (!user) throw new Error("Unauthorized");
 
-  return db
-    .select()
-    .from(notes)
-    .where(and(eq(notes.userId, user.id), eq(notes.isTrashed, false)))
-    .orderBy(desc(notes.isPinned), desc(notes.updatedAt));
+    return await db
+      .select()
+      .from(notes)
+      .where(and(eq(notes.userId, user.id), eq(notes.isTrashed, false)))
+      .orderBy(desc(notes.isPinned), desc(notes.updatedAt));
+  } catch (error: any) {
+    console.error("Error in listNotes:", error);
+    throw new Error(error.message || "Failed to list notes");
+  }
 }
 
 export async function listTrashedNotes() {
-  const user = await currentUser();
-  if (!user) throw new Error("Unauthorized");
+  try {
+    const user = await currentUser();
+    if (!user) throw new Error("Unauthorized");
 
-  return db
-    .select()
-    .from(notes)
-    .where(and(eq(notes.userId, user.id), eq(notes.isTrashed, true)))
-    .orderBy(desc(notes.trashedAt));
+    return await db
+      .select()
+      .from(notes)
+      .where(and(eq(notes.userId, user.id), eq(notes.isTrashed, true)))
+      .orderBy(desc(notes.trashedAt));
+  } catch (error: any) {
+    console.error("Error in listTrashedNotes:", error);
+    throw new Error(error.message || "Failed to list trashed notes");
+  }
 }
 
 export async function createNote(data?: { title?: string; color?: string }) {
-  const user = await currentUser();
-  if (!user) throw new Error("Unauthorized");
+  try {
+    const user = await currentUser();
+    if (!user) throw new Error("Unauthorized");
 
-  const newNoteId = "note_" + crypto.randomUUID();
-  const newNote = {
-    id: newNoteId,
-    userId: user.id,
-    title: data?.title || "Untitled Note",
-    content: "",
-    plainText: "",
-    wordCount: 0,
-    color: data?.color || "#6c5ce7",
-    isPinned: false,
-    isFavorite: false,
-    isTrashed: false,
-  };
+    const newNoteId = "note_" + crypto.randomUUID();
+    const newNote = {
+      id: newNoteId,
+      userId: user.id,
+      title: data?.title || "Untitled Note",
+      content: "",
+      plainText: "",
+      wordCount: 0,
+      color: data?.color || "#6c5ce7",
+      isPinned: false,
+      isFavorite: false,
+      isTrashed: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      trashedAt: null as Date | null,
+    };
 
-  await db.insert(notes).values(newNote);
-  return newNote;
+    await db.insert(notes).values(newNote);
+    return newNote;
+  } catch (error: any) {
+    console.error("Error in createNote:", error);
+    throw new Error(error.message || "Failed to create note");
+  }
 }
 
 export async function updateNoteMetadata(
   noteId: string,
   data: { title?: string; isPinned?: boolean; isFavorite?: boolean; color?: string; isTrashed?: boolean }
 ) {
-  const user = await currentUser();
-  if (!user) throw new Error("Unauthorized");
+  try {
+    const user = await currentUser();
+    if (!user) throw new Error("Unauthorized");
 
-  const updateData: any = { ...data, updatedAt: new Date() };
-  if (data.isTrashed === true) {
-    updateData.trashedAt = new Date();
-  } else if (data.isTrashed === false) {
-    updateData.trashedAt = null;
+    const updateData: any = { ...data, updatedAt: new Date() };
+    if (data.isTrashed === true) {
+      updateData.trashedAt = new Date();
+    } else if (data.isTrashed === false) {
+      updateData.trashedAt = null;
+    }
+
+    await db
+      .update(notes)
+      .set(updateData)
+      .where(and(eq(notes.id, noteId), eq(notes.userId, user.id)));
+
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error in updateNoteMetadata:", error);
+    throw new Error(error.message || "Failed to update note metadata");
   }
-
-  await db
-    .update(notes)
-    .set(updateData)
-    .where(and(eq(notes.id, noteId), eq(notes.userId, user.id)));
-
-  return { success: true };
 }
 
 export async function updateNoteContent(noteId: string, content: string, plainText: string, wordCount: number) {
-  const user = await currentUser();
-  if (!user) throw new Error("Unauthorized");
+  try {
+    const user = await currentUser();
+    if (!user) throw new Error("Unauthorized");
 
-  await db
-    .update(notes)
-    .set({
-      content,
-      plainText,
-      wordCount,
-      updatedAt: new Date(),
-    })
-    .where(and(eq(notes.id, noteId), eq(notes.userId, user.id)));
+    await db
+      .update(notes)
+      .set({
+        content,
+        plainText,
+        wordCount,
+        updatedAt: new Date(),
+      })
+      .where(and(eq(notes.id, noteId), eq(notes.userId, user.id)));
 
-  return { success: true };
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error in updateNoteContent:", error);
+    throw new Error(error.message || "Failed to update note content");
+  }
 }
 
 export async function duplicateNote(noteId: string) {
-  const user = await currentUser();
-  if (!user) throw new Error("Unauthorized");
+  try {
+    const user = await currentUser();
+    if (!user) throw new Error("Unauthorized");
 
-  const existing = await db
-    .select()
-    .from(notes)
-    .where(and(eq(notes.id, noteId), eq(notes.userId, user.id)))
-    .limit(1);
+    const existing = await db
+      .select()
+      .from(notes)
+      .where(and(eq(notes.id, noteId), eq(notes.userId, user.id)))
+      .limit(1);
 
-  if (existing.length === 0) throw new Error("Note not found");
-  const n = existing[0];
+    if (existing.length === 0) throw new Error("Note not found");
+    const n = existing[0];
 
-  const duplicatedId = "note_" + crypto.randomUUID();
-  const duplicatedNote = {
-    id: duplicatedId,
-    userId: user.id,
-    title: n.title.startsWith("Copy of ") ? n.title : `Copy of ${n.title}`,
-    content: n.content || "",
-    plainText: n.plainText || "",
-    wordCount: n.wordCount || 0,
-    color: n.color,
-    isPinned: false,
-    isFavorite: false,
-    isTrashed: false,
-  };
+    const duplicatedId = "note_" + crypto.randomUUID();
+    const duplicatedNote = {
+      id: duplicatedId,
+      userId: user.id,
+      title: n.title.startsWith("Copy of ") ? n.title : `Copy of ${n.title}`,
+      content: n.content || "",
+      plainText: n.plainText || "",
+      wordCount: n.wordCount || 0,
+      color: n.color,
+      isPinned: false,
+      isFavorite: false,
+      isTrashed: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      trashedAt: null as Date | null,
+    };
 
-  await db.insert(notes).values(duplicatedNote);
-  return duplicatedNote;
+    await db.insert(notes).values(duplicatedNote);
+    return duplicatedNote;
+  } catch (error: any) {
+    console.error("Error in duplicateNote:", error);
+    throw new Error(error.message || "Failed to duplicate note");
+  }
 }
 
 export async function restoreNote(noteId: string) {
-  const user = await currentUser();
-  if (!user) throw new Error("Unauthorized");
+  try {
+    const user = await currentUser();
+    if (!user) throw new Error("Unauthorized");
 
-  await db
-    .update(notes)
-    .set({ isTrashed: false, trashedAt: null, updatedAt: new Date() })
-    .where(and(eq(notes.id, noteId), eq(notes.userId, user.id)));
+    await db
+      .update(notes)
+      .set({ isTrashed: false, trashedAt: null, updatedAt: new Date() })
+      .where(and(eq(notes.id, noteId), eq(notes.userId, user.id)));
 
-  return { success: true };
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error in restoreNote:", error);
+    throw new Error(error.message || "Failed to restore note");
+  }
 }
 
 export async function deleteNoteForever(noteId: string) {
-  const user = await currentUser();
-  if (!user) throw new Error("Unauthorized");
+  try {
+    const user = await currentUser();
+    if (!user) throw new Error("Unauthorized");
 
-  await db
-    .delete(notes)
-    .where(and(eq(notes.id, noteId), eq(notes.userId, user.id)));
+    await db
+      .delete(notes)
+      .where(and(eq(notes.id, noteId), eq(notes.userId, user.id)));
 
-  return { success: true };
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error in deleteNoteForever:", error);
+    throw new Error(error.message || "Failed to delete note permanently");
+  }
 }
 
 export async function refineSelectedText(text: string, instruction: string): Promise<string> {

@@ -1,0 +1,92 @@
+"use client";
+
+import { useState, useRef } from "react";
+
+export function useVoiceDictation(editor: any) {
+  const [isRecording, setIsRecording] = useState(false);
+  const [transcript, setTranscript] = useState("");
+  const socketRef = useRef<WebSocket | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const processorRef = useRef<ScriptProcessorNode | null>(null);
+  const micStreamRef = useRef<MediaStream | null>(null);
+
+  const startVoiceRecording = async () => {
+    try {
+      const response = await fetch("/api/assemblyai/token", { method: "POST" });
+      if (!response.ok) throw new Error("AssemblyAI handshake failed");
+      const { token } = await response.json();
+
+      const wsUrl = `wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000&token=${token}`;
+      const socket = new WebSocket(wsUrl);
+      socketRef.current = socket;
+
+      socket.onopen = async () => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        micStreamRef.current = stream;
+
+        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+        const audioContext = new AudioCtx({ sampleRate: 16000 });
+        audioContextRef.current = audioContext;
+
+        const source = audioContext.createMediaStreamSource(stream);
+        const processor = audioContext.createScriptProcessor(4096, 1, 1);
+        processorRef.current = processor;
+
+        processor.onaudioprocess = (e) => {
+          const inputData = e.inputBuffer.getChannelData(0);
+          const pcmData = new Int16Array(inputData.length);
+          for (let i = 0; i < inputData.length; i++) {
+            pcmData[i] = Math.max(-1, Math.min(1, inputData[i])) * 0x7fff;
+          }
+          if (socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify({ audio_data: Buffer.from(pcmData.buffer).toString("base64") }));
+          }
+        };
+
+        source.connect(processor);
+        processor.connect(audioContext.destination);
+        setIsRecording(true);
+      };
+
+      socket.onmessage = (message) => {
+        const res = JSON.parse(message.data);
+        if (res.text) {
+          setTranscript(res.text);
+          if (editor) {
+            editor.chain().focus().insertContent(res.text + " ").run();
+          }
+        }
+      };
+
+      socket.onerror = (e) => console.error("AssemblyAI streaming error:", e);
+      socket.onclose = () => stopVoiceRecording();
+
+    } catch (err) {
+      console.error("Recording start failed:", err);
+      alert("Please grant microphone permissions to use voice transcription.");
+    }
+  };
+
+  const stopVoiceRecording = () => {
+    setIsRecording(false);
+    setTranscript("");
+
+    if (processorRef.current) processorRef.current.disconnect();
+    if (audioContextRef.current) audioContextRef.current.close();
+    if (micStreamRef.current) micStreamRef.current.getTracks().forEach((track) => track.stop());
+    if (socketRef.current) {
+      if (socketRef.current.readyState === WebSocket.OPEN) {
+        socketRef.current.send(JSON.stringify({ terminate_session: true }));
+      }
+      socketRef.current.close();
+      socketRef.current = null;
+    }
+  };
+
+  return {
+    isRecording,
+    transcript,
+    startVoiceRecording,
+    stopVoiceRecording,
+  };
+}

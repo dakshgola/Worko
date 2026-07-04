@@ -1,18 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useUser } from "@clerk/nextjs";
+import { toast } from "sonner";
 import {
   Plus,
   Loader2,
-  Trash2,
-  MousePointer,
-  Square,
-  Circle,
-  Type,
-  ChevronLeft,
   PenTool,
-  Sparkles,
 } from "lucide-react";
 import {
   listWhiteboards,
@@ -32,6 +26,11 @@ import {
   useStorage,
   useMutation,
 } from "@/lib/liveblocks";
+import { WhiteboardCanvas } from "@/components/whiteboard/WhiteboardCanvas";
+import { WhiteboardToolbar } from "@/components/whiteboard/WhiteboardToolbar";
+import { WhiteboardAIGenerator } from "@/components/whiteboard/WhiteboardAIGenerator";
+
+import { Whiteboard } from "@/db/schema";
 
 export type Element = {
   id: string;
@@ -50,8 +49,8 @@ export default function WhiteboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // DB Whiteboards
-  const [boards, setBoards] = useState<any[]>([]);
-  const [activeBoard, setActiveBoard] = useState<any>(null);
+  const [boards, setBoards] = useState<Whiteboard[]>([]);
+  const [activeBoard, setActiveBoard] = useState<Whiteboard | null>(null);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
 
@@ -80,8 +79,10 @@ export default function WhiteboardPage() {
       const newB = await createWhiteboard("Creative Canvas");
       setBoards((prev) => [newB, ...prev]);
       setActiveBoard(newB);
+      toast.success("Whiteboard created successfully");
     } catch (e) {
       console.error(e);
+      toast.error("Failed to create whiteboard");
     } finally {
       setCreating(false);
     }
@@ -166,10 +167,10 @@ export default function WhiteboardPage() {
 }
 
 interface CanvasProps {
-  activeBoard: any;
-  setActiveBoard: (b: any) => void;
-  boards: any[];
-  setBoards: React.Dispatch<React.SetStateAction<any[]>>;
+  activeBoard: Whiteboard;
+  setActiveBoard: (b: Whiteboard | null) => void;
+  boards: Whiteboard[];
+  setBoards: React.Dispatch<React.SetStateAction<Whiteboard[]>>;
   user: any;
 }
 
@@ -200,6 +201,8 @@ function WhiteboardMultiplayerCanvas({ activeBoard, setActiveBoard, boards, setB
   const updateMyPresence = useUpdateMyPresence();
   const others = useOthers();
 
+  const drawingColorList = ["#FF5A36", "#3e9b68", "#ef6688", "#e49a3a", "#3b82f6"];
+
   // Populate map storage from Postgres if empty on room creation
   const populateMutation = useMutation(({ storage }) => {
     const map = storage.get("canvasElements");
@@ -207,7 +210,7 @@ function WhiteboardMultiplayerCanvas({ activeBoard, setActiveBoard, boards, setB
       try {
         const initial = JSON.parse(activeBoard.elements);
         if (Array.isArray(initial)) {
-          initial.forEach((el: any) => {
+          initial.forEach((el: Element) => {
             map.set(el.id, el);
           });
         }
@@ -246,17 +249,25 @@ function WhiteboardMultiplayerCanvas({ activeBoard, setActiveBoard, boards, setB
 
   // Update board metadata title
   const handleUpdateName = async (newName: string) => {
-    setActiveBoard({ ...activeBoard, name: newName });
-    setBoards(boards.map((b) => (b.id === activeBoard.id ? { ...b, name: newName } : b)));
-    await updateWhiteboardMetadata(activeBoard.id, { name: newName });
+    if (!activeBoard) return;
+    try {
+      setActiveBoard({ ...activeBoard, name: newName });
+      setBoards(boards.map((b) => (b.id === activeBoard.id ? { ...b, name: newName } : b)));
+      await updateWhiteboardMetadata(activeBoard.id, { name: newName });
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to rename whiteboard");
+    }
   };
 
   // Debounced Neon Postgres DB persistence
   const saveCanvasElementsToDb = async (newElements: Element[]) => {
+    if (!activeBoard) return;
     try {
       await updateWhiteboardElements(activeBoard.id, JSON.stringify(newElements));
     } catch (e) {
       console.error("Failed to save elements to database:", e);
+      toast.error("Failed to save drawing changes");
     }
   };
 
@@ -268,126 +279,6 @@ function WhiteboardMultiplayerCanvas({ activeBoard, setActiveBoard, boards, setB
       return () => clearTimeout(timer);
     }
   }, [elements]);
-
-  // Canvas Mouse events
-  const getCoordinates = (e: React.MouseEvent<SVGSVGElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    };
-  };
-
-  const handleMouseDown = (e: React.MouseEvent<SVGSVGElement>) => {
-    const coords = getCoordinates(e);
-
-    if (tool === "select") {
-      const hit = [...elements].reverse().find(
-        (el) =>
-          coords.x >= el.x &&
-          coords.x <= el.x + el.width &&
-          coords.y >= el.y &&
-          coords.y <= el.y + el.height
-      );
-
-      if (hit) {
-        setSelectedId(hit.id);
-        setIsDragging(true);
-        setDragOffset({
-          x: coords.x - hit.x,
-          y: coords.y - hit.y,
-        });
-      } else {
-        setSelectedId(null);
-      }
-      return;
-    }
-
-    setIsDrawing(true);
-    setStartPos(coords);
-
-    if (tool === "text") {
-      const textVal = prompt("Enter shape label:");
-      if (textVal) {
-        const newEl: Element = {
-          id: "el_" + crypto.randomUUID(),
-          type: "text",
-          x: coords.x,
-          y: coords.y,
-          width: 140,
-          height: 35,
-          text: textVal,
-          color: drawingColor,
-        };
-        saveCanvasElementsMutation([...elements, newEl]);
-      }
-      setIsDrawing(false);
-      setTool("select");
-    }
-  };
-
-  const handleMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
-    const coords = getCoordinates(e);
-
-    // Sync current cursor position to other users
-    updateMyPresence({ cursor: coords });
-
-    if (isDragging && selectedId && tool === "select") {
-      const nx = coords.x - dragOffset.x;
-      const ny = coords.y - dragOffset.y;
-      updateElementMutation(selectedId, nx, ny);
-      return;
-    }
-
-    if (!isDrawing) return;
-
-    const width = coords.x - startPos.x;
-    const height = coords.y - startPos.y;
-
-    if (tool === "rectangle") {
-      setTempElement({
-        id: "temp",
-        type: "rectangle",
-        x: width < 0 ? coords.x : startPos.x,
-        y: height < 0 ? coords.y : startPos.y,
-        width: Math.abs(width),
-        height: Math.abs(height),
-        color: drawingColor,
-      });
-    } else if (tool === "circle") {
-      setTempElement({
-        id: "temp",
-        type: "circle",
-        x: startPos.x,
-        y: startPos.y,
-        width: Math.abs(width),
-        height: Math.abs(height),
-        color: drawingColor,
-      });
-    }
-  };
-
-  const handleMouseUp = () => {
-    if (!isDrawing || !tempElement) {
-      setIsDrawing(false);
-      setTempElement(null);
-      return;
-    }
-
-    const newEl: Element = {
-      ...tempElement,
-      id: "el_" + crypto.randomUUID(),
-    };
-
-    saveCanvasElementsMutation([...elements, newEl]);
-    setIsDrawing(false);
-    setTempElement(null);
-    setTool("select");
-  };
-
-  const handleMouseLeave = () => {
-    updateMyPresence({ cursor: null });
-  };
 
   const handleDeleteSelected = () => {
     if (!selectedId) return;
@@ -435,7 +326,7 @@ function WhiteboardMultiplayerCanvas({ activeBoard, setActiveBoard, boards, setB
       const generatedCode = await generateAIDiagram(aiPrompt);
       const parsed = JSON.parse(generatedCode);
       if (parsed && Array.isArray(parsed)) {
-        const withIds = parsed.map((el: any) => ({
+        const withIds = parsed.map((el: Element) => ({
           ...el,
           id: "el_" + crypto.randomUUID(),
         }));
@@ -452,285 +343,51 @@ function WhiteboardMultiplayerCanvas({ activeBoard, setActiveBoard, boards, setB
 
   return (
     <div className="flex flex-col flex-1 min-w-0 h-full relative">
-      {/* Visual Workspace toolbar header */}
-      <div className="h-[68px] bg-surface border-b border-border flex items-center px-6 gap-4 shrink-0 shadow-sm z-10">
-        <button
-          onClick={() => setActiveBoard(null)}
-          className="mr-1.5 grid size-8.5 place-items-center rounded-xl border border-border bg-surface text-muted shadow-xs hover:bg-hover-overlay lg:hidden shrink-0"
-          aria-label="Back to whiteboards list"
-        >
-          <ChevronLeft size={14} />
-        </button>
-        <input
-          type="text"
-          value={activeBoard.name}
-          onChange={(e) => handleUpdateName(e.target.value)}
-          className="text-h3 font-black text-foreground outline-none max-w-xs border-b border-transparent focus:border-slate-200 bg-transparent"
+      <WhiteboardToolbar
+        activeBoard={activeBoard}
+        setActiveBoard={setActiveBoard}
+        handleUpdateName={handleUpdateName}
+        others={others}
+        tool={tool}
+        setTool={setTool}
+        selectedId={selectedId}
+        handleDeleteSelected={handleDeleteSelected}
+      />
+
+      <div className="flex-grow flex min-h-0 relative">
+        <WhiteboardCanvas
+          elements={elements}
+          selectedId={selectedId}
+          setSelectedId={setSelectedId}
+          tool={tool}
+          setTool={setTool}
+          drawingColor={drawingColor}
+          setIsDrawing={setIsDrawing}
+          isDrawing={isDrawing}
+          startPos={startPos}
+          setStartPos={setStartPos}
+          tempElement={tempElement}
+          setTempElement={setTempElement}
+          isDragging={isDragging}
+          setIsDragging={setIsDragging}
+          dragOffset={dragOffset}
+          setDragOffset={setDragOffset}
+          saveCanvasElementsMutation={saveCanvasElementsMutation}
+          updateElementMutation={updateElementMutation}
+          deleteElementMutation={deleteElementMutation}
+          others={others}
+          updateMyPresence={updateMyPresence}
+          drawingColorList={drawingColorList}
+          setDrawingColor={setDrawingColor}
+          loadPredefinedTemplate={loadPredefinedTemplate}
         />
 
-        {/* Live Collaborators stack inside toolbar */}
-        <div className="flex items-center gap-1.5 ml-4">
-          {others.map(({ connectionId, presence, info }) => {
-            const name = info?.name || presence?.name || "Guest";
-            const avatar = info?.avatar || presence?.avatar || "";
-            return (
-              <span
-                key={connectionId}
-                className="grid place-items-center relative"
-                title={name}
-              >
-                {avatar ? (
-                  <img src={avatar} alt={name} className="size-7.5 rounded-full object-cover border border-primary ring-2 ring-primary-soft shadow-sm" />
-                ) : (
-                  <span className="size-7.5 rounded-full bg-primary-soft text-primary font-black text-[9px] border border-primary grid place-items-center uppercase">
-                    {name.substring(0, 2)}
-                  </span>
-                )}
-              </span>
-            );
-          })}
-        </div>
-
-        <div className="flex items-center gap-1.5 bg-background border border-border p-1 rounded-xl ml-auto">
-          {[
-            { tool: "select", icon: MousePointer },
-            { tool: "rectangle", icon: Square },
-            { tool: "circle", icon: Circle },
-            { tool: "text", icon: Type },
-          ].map((t) => (
-            <button
-              key={t.tool}
-              onClick={() => setTool(t.tool as any)}
-              className={`p-1.5 rounded-lg transition ${
-                tool === t.tool ? "bg-surface text-primary shadow-sm" : "text-muted hover:text-foreground"
-              }`}
-            >
-              <t.icon size={14} />
-            </button>
-          ))}
-        </div>
-
-        {selectedId && (
-          <button
-            onClick={handleDeleteSelected}
-            className="p-1.5 rounded-lg border border-danger-soft text-danger hover:bg-danger-soft"
-          >
-            <Trash2 size={14} />
-          </button>
-        )}
-      </div>
-
-      {/* SVG Canvas and Right AI helper layout panel */}
-      <div className="flex-grow flex min-h-0 relative">
-        <div className="flex-grow relative overflow-hidden bg-white">
-          <svg
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseLeave}
-            className="w-full h-full bg-white select-none cursor-crosshair"
-          >
-            {elements.map((el) => {
-              const isSelected = el.id === selectedId;
-              if (el.type === "rectangle") {
-                return (
-                  <g key={el.id}>
-                    <rect
-                      x={el.x}
-                      y={el.y}
-                      width={el.width}
-                      height={el.height}
-                      fill="none"
-                      stroke={el.color}
-                      strokeWidth={isSelected ? 3 : 2}
-                      rx={4}
-                    />
-                    {el.text && (
-                      <text
-                        x={el.x + 10}
-                        y={el.y + el.height / 2 + 4}
-                        fontSize={11}
-                        fontFamily="var(--font-sans)"
-                        fontWeight="bold"
-                        fill="#2C2A29"
-                      >
-                        {el.text}
-                      </text>
-                    )}
-                  </g>
-                );
-              } else if (el.type === "circle") {
-                const rx = el.width / 2;
-                const ry = el.height / 2;
-                const cx = el.x + rx;
-                const cy = el.y + ry;
-                return (
-                  <g key={el.id}>
-                    <ellipse
-                      cx={cx}
-                      cy={cy}
-                      rx={rx}
-                      ry={ry}
-                      fill="none"
-                      stroke={el.color}
-                      strokeWidth={isSelected ? 3 : 2}
-                    />
-                    {el.text && (
-                      <text
-                        x={cx - el.text.length * 3}
-                        y={cy + 4}
-                        fontSize={11}
-                        fontFamily="var(--font-sans)"
-                        fontWeight="bold"
-                        fill="#2C2A29"
-                      >
-                        {el.text}
-                      </text>
-                    )}
-                  </g>
-                );
-              } else if (el.type === "text") {
-                return (
-                  <text
-                    key={el.id}
-                    x={el.x}
-                    y={el.y}
-                    fill={el.color}
-                    fontSize={12}
-                    fontFamily="var(--font-sans)"
-                    fontWeight="bold"
-                  >
-                    {el.text}
-                  </text>
-                );
-              }
-              return null;
-            })}
-
-            {/* Rendering temp element while drawing */}
-            {tempElement && tempElement.type === "rectangle" && (
-              <rect
-                x={tempElement.x}
-                y={tempElement.y}
-                width={tempElement.width}
-                height={tempElement.height}
-                fill="none"
-                stroke={tempElement.color}
-                strokeWidth={2}
-                strokeDasharray="4 4"
-              />
-            )}
-            {tempElement && tempElement.type === "circle" && (
-              <ellipse
-                cx={tempElement.x + tempElement.width / 2}
-                cy={tempElement.y + tempElement.height / 2}
-                rx={tempElement.width / 2}
-                ry={tempElement.height / 2}
-                fill="none"
-                stroke={tempElement.color}
-                strokeWidth={2}
-                strokeDasharray="4 4"
-              />
-            )}
-
-            {/* Live pointers of other online collaborators */}
-            {others.map(({ connectionId, presence, info }) => {
-              if (!presence?.cursor) return null;
-              const name = info?.name || presence.name || "Guest";
-              const avatar = info?.avatar || presence.avatar || "";
-              return (
-                <g key={connectionId} style={{ pointerEvents: "none" }} className="z-50 select-none">
-                  {/* Cursor pointer */}
-                  <path
-                    d="M0,0 L0,16 L4,12 L8,20 L11,19 L7,11 L13,11 Z"
-                    fill="#3b82f6"
-                    stroke="white"
-                    strokeWidth={1}
-                    transform={`translate(${presence.cursor.x}, ${presence.cursor.y})`}
-                  />
-                  {/* Cursor tooltip (Avatar + Name) */}
-                  <foreignObject
-                    x={presence.cursor.x + 12}
-                    y={presence.cursor.y + 12}
-                    width={150}
-                    height={32}
-                  >
-                    <div className="flex items-center gap-1 bg-surface/90 border border-border px-1.5 py-0.5 rounded-lg shadow-sm text-[9px] font-bold text-foreground">
-                      {avatar && <img src={avatar} alt={name} className="size-4.5 rounded-full object-cover border border-white" />}
-                      <span className="truncate max-w-[100px]">{name}</span>
-                    </div>
-                  </foreignObject>
-                </g>
-              );
-            })}
-          </svg>
-
-          {/* Left floating color tag select */}
-          <div className="absolute left-4 top-4 bg-surface border border-border rounded-xl p-2 shadow-sm space-y-1.5 flex flex-col z-20">
-            {["#FF5A36", "#3e9b68", "#ef6688", "#e49a3a", "#3b82f6"].map((hex) => (
-              <button
-                key={hex}
-                onClick={() => setDrawingColor(hex)}
-                className={`size-4 rounded-full border border-white shrink-0 ${
-                  drawingColor === hex ? "ring-2 ring-primary" : ""
-                }`}
-                style={{ backgroundColor: hex }}
-              />
-            ))}
-          </div>
-
-          {/* Bottom template quick presets loaders */}
-          <div className="absolute bottom-4 left-4 right-4 bg-surface border border-border rounded-xl p-3 shadow-md z-20 flex items-center justify-between">
-            <span className="text-overline text-muted block">Canvas templates</span>
-            <div className="flex gap-2">
-              <button onClick={() => loadPredefinedTemplate("flowchart")} className="btn-secondary text-caption hover:bg-primary hover:text-white px-2.5 py-1">
-                Flowchart Presets
-              </button>
-              <button onClick={() => loadPredefinedTemplate("mindmap")} className="btn-secondary text-caption hover:bg-primary hover:text-white px-2.5 py-1">
-                Mindmap Canvas
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Right side AI generator */}
-        <section className="w-80 border-l border-border bg-background p-5 shrink-0 flex flex-col justify-between hidden lg:flex">
-          <div className="space-y-4">
-            <div>
-              <h4 className="text-label-val text-primary uppercase tracking-wider block font-bold">AI Diagram Generator</h4>
-              <p className="text-caption text-muted mt-0.5 font-semibold">Describe your flow process. Gemini will append vector node shapes immediately:</p>
-            </div>
-
-            <textarea
-              placeholder="e.g. User authentication flow, OAuth handshake process, task lifecycle..."
-              value={aiPrompt}
-              onChange={(e) => setAiPrompt(e.target.value)}
-              className="w-full h-24 p-3 bg-surface border border-border text-input-val rounded-xl outline-none resize-none focus:border-primary text-foreground"
-            />
-
-            <button
-              onClick={handleAIGenerateDiagram}
-              disabled={generating || !aiPrompt.trim()}
-              className="w-full btn-primary h-9.5"
-            >
-              {generating ? (
-                <div className="flex items-center justify-center gap-1">
-                  <span className="ai-dot-indicator" />
-                  <span className="ai-dot-indicator" />
-                  <span className="ai-dot-indicator" />
-                </div>
-              ) : (
-                <>
-                  <Sparkles size={13} /> Generate shapes
-                </>
-              )}
-            </button>
-          </div>
-
-          <div className="p-3 bg-amber-50/40 border border-amber-100 rounded-xl text-caption text-amber-800 leading-relaxed font-semibold">
-            Select shape and drag to move on canvas. Double-click or select and press Delete to remove elements.
-          </div>
-        </section>
+        <WhiteboardAIGenerator
+          aiPrompt={aiPrompt}
+          setAiPrompt={setAiPrompt}
+          generating={generating}
+          handleAIGenerateDiagram={handleAIGenerateDiagram}
+        />
       </div>
     </div>
   );

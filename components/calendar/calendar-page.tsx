@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 import {
   Bell,
   CalendarDays,
@@ -31,7 +32,7 @@ import { DraftTaskPanel } from "./draft-task-panel";
 import { formatMonth, toDateKey } from "./date-utils";
 import { MonthView } from "./month-view";
 import { TaskDialog } from "./task-dialog";
-import type { CalendarTask, CalendarView, TaskFormData } from "./types";
+import type { CalendarTask, CalendarView, TaskFormData, TaskCategory, TaskPriority } from "./types";
 import { WeekView } from "./week-view";
 import { listEvents, createEvent, updateEvent, deleteEvent } from "@/lib/calendar/actions";
 import { WorkspaceSidebar } from "@/components/WorkspaceSidebar";
@@ -53,14 +54,14 @@ export function CalendarPage() {
     try {
       setLoading(true);
       const res = await listEvents();
-      setTasks(res.map((ev: any) => ({
+      setTasks(res.map((ev) => ({
         id: ev.id,
         title: ev.title,
         description: ev.description || "",
         date: ev.date,
         time: ev.time || "09:00",
-        category: ev.category as any,
-        priority: ev.priority as any,
+        category: ev.category as TaskCategory,
+        priority: ev.priority as TaskPriority,
         notes: ev.notes || "",
         recurring: ev.recurring,
       })));
@@ -103,8 +104,10 @@ export function CalendarPage() {
       await updateEvent(taskId, { date });
       setTasks((current) => current.map((task) => task.id === taskId ? { ...task, date } : task));
       setDraggingId(null);
+      toast.success("Event moved");
     } catch (e) {
       console.error(e);
+      toast.error("Failed to move event");
     }
   };
 
@@ -129,15 +132,17 @@ export function CalendarPage() {
           description: newEv.description || "",
           date: newEv.date,
           time: newEv.time || "09:00",
-          category: newEv.category as any,
-          priority: newEv.priority as any,
+          category: newEv.category as TaskCategory,
+          priority: newEv.priority as TaskPriority,
           notes: newEv.notes || "",
           recurring: newEv.recurring,
         },
       ]);
       setDialogOpen(false);
+      toast.success("Event created successfully");
     } catch (e) {
       console.error(e);
+      toast.error("Failed to create event");
     }
   };
 
@@ -146,8 +151,10 @@ export function CalendarPage() {
       try {
         await deleteEvent(id);
         setTasks((current) => current.filter((t) => t.id !== id));
+        toast.success("Event deleted");
       } catch (e) {
         console.error(e);
+        toast.error("Failed to delete event");
       }
     }
   };

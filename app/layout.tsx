@@ -1,6 +1,7 @@
 import { ClerkProvider } from '@clerk/nextjs';
 import "./globals.css";
 import type { Metadata } from "next";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Worko — Creative Workspace",
@@ -15,7 +16,10 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body>{children}</body>
+        <body>
+          {children}
+          <Toaster position="top-right" richColors />
+        </body>
       </html>
     </ClerkProvider>
   );

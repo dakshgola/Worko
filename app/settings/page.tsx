@@ -2,33 +2,16 @@
 
 import React, { useState, useEffect } from "react";
 import { useUser, useClerk } from "@clerk/nextjs";
+import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  LayoutDashboard,
-  Bot,
-  CalendarDays,
-  SquareKanban,
-  StickyNote,
-  PenTool,
-  PanelTop,
-  WandSparkles,
-  Settings,
-  Plus,
   Loader2,
-  Trash2,
-  Check,
-  Zap,
   Sliders,
   User,
   SlidersHorizontal,
-  Bell,
-  Lock,
   CreditCard,
   X,
   ChevronLeft,
-  ChevronRight,
-  Menu,
-  PanelLeftClose,
   LogOut,
 } from "lucide-react";
 import {
@@ -39,6 +22,12 @@ import {
   deleteCategory,
 } from "@/lib/settings/actions";
 import { WorkspaceSidebar } from "@/components/WorkspaceSidebar";
+import { ProfileSettings } from "@/components/settings/ProfileSettings";
+import { AppearanceSettings } from "@/components/settings/AppearanceSettings";
+import { AISettings } from "@/components/settings/AISettings";
+import { NotificationSettings } from "@/components/settings/NotificationSettings";
+import { CategoriesSettings } from "@/components/settings/CategoriesSettings";
+import { SubscriptionSettings } from "@/components/settings/SubscriptionSettings";
 
 export default function SettingsPage() {
   const { user } = useUser();
@@ -109,8 +98,10 @@ export default function SettingsPage() {
       const nextVal = !preferences[key];
       setPreferences((prev: any) => ({ ...prev, [key]: nextVal }));
       await saveUserPreferences({ [key]: nextVal });
+      toast.success("Preferences updated");
     } catch (e) {
       console.error(e);
+      toast.error("Failed to update preferences");
     } finally {
       setSavingPrefs(false);
     }
@@ -122,8 +113,10 @@ export default function SettingsPage() {
       setSavingPrefs(true);
       setPreferences((prev: any) => ({ ...prev, [key]: val }));
       await saveUserPreferences({ [key]: val });
+      toast.success("Preferences updated");
     } catch (e) {
       console.error(e);
+      toast.error("Failed to update preferences");
     } finally {
       setSavingPrefs(false);
     }
@@ -142,8 +135,10 @@ export default function SettingsPage() {
       setCategories((prev) => [...prev, cat]);
       setNewCatName("");
       setNewCatColor("#FF5A36");
+      toast.success("Category created successfully");
     } catch (err) {
       console.error(err);
+      toast.error("Failed to create category");
     }
   };
 
@@ -152,8 +147,10 @@ export default function SettingsPage() {
       try {
         await deleteCategory(id);
         setCategories((curr) => curr.filter((c) => c.id !== id));
+        toast.success("Category deleted");
       } catch (e) {
         console.error(e);
+        toast.error("Failed to delete category");
       }
     }
   };
@@ -206,46 +203,7 @@ export default function SettingsPage() {
               transition={{ duration: 0.15 }}
             >
               {activeTab === "profile" && (
-                <div className="space-y-6">
-                  <div className="flex items-center gap-4">
-                    <div className="grid size-16 place-items-center rounded-2xl bg-gradient-to-br from-[#ffad72] to-[#ef6688] text-white text-lg font-black shadow-md">
-                      {user?.firstName ? user.firstName.substring(0, 2).toUpperCase() : "DG"}
-                    </div>
-                    <div>
-                      <h3 className="text-body-sm font-extrabold text-foreground">{user?.fullName || "Daksh Gola"}</h3>
-                      <p className="text-caption text-muted mt-0.5 font-semibold">{user?.primaryEmailAddress?.emailAddress}</p>
-                    </div>
-                  </div>
-
-                  <div className="border-t border-border pt-4 space-y-3">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-label-val uppercase text-muted mb-1">First Name</label>
-                        <input type="text" readOnly value={user?.firstName || ""} className="w-full h-9 px-3 border border-border bg-background rounded-lg outline-none cursor-not-allowed text-input-val text-muted" />
-                      </div>
-                      <div>
-                        <label className="block text-label-val uppercase text-muted mb-1">Last Name</label>
-                        <input type="text" readOnly value={user?.lastName || ""} className="w-full h-9 px-3 border border-border bg-background rounded-lg outline-none cursor-not-allowed text-input-val text-muted" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="border-t border-border pt-4 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="text-body-sm font-bold text-foreground">Manage Account</h4>
-                        <p className="text-caption text-muted mt-0.5 font-semibold">Securely sign out of your workspace session.</p>
-                      </div>
-                      <button
-                        onClick={() => setShowLogoutConfirm(true)}
-                        type="button"
-                        className="h-9 px-4 rounded-xl border border-danger-soft text-danger hover:bg-danger-soft text-btn flex items-center gap-1.5 transition"
-                      >
-                        <LogOut size={13.5} /> Log Out
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <ProfileSettings user={user} setShowLogoutConfirm={setShowLogoutConfirm} />
               )}
 
               {activeTab === "preferences" && (
@@ -253,167 +211,40 @@ export default function SettingsPage() {
                   {loadingPrefs ? (
                     <div className="text-center py-6 text-caption font-semibold text-muted"><Loader2 size={12} className="animate-spin mr-1 inline" /> Loading...</div>
                   ) : (
-                    <div className="space-y-4 text-input-val text-foreground">
-                      {/* Dropdowns */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-label-val uppercase text-muted mb-1.5">Active Theme</label>
-                          <select
-                            value={preferences.theme}
-                            onChange={(e) => handleSaveTextPreference("theme", e.target.value)}
-                            className="w-full h-9 px-2 border border-border bg-background text-foreground rounded-lg outline-none"
-                          >
-                            <option value="system">System Default</option>
-                            <option value="light">Light Cozy Mode</option>
-                            <option value="dark">Dark Theme</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-label-val uppercase text-muted mb-1.5">AI Engine model</label>
-                          <select
-                            value={preferences.aiModel}
-                            onChange={(e) => handleSaveTextPreference("aiModel", e.target.value)}
-                            className="w-full h-9 px-2 border border-border bg-background text-foreground rounded-lg outline-none"
-                          >
-                            <option value="Gemini">Gemini 2.5 Flash</option>
-                            <option value="Pro">Gemini 2.5 Pro</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      {/* Toggle list */}
-                      <div className="border-t border-border pt-4 space-y-4">
-                        <h4 className="text-overline text-muted block mb-2">AI Assistant Preferences</h4>
-                        {[
-                          { key: "aiSummaries", label: "Perform auto-summarization on Note saves" },
-                          { key: "aiRefine", label: "Enable AI Refine sidebars" },
-                          { key: "aiWhiteboard", label: "Enable visual diagram generation layout" },
-                        ].map((pref) => (
-                          <label key={pref.key} className="flex items-center justify-between p-1 cursor-pointer text-muted font-semibold text-caption">
-                            <span>{pref.label}</span>
-                            <input
-                              type="checkbox"
-                              checked={preferences[pref.key]}
-                              onChange={() => handleTogglePreference(pref.key)}
-                              className="rounded text-primary focus:ring-primary size-4"
-                            />
-                          </label>
-                        ))}
-                      </div>
-
-                      <div className="border-t border-border pt-4 space-y-4">
-                        <h4 className="text-overline text-muted block mb-2">Workspace Notices</h4>
-                        {[
-                          { key: "emailNotifications", label: "Email alerts for task deadliness" },
-                          { key: "pushNotifications", label: "Receive push notices for events schedules" },
-                        ].map((pref) => (
-                          <label key={pref.key} className="flex items-center justify-between p-1 cursor-pointer text-muted font-semibold text-caption">
-                            <span>{pref.label}</span>
-                            <input
-                              type="checkbox"
-                              checked={preferences[pref.key]}
-                              onChange={() => handleTogglePreference(pref.key)}
-                              className="rounded text-primary focus:ring-primary size-4"
-                            />
-                          </label>
-                        ))}
-                      </div>
+                    <div className="space-y-6 text-input-val text-foreground">
+                      <AppearanceSettings
+                        preferences={preferences}
+                        handleSaveTextPreference={handleSaveTextPreference}
+                      />
+                      <AISettings
+                        preferences={preferences}
+                        handleTogglePreference={handleTogglePreference}
+                        handleSaveTextPreference={handleSaveTextPreference}
+                      />
+                      <NotificationSettings
+                        preferences={preferences}
+                        handleTogglePreference={handleTogglePreference}
+                      />
                     </div>
                   )}
                 </div>
               )}
 
               {activeTab === "categories" && (
-                <div className="space-y-6">
-                  <form onSubmit={handleCreateCategorySubmit} className="flex gap-3 items-end">
-                    <div className="flex-1 text-input-val">
-                      <label className="block text-label-val uppercase text-muted mb-1">New Category Label</label>
-                      <input
-                        type="text"
-                        required
-                        value={newCatName}
-                        onChange={(e) => setNewCatName(e.target.value)}
-                        placeholder="e.g. Design Sync, Urgent Review..."
-                        className="w-full h-9 px-3 border border-border bg-background text-foreground rounded-lg outline-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-label-val uppercase text-muted mb-1">Accent</label>
-                      <select
-                        value={newCatColor}
-                        onChange={(e) => setNewCatColor(e.target.value)}
-                        className="h-9 px-2 border border-border bg-background text-foreground rounded-lg outline-none text-caption"
-                      >
-                        <option value="#FF5A36">Coral Orange</option>
-                        <option value="#3e9b68">Green Forest</option>
-                        <option value="#ef6688">Pink Rose</option>
-                        <option value="#e49a3a">Amber Yellow</option>
-                      </select>
-                    </div>
-                    <button type="submit" className="btn-primary h-9 px-4 flex items-center justify-center shrink-0">
-                      Add Label
-                    </button>
-                  </form>
-
-                  <div className="border-t border-border pt-4 space-y-2">
-                    <h4 className="text-overline text-muted block mb-2">Existing Category Labels</h4>
-                    {loadingCats ? (
-                      <div className="text-caption font-semibold text-muted py-3">Loading labels...</div>
-                    ) : categories.length === 0 ? (
-                      <div className="text-caption font-semibold text-muted py-3">0 categories.</div>
-                    ) : (
-                      <div className="grid grid-cols-2 gap-2">
-                        {categories.map((c) => (
-                          <div key={c.id} className="p-2.5 border border-border rounded-xl bg-background flex items-center justify-between">
-                            <div className="flex items-center gap-2 text-body-sm font-bold">
-                              <span className="size-2 rounded-full shrink-0" style={{ backgroundColor: c.color }} />
-                              <span>{c.name}</span>
-                            </div>
-                            <button onClick={() => handleDeleteCategory(c.id)} className="text-muted hover:text-danger transition">
-                              <Trash2 size={11} />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <CategoriesSettings
+                  categories={categories}
+                  loadingCats={loadingCats}
+                  newCatName={newCatName}
+                  setNewCatName={setNewCatName}
+                  newCatColor={newCatColor}
+                  setNewCatColor={setNewCatColor}
+                  handleCreateCategorySubmit={handleCreateCategorySubmit}
+                  handleDeleteCategory={handleDeleteCategory}
+                />
               )}
 
               {activeTab === "subscription" && (
-                <div className="space-y-6">
-                  <div className="p-4 bg-primary-soft border border-primary-soft rounded-2xl flex items-center justify-between">
-                    <div>
-                      <h4 className="text-body-sm font-extrabold text-primary flex items-center gap-1.5">
-                        <Zap size={14} fill="currentColor" /> Worko Free Tier
-                      </h4>
-                      <p className="text-caption text-muted mt-0.5 font-semibold">Workspace account initialized.</p>
-                    </div>
-                    <span className="px-3 py-1 bg-surface text-primary border border-border font-bold rounded-lg text-badge-val shadow-sm">
-                      Active
-                    </span>
-                  </div>
-
-                  <div className="border-t border-border pt-4 space-y-3">
-                    <h4 className="text-overline text-muted block mb-2">Limits Usage</h4>
-                    {[
-                      { label: "Notes limits usage", value: "Unlimited", usage: 15 },
-                      { label: "Visual canvas templates", value: "3 of 5", usage: 60 },
-                      { label: "Spaces folders limit", value: "2 of 3", usage: 66 },
-                    ].map((lim, i) => (
-                      <div key={i} className="space-y-1 text-caption font-semibold text-muted">
-                        <div className="flex justify-between">
-                          <span>{lim.label}</span>
-                          <span className="text-primary">{lim.value}</span>
-                        </div>
-                        <div className="h-1.5 bg-background border border-border rounded-full overflow-hidden">
-                          <div className="h-full bg-primary rounded-full" style={{ width: `${lim.usage}%` }} />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <SubscriptionSettings />
               )}
             </motion.div>
           </AnimatePresence>

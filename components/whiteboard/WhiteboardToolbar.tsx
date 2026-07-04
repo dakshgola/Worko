@@ -1,0 +1,96 @@
+"use client";
+import React from "react";
+import { ChevronLeft, Trash2, MousePointer, Square, Circle, Type } from "lucide-react";
+
+import { Whiteboard } from "@/db/schema";
+
+interface WhiteboardToolbarProps {
+  activeBoard: Whiteboard;
+  setActiveBoard: (b: Whiteboard | null) => void;
+  handleUpdateName: (name: string) => void;
+  others: readonly any[];
+  tool: "select" | "rectangle" | "circle" | "text";
+  setTool: (t: "select" | "rectangle" | "circle" | "text") => void;
+  selectedId: string | null;
+  handleDeleteSelected: () => void;
+}
+
+export function WhiteboardToolbar({
+  activeBoard,
+  setActiveBoard,
+  handleUpdateName,
+  others,
+  tool,
+  setTool,
+  selectedId,
+  handleDeleteSelected,
+}: WhiteboardToolbarProps) {
+  return (
+    <div className="h-[68px] bg-surface border-b border-border flex items-center px-6 gap-4 shrink-0 shadow-sm z-10">
+      <button
+        onClick={() => setActiveBoard(null)}
+        className="mr-1.5 grid size-8.5 place-items-center rounded-xl border border-border bg-surface text-muted shadow-xs hover:bg-hover-overlay lg:hidden shrink-0"
+        aria-label="Back to whiteboards list"
+      >
+        <ChevronLeft size={14} />
+      </button>
+      <input
+        type="text"
+        value={activeBoard.name}
+        onChange={(e) => handleUpdateName(e.target.value)}
+        className="text-h3 font-black text-foreground outline-none max-w-xs border-b border-transparent focus:border-slate-200 bg-transparent"
+      />
+
+      {/* Live Collaborators stack inside toolbar */}
+      <div className="flex items-center gap-1.5 ml-4">
+        {others.map(({ connectionId, presence, info }) => {
+          const name = info?.name || presence?.name || "Guest";
+          const avatar = info?.avatar || presence?.avatar || "";
+          return (
+            <span
+              key={connectionId}
+              className="grid place-items-center relative"
+              title={name}
+            >
+              {avatar ? (
+                <img src={avatar} alt={name} className="size-7.5 rounded-full object-cover border border-primary ring-2 ring-primary-soft shadow-sm" />
+              ) : (
+                <span className="size-7.5 rounded-full bg-primary-soft text-primary font-black text-[9px] border border-primary grid place-items-center uppercase">
+                  {name.substring(0, 2)}
+                </span>
+              )}
+            </span>
+          );
+        })}
+      </div>
+
+      <div className="flex items-center gap-1.5 bg-background border border-border p-1 rounded-xl ml-auto">
+        {[
+          { tool: "select", icon: MousePointer },
+          { tool: "rectangle", icon: Square },
+          { tool: "circle", icon: Circle },
+          { tool: "text", icon: Type },
+        ].map((t) => (
+          <button
+            key={t.tool}
+            onClick={() => setTool(t.tool as "select" | "rectangle" | "circle" | "text")}
+            className={`p-1.5 rounded-lg transition ${
+              tool === t.tool ? "bg-surface text-primary shadow-sm" : "text-muted hover:text-foreground"
+            }`}
+          >
+            <t.icon size={14} />
+          </button>
+        ))}
+      </div>
+
+      {selectedId && (
+        <button
+          onClick={handleDeleteSelected}
+          className="p-1.5 rounded-lg border border-danger-soft text-danger hover:bg-danger-soft"
+        >
+          <Trash2 size={14} />
+        </button>
+      )}
+    </div>
+  );
+}
