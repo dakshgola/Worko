@@ -181,3 +181,46 @@ export const calendarEvents = pgTable("calendar_events", {
 
 export type CalendarEvent = typeof calendarEvents.$inferSelect;
 export type NewCalendarEvent = typeof calendarEvents.$inferInsert;
+
+export const kanbanBoards = pgTable("kanban_boards", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  name: text("name").notNull(),
+  description: text("description"),
+  color: text("color").default("#6c5ce7").notNull(),
+  icon: text("icon").default("Rocket").notNull(),
+  favorite: boolean("favorite").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const kanbanTasks = pgTable("kanban_tasks", {
+  id: text("id").primaryKey(),
+  boardId: text("board_id").notNull(),
+  columnId: text("column_id").notNull(),
+  userId: text("user_id").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  dueDate: text("due_date").notNull(),
+  priority: text("priority").notNull(),
+  labels: text("labels"),
+  assignee: text("assignee"),
+  archived: boolean("archived").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const notifications = pgTable("notifications", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  type: text("type").notNull(),
+  message: text("message").notNull(),
+  read: boolean("read").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  relatedEntityId: text("related_entity_id"),
+});
+
+export type KanbanBoardDb = typeof kanbanBoards.$inferSelect;
+export type NewKanbanBoardDb = typeof kanbanBoards.$inferInsert;
+export type KanbanTaskDb = typeof kanbanTasks.$inferSelect;
+export type NewKanbanTaskDb = typeof kanbanTasks.$inferInsert;
+export type Notification = typeof notifications.$inferSelect;
+export type NewNotification = typeof notifications.$inferInsert;

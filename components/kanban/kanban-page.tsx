@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { DndContext, DragEndEvent, PointerSensor, useDroppable, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, horizontalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
@@ -16,12 +16,20 @@ import { useKanbanStore } from "./store";
 import { TaskModal } from "./task-modal";
 import type { KanbanBoard, KanbanTask, Priority, TaskFormData } from "./types";
 import { WorkspaceSidebar } from "@/components/WorkspaceSidebar";
+import { syncKanbanData } from "@/lib/kanban/actions";
 
 const iconMap = { Rocket, Sparkles, Briefcase: BriefcaseBusiness, Sun };
 const priorityStyles: Record<Priority, string> = { Low: "bg-success-soft text-success", Medium: "bg-primary-soft text-primary", High: "bg-danger-soft text-danger" };
 
 export function KanbanPage() {
   const store = useKanbanStore();
+
+  useEffect(() => {
+    if (store.boards) {
+      syncKanbanData(store.boards).catch((err) => console.error("Kanban sync failed:", err));
+    }
+  }, [store.boards]);
+
   const board = store.boards.find((item) => item.id === store.activeBoardId) ?? store.boards[0];
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [boardSearch, setBoardSearch] = useState("");

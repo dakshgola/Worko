@@ -46,6 +46,8 @@ import { createWhiteboard } from "@/lib/whiteboard/actions";
 import { createSpace, createPage } from "@/lib/spaces/actions";
 import { createEvent } from "@/lib/calendar/actions";
 import { WorkspaceSidebar } from "@/components/WorkspaceSidebar";
+import { CommandPalette } from "@/components/CommandPalette";
+import { listNotifications, markNotificationRead } from "@/lib/notifications/actions";
 
 const DEFAULT_WIDGETS = [
   { id: "welcome", name: "Welcome Message Banner", visible: true },
@@ -94,6 +96,7 @@ const LANDING_FEATURES = [
   { title: "SVG Whiteboards", desc: "Draw mindmaps, flows, and shapes with collaborative pointers on an infinite canvas sheet.", icon: PenTool, bg: "from-pink-500 to-rose-600", accent: "rgba(244, 139, 164, 0.15)" },
   { title: "Voice Notes Dictation", desc: "Dictate transcriptions directly at cursor using AssemblyAI streaming sockets.", icon: StickyNote, bg: "from-violet-500 to-purple-600", accent: "rgba(135, 120, 255, 0.15)" },
   { title: "AI Custom App Builder", desc: "Describe custom trackers app layouts and compile schema JSONs config immediately.", icon: WandSparkles, bg: "from-rose-500 to-pink-600", accent: "rgba(244, 139, 164, 0.15)" },
+  { title: "Global Search Engine", desc: "Instant matching overlay across notes, board cards, checklists, and calendar events.", icon: Search, bg: "from-indigo-500 to-blue-600", accent: "rgba(108, 92, 231, 0.15)" },
 ];
 
 const LANDING_FAQS = [
@@ -816,34 +819,30 @@ function DashboardView() {
     loadLocalAssets();
   }, []);
 
-  // Update notifications from database events
+  // Fetch notifications from database
+  const loadDbNotifications = async () => {
+    try {
+      const list = await listNotifications();
+      setNotifications(list);
+    } catch (e) {
+      console.error("Failed to load notifications:", e);
+    }
+  };
+
   useEffect(() => {
-    const notifyList: any[] = [];
-    const todayStr = new Date().toISOString().split("T")[0];
-    
-    if (dbData?.calendarEvents) {
-      const todayEvents = dbData.calendarEvents.filter((ev: any) => ev.date === todayStr);
-      todayEvents.forEach((ev: any) => {
-        notifyList.push({
-          id: ev.id,
-          title: `Today: ${ev.title}`,
-          desc: `Starts at ${ev.time || "12:00"}`,
-          type: "calendar",
-        });
-      });
-    }
+    loadDbNotifications();
+  }, []);
 
-    if (notifyList.length === 0) {
-      notifyList.push({
-        id: "welcome_notice",
-        title: "Welcome to Worko",
-        desc: "Ready to coordinate notes, calendar plans, and collaborative whiteboards.",
-        type: "system",
-      });
+  const handleMarkRead = async (id: string) => {
+    try {
+      await markNotificationRead(id);
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+      );
+    } catch (e) {
+      console.error(e);
     }
-
-    setNotifications(notifyList);
-  }, [dbData]);
+  };
 
   // Global search filtering
   useEffect(() => {
@@ -1191,6 +1190,7 @@ function DashboardView() {
         
         {/* Top Header */}
         <header className="flex h-[68px] items-center gap-4 border-b border-border bg-background/80 px-6 backdrop-blur-xl shrink-0">
+          <CommandPalette />
           <div className="ml-auto flex items-center gap-3">
             <button
               onClick={() => setShowCustomizer(true)}
@@ -1203,11 +1203,14 @@ function DashboardView() {
             {/* Notifications panel dropdown triggers */}
             <div className="relative">
               <button
-                onClick={() => setShowNotifications(!showNotifications)}
+                onClick={() => {
+                  setShowNotifications(!showNotifications);
+                  if (!showNotifications) loadDbNotifications();
+                }}
                 className="relative btn-icon text-muted"
               >
                 <Bell size={17} />
-                {notifications.length > 0 && (
+                {notifications.filter((n) => !n.read).length > 0 && (
                   <span className="absolute right-2.5 top-2.5 size-2 rounded-full bg-primary border border-white" />
                 )}
               </button>
@@ -1222,16 +1225,38 @@ function DashboardView() {
                     className="absolute right-0 top-11 w-72 bg-surface border border-border rounded-xl shadow-lg p-3 z-50 space-y-2"
                   >
                     <div className="flex items-center justify-between pb-2 border-b border-border text-body-sm font-bold">
-                      <span>Notifications ({notifications.length})</span>
+                      <span>Notifications ({notifications.filter((n) => !n.read).length})</span>
                       <button onClick={() => setShowNotifications(false)}><X size={12} /></button>
                     </div>
                     <div className="max-h-60 overflow-y-auto space-y-2">
-                      {notifications.map((n) => (
-                        <div key={n.id} className="p-2 bg-background rounded-lg border border-border text-caption leading-relaxed font-semibold">
-                          <div className="font-bold text-primary">{n.title}</div>
-                          <div className="text-muted mt-0.5">{n.desc}</div>
-                        </div>
-                      ))}
+                      {notifications.length === 0 ? (
+                        <p className="text-center text-caption text-muted py-4 font-semibold">No notifications</p>
+                      ) : (
+                        notifications.map((n) => (
+                          <div
+                            key={n.id}
+                            className={`p-2 rounded-lg border text-caption leading-relaxed font-semibold transition ${
+                              n.read
+                                ? "bg-background border-border text-muted"
+                                : "bg-primary-soft/30 border-primary/20 text-foreground"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-bold text-primary capitalize">{n.type} Notification</span>
+                              {!n.read && (
+                                <button
+                                  onClick={() => handleMarkRead(n.id)}
+                                  className="text-[9px] text-primary hover:underline"
+                                >
+                                  Mark read
+                                </button>
+                              )}
+                            </div>
+                            <div className="mt-0.5 text-xs text-foreground/95">{n.message}</div>
+                            <div className="text-[8px] text-muted mt-1">{new Date(n.createdAt).toLocaleDateString()}</div>
+                          </div>
+                        ))
+                      )}
                     </div>
                   </motion.div>
                 )}

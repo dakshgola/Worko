@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { calendarEvents } from "@/db/schema";
+import { calendarEvents, notifications } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { currentUser } from "@clerk/nextjs/server";
 
@@ -45,6 +45,16 @@ export async function createEvent(data: {
   };
 
   await db.insert(calendarEvents).values(newEvent);
+
+  await db.insert(notifications).values({
+    id: "notif_" + crypto.randomUUID(),
+    userId: user.id,
+    type: "calendar",
+    message: `Scheduled new calendar event: "${data.title}" for ${data.date || "today"} at ${data.time || "12:00"}.`,
+    read: false,
+    relatedEntityId: newEventId,
+  });
+
   return newEvent;
 }
 
