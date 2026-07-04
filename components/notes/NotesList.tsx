@@ -15,6 +15,33 @@ interface NotesListProps {
   filteredNotes: Note[];
 }
 
+function extractTextFromTiptapDoc(node: any): string {
+  if (!node) return "";
+  if (node.type === "text" && node.text) {
+    return node.text;
+  }
+  if (node.content && Array.isArray(node.content)) {
+    return node.content.map(extractTextFromTiptapDoc).join(" ");
+  }
+  return "";
+}
+
+function getNotePreview(plainText: string | null): string {
+  if (!plainText) return "Empty note";
+  const trimmed = plainText.trim();
+  if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (parsed.type === "doc") {
+        return extractTextFromTiptapDoc(parsed).trim() || "Empty note";
+      }
+    } catch (e) {
+      // Ignore parse failure, treat as literal text
+    }
+  }
+  return plainText || "Empty note";
+}
+
 export function NotesList({
   activeNote,
   setActiveNote,
@@ -70,7 +97,7 @@ export function NotesList({
               <div className="min-w-0 flex-1">
                 <p className="text-body-sm font-bold truncate">{note.title}</p>
                 <p className="text-caption text-muted truncate mt-0.5 font-semibold">
-                  {note.plainText || "Empty note"}
+                  {getNotePreview(note.plainText)}
                 </p>
               </div>
               {note.isPinned && <Sparkles size={11} className="text-amber-500 shrink-0" />}

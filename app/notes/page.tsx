@@ -18,6 +18,7 @@ import { WorkspaceSidebar } from "@/components/WorkspaceSidebar";
 import { useVoiceDictation } from "@/hooks/useVoiceDictation";
 import { NotesList } from "@/components/notes/NotesList";
 import { NoteEditor } from "@/components/notes/NoteEditor";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 import { Note } from "@/db/schema";
 
@@ -35,6 +36,7 @@ export default function NotesPage() {
 
   // Search Notes
   const [noteSearch, setNoteSearch] = useState("");
+  const [noteToTrash, setNoteToTrash] = useState<string | null>(null);
 
   // AI Refine State
   const [aiPrompt, setAiPrompt] = useState("");
@@ -81,6 +83,20 @@ export default function NotesPage() {
     stopVoiceRecording,
   } = useVoiceDictation(editor);
 
+  const setEditorContentParsed = (contentStr: string | null) => {
+    if (!editor) return;
+    const content = contentStr || "";
+    if (content.trim().startsWith('{"type":"doc"')) {
+      try {
+        editor.commands.setContent(JSON.parse(content));
+      } catch (e) {
+        editor.commands.setContent(content);
+      }
+    } else {
+      editor.commands.setContent(content);
+    }
+  };
+
   const fetchNotes = async () => {
     try {
       setLoading(true);
@@ -89,7 +105,7 @@ export default function NotesPage() {
       if (res.length > 0) {
         setActiveNote(res[0]);
         if (editor) {
-          editor.commands.setContent(res[0].content || "");
+          setEditorContentParsed(res[0].content);
         }
       }
     } catch (e) {
@@ -108,7 +124,7 @@ export default function NotesPage() {
     if (activeNote && editor) {
       const currentHTML = editor.getHTML();
       if (currentHTML !== activeNote.content) {
-        editor.commands.setContent(activeNote.content || "");
+        setEditorContentParsed(activeNote.content);
       }
     }
   }, [activeNote, editor]);
@@ -183,18 +199,7 @@ export default function NotesPage() {
 
   const handleTrashNote = async () => {
     if (!activeNote) return;
-    if (confirm("Are you sure you want to move this note to trash?")) {
-      try {
-        await updateNoteMetadata(activeNote.id, { isTrashed: true });
-        const remaining = notesList.filter((n) => n.id !== activeNote.id);
-        setNotesList(remaining);
-        setActiveNote(remaining.length > 0 ? remaining[0] : null);
-        toast.success("Note moved to trash");
-      } catch (e) {
-        console.error(e);
-        toast.error("Failed to trash note");
-      }
-    }
+    setNoteToTrash(activeNote.id);
   };
 
   const handleDuplicateNote = async () => {
@@ -283,6 +288,44 @@ export default function NotesPage() {
           handleCreateNote={handleCreateNote}
         />
       </main>
+
+      <Dialog open={!!noteToTrash} onOpenChange={(open) => { if (!open) setNoteToTrash(null); }}>
+        <DialogContent className="bg-surface border border-border w-full max-w-sm p-6 shadow-2xl dark:border-border dark:bg-surface sm:rounded-3xl gap-4">
+          <DialogTitle className="text-body-sm font-extrabold text-foreground">Move note to Trash?</DialogTitle>
+          <DialogDescription className="text-caption text-muted font-semibold mt-1">
+            Are you sure you want to move this note to the trash? You can restore it later from settings.
+          </DialogDescription>
+          <div className="flex justify-end gap-2 border-t border-border pt-4 mt-2">
+            <button
+              onClick={() => setNoteToTrash(null)}
+              className="btn-outline h-9 px-4 text-btn text-muted"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={async () => {
+                if (noteToTrash) {
+                  try {
+                    await updateNoteMetadata(noteToTrash, { isTrashed: true });
+                    const remaining = notesList.filter((n) => n.id !== noteToTrash);
+                    setNotesList(remaining);
+                    setActiveNote(remaining.length > 0 ? remaining[0] : null);
+                    toast.success("Note moved to trash");
+                  } catch (e) {
+                    console.error(e);
+                    toast.error("Failed to trash note");
+                  } finally {
+                    setNoteToTrash(null);
+                  }
+                }
+              }}
+              className="btn-primary bg-destructive hover:bg-destructive/90 h-9 px-4 text-btn text-white"
+            >
+              Trash Note
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

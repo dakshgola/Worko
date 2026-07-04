@@ -1,6 +1,6 @@
 "use client";
-
 import { useState, useRef } from "react";
+import { toast } from "sonner";
 
 export function useVoiceDictation(editor: any) {
   const [isRecording, setIsRecording] = useState(false);
@@ -21,31 +21,48 @@ export function useVoiceDictation(editor: any) {
       socketRef.current = socket;
 
       socket.onopen = async () => {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        micStreamRef.current = stream;
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          micStreamRef.current = stream;
 
-        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-        const audioContext = new AudioCtx({ sampleRate: 16000 });
-        audioContextRef.current = audioContext;
+          const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+          const audioContext = new AudioCtx({ sampleRate: 16000 });
+          audioContextRef.current = audioContext;
 
-        const source = audioContext.createMediaStreamSource(stream);
-        const processor = audioContext.createScriptProcessor(4096, 1, 1);
-        processorRef.current = processor;
+          const source = audioContext.createMediaStreamSource(stream);
+          const processor = audioContext.createScriptProcessor(4096, 1, 1);
+          processorRef.current = processor;
 
-        processor.onaudioprocess = (e) => {
-          const inputData = e.inputBuffer.getChannelData(0);
-          const pcmData = new Int16Array(inputData.length);
-          for (let i = 0; i < inputData.length; i++) {
-            pcmData[i] = Math.max(-1, Math.min(1, inputData[i])) * 0x7fff;
+          processor.onaudioprocess = (e) => {
+            const inputData = e.inputBuffer.getChannelData(0);
+            const pcmData = new Int16Array(inputData.length);
+            for (let i = 0; i < inputData.length; i++) {
+              pcmData[i] = Math.max(-1, Math.min(1, inputData[i])) * 0x7fff;
+            }
+            if (socket.readyState === WebSocket.OPEN) {
+              socket.send(JSON.stringify({ audio_data: Buffer.from(pcmData.buffer).toString("base64") }));
+            }
+          };
+
+          source.connect(processor);
+          processor.connect(audioContext.destination);
+          setIsRecording(true);
+        } catch (err: any) {
+          console.error("Recording setup failed:", err);
+          let message = "Please grant microphone permissions to use voice transcription.";
+          if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+            try {
+              const permissionStatus = await navigator.permissions.query({ name: "microphone" as any });
+              if (permissionStatus.state === "denied") {
+                message = "Microphone access is blocked. Please enable microphone access in your browser's site settings to use voice transcription.";
+              }
+            } catch (pe) {
+              console.error("Permissions query error:", pe);
+            }
           }
-          if (socket.readyState === WebSocket.OPEN) {
-            socket.send(JSON.stringify({ audio_data: Buffer.from(pcmData.buffer).toString("base64") }));
-          }
-        };
-
-        source.connect(processor);
-        processor.connect(audioContext.destination);
-        setIsRecording(true);
+          toast.error(message);
+          stopVoiceRecording();
+        }
       };
 
       socket.onmessage = (message) => {
@@ -61,9 +78,10 @@ export function useVoiceDictation(editor: any) {
       socket.onerror = (e) => console.error("AssemblyAI streaming error:", e);
       socket.onclose = () => stopVoiceRecording();
 
-    } catch (err) {
+    } catch (err: any) {
       console.error("Recording start failed:", err);
-      alert("Please grant microphone permissions to use voice transcription.");
+      toast.error(err.message || "Failed to initialize microphone dictation session.");
+      stopVoiceRecording();
     }
   };
 
