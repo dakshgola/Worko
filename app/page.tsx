@@ -94,7 +94,6 @@ const LANDING_FEATURES = [
   { title: "SVG Whiteboards", desc: "Draw mindmaps, flows, and shapes with collaborative pointers on an infinite canvas sheet.", icon: PenTool, bg: "from-pink-500 to-rose-600", accent: "rgba(244, 139, 164, 0.15)" },
   { title: "Voice Notes Dictation", desc: "Dictate transcriptions directly at cursor using AssemblyAI streaming sockets.", icon: StickyNote, bg: "from-violet-500 to-purple-600", accent: "rgba(135, 120, 255, 0.15)" },
   { title: "AI Custom App Builder", desc: "Describe custom trackers app layouts and compile schema JSONs config immediately.", icon: WandSparkles, bg: "from-rose-500 to-pink-600", accent: "rgba(244, 139, 164, 0.15)" },
-  { title: "Global Search Engine", desc: "Instant matching overlay across notes, board cards, checklists, and calendar events.", icon: Search, bg: "from-indigo-500 to-blue-600", accent: "rgba(108, 92, 231, 0.15)" },
 ];
 
 const LANDING_FAQS = [
@@ -1192,51 +1191,6 @@ function DashboardView() {
         
         {/* Top Header */}
         <header className="flex h-[68px] items-center gap-4 border-b border-border bg-background/80 px-6 backdrop-blur-xl shrink-0">
-          <div className="relative max-w-[420px] flex-1">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
-            <input
-              type="text"
-              placeholder="Search workspaces (notes, pages, boards)..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => setShowSearchResults(true)}
-              className="w-full input-cozy pl-10 pr-10"
-            />
-            {searchQuery && (
-              <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-foreground">
-                <X size={14} />
-              </button>
-            )}
-
-            {/* Global Search overlays dropdown matches list */}
-            <AnimatePresence>
-              {showSearchResults && searchResults.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 8 }}
-                  transition={{ duration: 0.15 }}
-                  className="absolute left-0 right-0 top-11 bg-surface border border-border rounded-xl shadow-lg p-2 max-h-[300px] overflow-y-auto z-50"
-                >
-                  <div className="flex items-center justify-between px-2 py-1.5 border-b border-border text-overline text-muted mb-1">
-                    <span>Search Matches</span>
-                    <button onClick={() => setShowSearchResults(false)}><X size={11} /></button>
-                  </div>
-                  {searchResults.map((item, index) => (
-                    <button
-                      key={index}
-                      onClick={() => { window.location.href = item.link; }}
-                      className="w-full flex items-center justify-between px-2.5 py-2 hover:bg-primary-soft/40 rounded-lg text-body-sm font-semibold text-foreground text-left"
-                    >
-                      <span>{item.name}</span>
-                      <span className="px-1.5 py-0.5 bg-primary-soft text-primary text-badge-val rounded shrink-0">{item.type}</span>
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
           <div className="ml-auto flex items-center gap-3">
             <button
               onClick={() => setShowCustomizer(true)}

@@ -303,7 +303,10 @@ export default function SettingsPage() {
                       </div>
 
                       <div className="border-t border-border pt-4 space-y-4">
-                        <h4 className="text-overline text-muted block mb-2">Workspace Notices</h4>
+                        <div className="flex items-center gap-2 mb-2">
+                          <h4 className="text-overline text-muted block">Workspace Notices</h4>
+                          <span className="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 text-[8px] font-bold uppercase tracking-wider">Coming Soon</span>
+                        </div>
                         {[
                           { key: "emailNotifications", label: "Email alerts for task deadliness" },
                           { key: "pushNotifications", label: "Receive push notices for events schedules" },
