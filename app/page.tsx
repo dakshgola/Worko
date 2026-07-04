@@ -785,6 +785,30 @@ function DashboardView() {
       const res = await getDashboardData();
       if (res.success) {
         setDbData(res);
+        // Map database boards & tasks into the nested structure expected by dashboard kanban widgets
+        const mappedBoards = (res.kanbanBoards || []).map((board: any) => {
+          const boardTasks = (res.kanbanTasks || [])
+            .filter((task: any) => task.boardId === board.id)
+            .map((task: any) => {
+              let parsedLabels = [];
+              try {
+                if (task.labels) {
+                  parsedLabels = typeof task.labels === "string" ? JSON.parse(task.labels) : task.labels;
+                }
+              } catch (e) {
+                console.error("Failed to parse task labels:", e);
+              }
+              return {
+                ...task,
+                labels: parsedLabels,
+              };
+            });
+          return {
+            ...board,
+            tasks: boardTasks,
+          };
+        });
+        setKanbanBoards(mappedBoards);
       }
     } catch (e) {
       console.error("Failed to load postgres dashboard data:", e);
@@ -796,14 +820,8 @@ function DashboardView() {
   // Load local kanban assets
   const loadLocalAssets = () => {
     try {
-      const savedKanban = localStorage.getItem("worko-kanban");
-      if (savedKanban) {
-        const parsed = JSON.parse(savedKanban);
-        if (parsed.state && parsed.state.boards) {
-          setKanbanBoards(parsed.state.boards);
-        }
-      }
-
+      // NOTE: "worko-streak" is kept in localStorage intentionally because it is a client-only 
+      // login-streak tracker widget with no backing Postgres database server model.
       const savedStreak = localStorage.getItem("worko-streak") || "3";
       setStreakCount(parseInt(savedStreak));
 

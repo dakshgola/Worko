@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { notes, whiteboards, spaces, pages, generatedApps, chats, userPreferences, calendarEvents } from "@/db/schema";
+import { notes, whiteboards, spaces, pages, generatedApps, chats, userPreferences, calendarEvents, kanbanBoards, kanbanTasks } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { currentUser } from "@clerk/nextjs/server";
 
@@ -68,6 +68,20 @@ export async function getDashboardData() {
       .where(eq(calendarEvents.userId, user.id))
       .orderBy(desc(calendarEvents.createdAt));
 
+    // 9. Kanban Boards
+    const activeBoards = await db
+      .select()
+      .from(kanbanBoards)
+      .where(eq(kanbanBoards.userId, user.id))
+      .orderBy(desc(kanbanBoards.createdAt));
+
+    // 10. Kanban Tasks
+    const activeTasks = await db
+      .select()
+      .from(kanbanTasks)
+      .where(eq(kanbanTasks.userId, user.id))
+      .orderBy(desc(kanbanTasks.createdAt));
+
     return {
       success: true,
       preferences: activePrefs,
@@ -78,6 +92,8 @@ export async function getDashboardData() {
       generatedApps: templates,
       chats: activeChats,
       calendarEvents: activeEvents,
+      kanbanBoards: activeBoards,
+      kanbanTasks: activeTasks,
     };
   } catch (error: any) {
     console.error("Error in getDashboardData:", error);
@@ -92,6 +108,8 @@ export async function getDashboardData() {
       generatedApps: [],
       chats: [],
       calendarEvents: [],
+      kanbanBoards: [],
+      kanbanTasks: [],
     };
   }
 }
