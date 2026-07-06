@@ -151,6 +151,3 @@ npm run dev
 Open `http://localhost:3000` in your web browser.
 
 ---
-
-## 📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
