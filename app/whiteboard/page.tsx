@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
 import {
@@ -17,6 +17,7 @@ import {
 } from "@/lib/whiteboard/actions";
 import { WorkspaceSidebar } from "@/components/WorkspaceSidebar";
 import { LiveMap } from "@liveblocks/client";
+import { ClientSideSuspense } from "@liveblocks/react";
 import {
   LiveblocksProvider,
   RoomProvider,
@@ -141,13 +142,20 @@ export default function WhiteboardPage() {
                   canvasElements: new LiveMap<string, Element>(),
                 }}
               >
-                <WhiteboardMultiplayerCanvas
-                  activeBoard={activeBoard}
-                  setActiveBoard={setActiveBoard}
-                  boards={boards}
-                  setBoards={setBoards}
-                  user={user}
-                />
+                <ClientSideSuspense fallback={
+                  <div className="flex-grow flex flex-col items-center justify-center text-caption font-semibold text-muted gap-2">
+                    <Loader2 size={18} className="animate-spin text-primary" />
+                    <span>Loading collaborative workspace...</span>
+                  </div>
+                }>
+                  <WhiteboardMultiplayerCanvas
+                    activeBoard={activeBoard}
+                    setActiveBoard={setActiveBoard}
+                    boards={boards}
+                    setBoards={setBoards}
+                    user={user}
+                  />
+                </ClientSideSuspense>
               </RoomProvider>
             ) : (
               <div className="flex-grow flex flex-col items-center justify-center p-8 text-center text-slate-400 space-y-3">
@@ -201,6 +209,10 @@ function WhiteboardMultiplayerCanvas({ activeBoard, setActiveBoard, boards, setB
   const updateMyPresence = useUpdateMyPresence();
   const others = useOthers();
 
+  const initialSyncRef = useRef<string | null>(null);
+  const storageRoot = useStorage((root) => root);
+  const isStorageLoaded = !!storageRoot;
+
   const drawingColorList = ["#FF5A36", "#3e9b68", "#ef6688", "#e49a3a", "#3b82f6"];
 
   // Populate map storage from Postgres if empty on room creation
@@ -221,8 +233,11 @@ function WhiteboardMultiplayerCanvas({ activeBoard, setActiveBoard, boards, setB
   }, [activeBoard]);
 
   useEffect(() => {
-    populateMutation();
-  }, [populateMutation]);
+    if (isStorageLoaded && initialSyncRef.current !== activeBoard.id) {
+      initialSyncRef.current = activeBoard.id;
+      populateMutation();
+    }
+  }, [populateMutation, activeBoard.id, isStorageLoaded]);
 
   // Mutations to edit map storage
   const saveCanvasElementsMutation = useMutation(({ storage }, updated: Element[]) => {
