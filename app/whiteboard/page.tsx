@@ -186,7 +186,7 @@ function WhiteboardMultiplayerCanvas({ activeBoard, setActiveBoard, boards, setB
   // Sync state from Liveblocks storage LiveMap
   const canvasElements = useStorage((root) => root.canvasElements);
   const elements = useMemo(() => {
-    return canvasElements ? (Array.from(canvasElements.values()) as Element[]) : [];
+    return canvasElements ? (Object.values(canvasElements) as Element[]) : [];
   }, [canvasElements]);
 
   // SVG drawing states
