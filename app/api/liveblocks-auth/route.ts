@@ -2,16 +2,16 @@ import { Liveblocks } from "@liveblocks/node";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-const liveblocks = new Liveblocks({
-  secret: process.env.LIVEBLOCKS_SECRET_KEY || "",
-});
-
 export async function POST(request: Request) {
   try {
     const user = await currentUser();
     if (!user) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
+
+    const liveblocks = new Liveblocks({
+      secret: process.env.LIVEBLOCKS_SECRET_KEY || "",
+    });
 
     const json = await request.json().catch(() => ({}));
     const room = json.room || "workspace-default";
