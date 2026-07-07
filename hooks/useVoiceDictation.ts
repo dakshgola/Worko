@@ -16,7 +16,7 @@ export function useVoiceDictation(editor: any) {
       if (!response.ok) throw new Error("AssemblyAI handshake failed");
       const { token } = await response.json();
 
-      const wsUrl = `wss://streaming.assemblyai.com/v3/ws?sample_rate=16000&token=${token}`;
+      const wsUrl = `wss://streaming.assemblyai.com/v3/ws?sample_rate=16000&encoding=pcm_s16le&token=${token}`;
       const socket = new WebSocket(wsUrl);
       socketRef.current = socket;
 
@@ -40,7 +40,7 @@ export function useVoiceDictation(editor: any) {
               pcmData[i] = Math.max(-1, Math.min(1, inputData[i])) * 0x7fff;
             }
             if (socket.readyState === WebSocket.OPEN) {
-              socket.send(JSON.stringify({ audio_data: Buffer.from(pcmData.buffer).toString("base64") }));
+              socket.send(pcmData.buffer);
             }
           };
 
@@ -67,10 +67,10 @@ export function useVoiceDictation(editor: any) {
 
       socket.onmessage = (message) => {
         const res = JSON.parse(message.data);
-        if (res.text) {
-          setTranscript(res.text);
+        if (res.type === "Turn" && res.transcript) {
+          setTranscript(res.transcript);
           if (editor) {
-            editor.chain().focus().insertContent(res.text + " ").run();
+            editor.chain().focus().insertContent(res.transcript + " ").run();
           }
         }
       };
@@ -89,12 +89,23 @@ export function useVoiceDictation(editor: any) {
     setIsRecording(false);
     setTranscript("");
 
-    if (processorRef.current) processorRef.current.disconnect();
-    if (audioContextRef.current) audioContextRef.current.close();
-    if (micStreamRef.current) micStreamRef.current.getTracks().forEach((track) => track.stop());
+    if (processorRef.current) {
+      processorRef.current.disconnect();
+      processorRef.current = null;
+    }
+    if (audioContextRef.current) {
+      if (audioContextRef.current.state !== "closed") {
+        audioContextRef.current.close();
+      }
+      audioContextRef.current = null;
+    }
+    if (micStreamRef.current) {
+      micStreamRef.current.getTracks().forEach((track) => track.stop());
+      micStreamRef.current = null;
+    }
     if (socketRef.current) {
       if (socketRef.current.readyState === WebSocket.OPEN) {
-        socketRef.current.send(JSON.stringify({ terminate_session: true }));
+        socketRef.current.send(JSON.stringify({ type: "Terminate" }));
       }
       socketRef.current.close();
       socketRef.current = null;
