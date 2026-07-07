@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
 import { useEditor } from "@tiptap/react";
@@ -42,36 +42,56 @@ export default function NotesPage() {
   const [aiPrompt, setAiPrompt] = useState("");
   const [refining, setRefining] = useState(false);
 
+  // Keep track of activeNote via Ref to avoid stale closures in TipTap callbacks
+  const activeNoteRef = useRef<Note | null>(null);
+  useEffect(() => {
+    activeNoteRef.current = activeNote;
+  }, [activeNote]);
+
+  // Keep track of the active debounce timer for autosaving
+  const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Keep track of which note is currently loaded in the editor to prevent overwriting content while typing
+  const [loadedNoteId, setLoadedNoteId] = useState<string | null>(null);
+
   // Initialize Tiptap editor
   const editor = useEditor({
     extensions: [StarterKit],
     content: "",
     onUpdate: ({ editor: currentEditor }) => {
-      if (!activeNote) return;
+      const currentNote = activeNoteRef.current;
+      if (!currentNote) return;
       const htmlContent = currentEditor.getHTML();
       const plainText = currentEditor.getText();
       const wordsCount = plainText.split(/\s+/).filter(Boolean).length;
 
       // Debounce/autosave
       setSaving(true);
-      const timer = setTimeout(async () => {
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+      }
+      saveTimerRef.current = setTimeout(async () => {
         try {
-          await updateNoteContent(activeNote.id, htmlContent, plainText, wordsCount);
+          await updateNoteContent(currentNote.id, htmlContent, plainText, wordsCount);
           setNotesList((curr) =>
             curr.map((n) =>
-              n.id === activeNote.id
+              n.id === currentNote.id
                 ? { ...n, content: htmlContent, plainText, wordCount: wordsCount }
                 : n
             )
           );
+          setActiveNote((curr) => {
+            if (curr && curr.id === currentNote.id) {
+              return { ...curr, content: htmlContent, plainText, wordCount: wordsCount };
+            }
+            return curr;
+          });
         } catch (e) {
           console.error("Autosave failed:", e);
         } finally {
           setSaving(false);
         }
       }, 1000);
-
-      return () => clearTimeout(timer);
     },
   });
 
@@ -122,12 +142,15 @@ export default function NotesPage() {
   // Update editor content when active note changes
   useEffect(() => {
     if (activeNote && editor) {
-      const currentHTML = editor.getHTML();
-      if (currentHTML !== activeNote.content) {
+      if (activeNote.id !== loadedNoteId) {
         setEditorContentParsed(activeNote.content);
+        setLoadedNoteId(activeNote.id);
       }
+    } else if (!activeNote && editor) {
+      editor.commands.setContent("");
+      setLoadedNoteId(null);
     }
-  }, [activeNote, editor]);
+  }, [activeNote, editor, loadedNoteId]);
 
   const handleCreateNote = async () => {
     try {

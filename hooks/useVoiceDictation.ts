@@ -16,7 +16,7 @@ export function useVoiceDictation(editor: any) {
       if (!response.ok) throw new Error("AssemblyAI handshake failed");
       const { token } = await response.json();
 
-      const wsUrl = `wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000&token=${token}`;
+      const wsUrl = `wss://streaming.assemblyai.com/v3/ws?sample_rate=16000&token=${token}`;
       const socket = new WebSocket(wsUrl);
       socketRef.current = socket;
 
