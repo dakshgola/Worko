@@ -443,7 +443,7 @@ function DashboardView() {
               >
                 <Bell size={17} />
                 {notifications.filter((n) => !n.read).length > 0 && (
-                  <span className="absolute right-2.5 top-2.5 size-2 rounded-full bg-primary border border-white" />
+                  <span className="absolute right-2.5 top-2.5 size-2 rounded-full bg-primary border-2 border-background" />
                 )}
               </button>
 

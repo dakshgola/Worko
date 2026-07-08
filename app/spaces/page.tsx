@@ -34,6 +34,7 @@ import {
   Zap,
   PanelLeftClose,
 } from "lucide-react";
+import { EmptyStateIllustration } from "@/components/ui/EmptyStateIllustration";
 import {
   listSpaces,
   createSpace,
@@ -224,7 +225,7 @@ export default function SpacesPage() {
             {loadingSpaces ? (
               <div className="text-center py-4 text-caption font-semibold text-muted"><Loader2 size={12} className="animate-spin text-primary mr-1 inline" /> Loading</div>
             ) : spacesList.length === 0 ? (
-              <p className="text-caption text-center py-3 text-slate-400 font-semibold">No spaces created.</p>
+              <p className="text-caption text-center py-3 text-muted font-semibold">No spaces created.</p>
             ) : (
               spacesList.map((space) => (
                 <button
@@ -258,7 +259,7 @@ export default function SpacesPage() {
                 {loadingPages ? (
                   <div className="text-center py-6 text-xs text-muted"><Loader2 size={11} className="animate-spin text-primary" /></div>
                 ) : pagesList.length === 0 ? (
-                  <p className="text-caption text-center text-slate-400 py-6 font-semibold">0 page sheets.</p>
+                  <p className="text-caption text-center text-muted py-6 font-semibold">0 page sheets.</p>
                 ) : (
                   pagesList.map((page) => (
                     <button
@@ -287,7 +288,7 @@ export default function SpacesPage() {
                   type="text"
                   value={activePage.title}
                   onChange={(e) => handleUpdatePageTitle(e.target.value)}
-                  className="text-h3 font-black text-foreground outline-none max-w-sm border-b border-transparent focus:border-slate-100 bg-transparent"
+                  className="text-h3 font-black text-foreground outline-none max-w-sm border-b border-transparent focus:border-border bg-transparent"
                 />
 
                 {saving && (
@@ -305,7 +306,7 @@ export default function SpacesPage() {
 
               {/* Rich-Text Editor content */}
               <div className="flex-1 flex min-w-0 overflow-hidden">
-                <div className="flex-1 overflow-y-auto px-8 py-6 bg-surface prose max-w-none">
+                <div className="flex-1 overflow-y-auto px-8 py-6 bg-surface prose max-w-none dark:prose-invert">
                   <div className="mb-4 text-overline text-primary block">
                     Doc Template: <span>{activePage.template}</span>
                   </div>
@@ -340,9 +341,7 @@ export default function SpacesPage() {
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4">
-              <div className="size-16 rounded-2xl bg-primary-soft text-primary flex items-center justify-center shadow-[var(--shadow-sm)] mb-2">
-                <PanelTop size={28} />
-              </div>
+              <EmptyStateIllustration icon={PanelTop} />
               <h4 className="text-h4 font-extrabold text-foreground">Select or create a page</h4>
               <p className="text-caption max-w-xs text-muted font-semibold leading-relaxed">
                 Select an existing document under your spaces navigation or create a new spec document sheet.

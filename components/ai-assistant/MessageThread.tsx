@@ -60,8 +60,8 @@ export function MessageThread({
         <div className="space-y-4 max-w-3xl mx-auto">
           {messages.map((m) => (
             <div key={m.id} className={`flex gap-3.5 items-start ${m.role === "user" ? "flex-row-reverse" : ""}`}>
-              <span className={`grid size-8 shrink-0 place-items-center rounded-xl text-badge-val ${
-                m.role === "user" ? "bg-amber-100 text-amber-700" : "bg-primary-soft text-primary"
+              <span className={`grid size-8 shrink-0 place-items-center rounded-xl text-badge-val font-bold ${
+                m.role === "user" ? "bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300" : "bg-ai-accent-soft text-ai-accent"
               }`}>
                 {m.role === "user" ? "US" : "AI"}
               </span>
@@ -75,8 +75,8 @@ export function MessageThread({
 
           {streamingResponse && (
             <div className="flex gap-3.5 items-start">
-              <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary text-badge-val">AI</span>
-              <div className="p-3.5 rounded-2xl text-body-sm leading-relaxed bg-surface border border-border text-foreground font-semibold">
+              <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-ai-accent-soft text-ai-accent text-badge-val font-bold">AI</span>
+              <div className="p-3.5 rounded-2xl text-body-sm leading-relaxed bg-surface border border-border text-foreground font-semibold ai-thinking-glow border-ai-accent/35">
                 {streamingResponse}
               </div>
             </div>
@@ -84,8 +84,8 @@ export function MessageThread({
 
           {isAiResponding && !streamingResponse && (
             <div className="flex gap-3.5 items-start">
-              <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary text-badge-val">AI</span>
-              <div className="p-3.5 rounded-2xl text-body-sm leading-relaxed bg-surface border border-border text-foreground font-semibold">
+              <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-ai-accent-soft text-ai-accent text-badge-val font-bold">AI</span>
+              <div className="p-3.5 rounded-2xl text-body-sm leading-relaxed bg-surface border border-border text-foreground font-semibold ai-thinking-glow border-ai-accent/35">
                 <div className="flex items-center gap-1 py-1.5 px-3">
                   <span className="ai-dot-indicator" />
                   <span className="ai-dot-indicator" />

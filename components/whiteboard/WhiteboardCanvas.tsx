@@ -175,13 +175,13 @@ export function WhiteboardCanvas({
   };
 
   return (
-    <div className="flex-grow relative overflow-hidden bg-white">
+    <div className="flex-grow relative overflow-hidden bg-surface">
       <svg
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
-        className="w-full h-full bg-white select-none cursor-crosshair"
+        className="w-full h-full bg-surface text-foreground select-none cursor-crosshair"
       >
         {elements.map((el) => {
           const isSelected = el.id === selectedId;
@@ -205,7 +205,7 @@ export function WhiteboardCanvas({
                     fontSize={11}
                     fontFamily="var(--font-sans)"
                     fontWeight="bold"
-                    fill="#2C2A29"
+                    fill="currentColor"
                   >
                     {el.text}
                   </text>
@@ -235,7 +235,7 @@ export function WhiteboardCanvas({
                     fontSize={11}
                     fontFamily="var(--font-sans)"
                     fontWeight="bold"
-                    fill="#2C2A29"
+                    fill="currentColor"
                   >
                     {el.text}
                   </text>
@@ -295,7 +295,7 @@ export function WhiteboardCanvas({
             <g key={connectionId} style={{ pointerEvents: "none" }} className="z-50 select-none">
               <path
                 d="M0,0 L0,16 L4,12 L8,20 L11,19 L7,11 L13,11 Z"
-                fill="#3b82f6"
+                fill="var(--secondary)"
                 stroke="white"
                 strokeWidth={1}
                 transform={`translate(${presence.cursor.x}, ${presence.cursor.y})`}
@@ -306,7 +306,7 @@ export function WhiteboardCanvas({
                 width={150}
                 height={32}
               >
-                <div className="flex items-center gap-1 bg-surface/90 border border-border px-1.5 py-0.5 rounded-lg shadow-sm text-[9px] font-bold text-foreground">
+                <div className="flex items-center gap-1.5 bg-surface/95 border border-border px-2 py-0.5.5 rounded-full shadow-[var(--shadow-md)] text-[9px] font-bold text-foreground transition-all duration-200 animate-fade-in">
                   {avatar && <img src={avatar} alt={name} className="size-4.5 rounded-full object-cover border border-white" />}
                   <span className="truncate max-w-[100px]">{name}</span>
                 </div>

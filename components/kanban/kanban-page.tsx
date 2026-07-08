@@ -195,7 +195,7 @@ function TaskCard({ task, board, onEdit }: { task: KanbanTask; board: KanbanBoar
           <DropdownMenuItem onClick={() => store.archiveTask(board.id, task.id)} className="flex h-7 w-full items-center gap-2 rounded-lg px-2 text-caption font-bold text-muted hover:bg-primary-soft hover:text-primary cursor-pointer">
             <Archive size={10} /> Archive
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => store.deleteTask(board.id, task.id)} className="flex h-7 w-full items-center gap-2 rounded-lg px-2 text-caption font-bold text-muted hover:bg-[#ffe5e5] hover:text-danger cursor-pointer">
+          <DropdownMenuItem onClick={() => store.deleteTask(board.id, task.id)} className="flex h-7 w-full items-center gap-2 rounded-lg px-2 text-caption font-bold text-muted hover:bg-danger-soft hover:text-danger cursor-pointer">
             <Trash2 size={10} /> Delete
           </DropdownMenuItem>
         </DropdownMenuContent>

@@ -37,7 +37,7 @@ export function Hero() {
           </a>
           <a
             href="#showcase"
-            className="h-11 px-7 rounded-xl bg-surface border border-border text-btn text-muted flex items-center justify-center gap-1.5 hover:bg-slate-50 transition duration-200"
+            className="h-11 px-7 rounded-xl bg-surface border border-border text-btn text-muted flex items-center justify-center gap-1.5 hover:bg-hover-overlay transition duration-200"
           >
             <Play size={11} fill="currentColor" /> Live Showcase
           </a>

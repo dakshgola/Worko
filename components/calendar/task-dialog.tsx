@@ -40,10 +40,10 @@ export function TaskDialog({
     <Dialog open={open} onOpenChange={(val) => { if (!val) onClose(); }}>
       <DialogContent className="max-h-[92vh] w-full max-w-[660px] overflow-y-auto p-0 sm:rounded-[24px]">
         <div className="sticky top-0 z-10 flex items-center border-b border-border bg-surface/95 px-5 py-4 backdrop-blur-md">
-          <div className="grid size-10 place-items-center rounded-[13px] bg-[#eeeaff] text-[#6454d4]"><CalendarDays size={18} /></div>
+          <div className="grid size-10 place-items-center rounded-[13px] bg-secondary-soft text-secondary"><CalendarDays size={18} /></div>
           <div className="ml-3">
             <DialogTitle className="text-base font-bold tracking-[-0.03em]">Create a new task</DialogTitle>
-            <DialogDescription className="mt-0.5 text-[10px] text-[#9992a2]">Give your next move a calm place to land.</DialogDescription>
+            <DialogDescription className="mt-0.5 text-[10px] text-muted">Give your next move a calm place to land.</DialogDescription>
           </div>
         </div>
 
@@ -69,7 +69,7 @@ export function TaskDialog({
                   key={category}
                   onClick={() => update("category", category)}
                   className={`flex h-10 items-center gap-2 rounded-xl border px-3 text-[10px] font-bold transition ${
-                    form.category === category ? categoryStyles[category].chip : "border-[#e8e4ed] bg-white text-[#7d7687] hover:bg-[#faf9fc]"
+                    form.category === category ? categoryStyles[category].chip : "border-border bg-surface text-muted hover:bg-hover-overlay"
                   }`}
                 >
                   <span className={`size-2.5 rounded-full ${categoryStyles[category].dot}`} /> {category}
@@ -79,13 +79,13 @@ export function TaskDialog({
             </div>
           </Field>
           <Field label="Priority">
-            <div className="flex rounded-xl bg-[#f5f3f7] p-1">
+            <div className="flex rounded-xl bg-background p-1">
               {(["Low", "Medium", "High"] as TaskPriority[]).map((priority) => (
                 <button
                   key={priority}
                   onClick={() => update("priority", priority)}
                   className={`h-8 flex-1 rounded-lg text-[10px] font-bold transition ${
-                    form.priority === priority ? "bg-white text-[#4f4659] shadow-sm" : "text-[#9b94a4] hover:text-[#665e70]"
+                    form.priority === priority ? "bg-surface text-foreground shadow-sm" : "text-muted hover:text-foreground"
                   }`}
                 >
                   {priority}
@@ -99,24 +99,24 @@ export function TaskDialog({
           <button
             onClick={() => update("recurring", !form.recurring)}
             className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left transition ${
-              form.recurring ? "border-[#cdc5f4] bg-[#f5f2ff]" : "border-[#e8e4ed] hover:bg-[#faf9fc]"
+              form.recurring ? "border-secondary/40 bg-secondary-soft text-secondary" : "border-border hover:bg-hover-overlay"
             }`}
           >
-            <span className={`grid size-8 place-items-center rounded-lg ${form.recurring ? "bg-[#e7e1ff] text-[#6556d6]" : "bg-[#f2f0f4] text-[#918a99]"}`}><Repeat2 size={14} /></span>
+            <span className={`grid size-8 place-items-center rounded-lg ${form.recurring ? "bg-secondary-soft text-secondary" : "bg-background text-muted"}`}><Repeat2 size={14} /></span>
             <span className="flex-1">
               <span className="block text-[11px] font-bold">Repeat weekly</span>
-              <span className="mt-0.5 block text-[9px] text-[#9c95a5]">Create a recurring rhythm for this task</span>
+              <span className="mt-0.5 block text-[9px] text-muted">Create a recurring rhythm for this task</span>
             </span>
-            <span className={`relative h-5 w-9 rounded-full transition ${form.recurring ? "bg-[#6c5ce7]" : "bg-[#d8d3dd]"}`}>
-              <span className={`absolute top-0.5 size-4 rounded-full bg-white shadow-sm transition-all ${form.recurring ? "left-[18px]" : "left-0.5"}`} />
+            <span className={`relative h-5 w-9 rounded-full transition ${form.recurring ? "bg-primary" : "bg-border"}`}>
+              <span className={`absolute top-0.5 size-4 rounded-full bg-surface shadow-sm transition-all ${form.recurring ? "left-[18px]" : "left-0.5"}`} />
             </span>
           </button>
         </div>
 
-        <div className="sticky bottom-0 flex flex-wrap items-center gap-2 border-t border-[#ece9f1] bg-white/95 px-5 py-4 backdrop-blur">
-          <span className="mr-auto flex items-center gap-1.5 text-[9px] font-semibold text-[#aaa3b1]"><BellRing size={11} /> We&apos;ll remind you at the chosen time</span>
-          <button disabled={!canSave} onClick={() => onSave(form, true)} className="h-9 rounded-xl border border-[#ddd8e5] px-4 text-[10px] font-bold text-[#716979] transition hover:bg-[#f6f4f8] disabled:opacity-40">Save as draft</button>
-          <button disabled={!canSave || !form.date} onClick={() => onSave(form, false)} className="h-9 rounded-xl bg-gradient-to-r from-[#6556db] to-[#7b5fe7] px-4 text-[10px] font-bold text-white shadow-[0_6px_16px_rgba(103,87,220,0.25)] transition hover:-translate-y-0.5 disabled:opacity-40">Schedule task</button>
+        <div className="sticky bottom-0 flex flex-wrap items-center gap-2 border-t border-border bg-surface/95 px-5 py-4 backdrop-blur">
+          <span className="mr-auto flex items-center gap-1.5 text-[9px] font-semibold text-muted"><BellRing size={11} /> We&apos;ll remind you at the chosen time</span>
+          <button disabled={!canSave} onClick={() => onSave(form, true)} className="h-9 rounded-xl border border-border bg-surface px-4 text-[10px] font-bold text-muted hover:bg-hover-overlay hover:text-foreground transition disabled:opacity-40">Save as draft</button>
+          <button disabled={!canSave || !form.date} onClick={() => onSave(form, false)} className="h-9 rounded-xl bg-gradient-to-r from-primary to-primary-hover px-4 text-[10px] font-bold text-white shadow-[0_6px_16px_rgba(255,90,54,0.15)] transition hover:-translate-y-0.5 disabled:opacity-40">Schedule task</button>
         </div>
       </DialogContent>
     </Dialog>
@@ -126,7 +126,7 @@ export function TaskDialog({
 function Field({ label, icon, children }: { label: string; icon?: React.ReactNode; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1.5 flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.11em] text-[#8f8798]">{icon}{label}</span>
+      <span className="mb-1.5 flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.11em] text-muted">{icon}{label}</span>
       {children}
     </label>
   );

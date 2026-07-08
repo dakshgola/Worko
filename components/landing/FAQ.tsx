@@ -27,7 +27,7 @@ export function FAQ() {
             <div key={i} className="border border-border/80 bg-surface rounded-2xl overflow-hidden shadow-xs transition hover:border-border">
               <button
                 onClick={() => setFaqOpenIdx(isOpen ? null : i)}
-                className="w-full px-6 py-4.5 flex items-center justify-between text-left font-bold text-[#2C2A29] text-body-sm hover:text-primary transition"
+                className="w-full px-6 py-4.5 flex items-center justify-between text-left font-bold text-foreground text-body-sm hover:text-primary transition"
               >
                 <span>{fq.q}</span>
                 <ChevronRight size={14} className={`text-muted transition duration-200 transform ${isOpen ? "rotate-90 text-primary" : ""}`} />
@@ -40,9 +40,8 @@ export function FAQ() {
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="border-t border-border bg-background/10"
                   >
-                    <p className="p-4.5 text-caption text-[#5E5B5A] leading-relaxed font-semibold">
+                    <p className="p-4.5 text-caption text-muted leading-relaxed font-semibold">
                       {fq.a}
                     </p>
                   </motion.div>

@@ -28,9 +28,9 @@ export interface TaskFormData {
 }
 
 export const categoryStyles: Record<TaskCategory, { dot: string; chip: string; soft: string }> = {
-  Work: { dot: "bg-[#6c5ce7]", chip: "border-[#cfc8f7] bg-[#f0edff] text-[#5748c8]", soft: "bg-[#6c5ce7]" },
-  Personal: { dot: "bg-[#43a978]", chip: "border-[#bfe4d0] bg-[#eaf8f0] text-[#33845d]", soft: "bg-[#43a978]" },
-  Meeting: { dot: "bg-[#ef6688]", chip: "border-[#f3c1ce] bg-[#fff0f4] text-[#c54c6a]", soft: "bg-[#ef6688]" },
-  Reminder: { dot: "bg-[#e49a3a]", chip: "border-[#f1d5aa] bg-[#fff6e8] text-[#b97825]", soft: "bg-[#e49a3a]" },
+  Work: { dot: "bg-secondary", chip: "border-secondary/30 bg-secondary-soft text-secondary", soft: "bg-secondary" },
+  Personal: { dot: "bg-success", chip: "border-success/30 bg-success-soft text-success", soft: "bg-success" },
+  Meeting: { dot: "bg-accent", chip: "border-accent/30 bg-accent-soft text-accent", soft: "bg-accent" },
+  Reminder: { dot: "bg-warning", chip: "border-warning/30 bg-warning-soft text-warning", soft: "bg-warning" },
 };
 

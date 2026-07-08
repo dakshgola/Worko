@@ -290,8 +290,8 @@ export function Showcase() {
                     <p className="text-caption mt-1">Dictation</p>
                   </div>
                   <span className="text-muted text-lg">&rarr;</span>
-                  <div className="p-4 border border-secondary bg-[#eeeaff] rounded-xl font-bold text-center w-36 shadow-sm">
-                    <p className="text-overline text-[#6c5ce7]">Process</p>
+                  <div className="p-4 border border-secondary bg-secondary-soft rounded-xl font-bold text-center w-36 shadow-sm">
+                    <p className="text-overline text-secondary">Process</p>
                     <p className="text-caption mt-1">AI Transcribe</p>
                   </div>
                   <span className="text-muted text-lg">&rarr;</span>

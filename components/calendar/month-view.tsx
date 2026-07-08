@@ -25,9 +25,9 @@ export function MonthView({
 
   return (
     <div className="min-w-[760px]">
-      <div className="grid grid-cols-7 border-b border-[#eceaf1] bg-[#fbfafd]">
+      <div className="grid grid-cols-7 border-b border-border bg-background">
         {weekdays.map((day) => (
-          <div key={day} className="px-3 py-2 text-[9px] font-bold uppercase tracking-[0.13em] text-[#aaa6b5]">
+          <div key={day} className="px-3 py-2 text-[9px] font-bold uppercase tracking-[0.13em] text-muted">
             {day}
           </div>
         ))}
@@ -52,28 +52,28 @@ export function MonthView({
                 event.currentTarget.classList.remove("calendar-drop-active");
                 onDropTask(event.dataTransfer.getData("text/task-id"), dateKey);
               }}
-              className={`group/day relative min-h-[122px] border-b border-r border-[#efedf4] p-2 transition-colors ${
-                outside ? "bg-[#fbfbfd]/75 text-[#b9b5c1]" : "bg-white"
+              className={`group/day relative min-h-[122px] border-b border-r border-border p-2 transition-colors ${
+                outside ? "bg-background/70 text-muted" : "bg-surface"
               }`}
             >
               <div className="mb-1.5 flex items-center justify-between">
                 <span
                   className={`grid size-6 place-items-center rounded-full text-[10px] font-bold ${
-                    isToday ? "bg-[#6556db] text-white shadow-[0_4px_12px_rgba(101,86,219,0.3)]" : ""
+                    isToday ? "bg-secondary text-white shadow-[0_4px_12px_rgba(108,92,231,0.25)]" : ""
                   }`}
                 >
                   {day.getDate()}
                 </span>
                 <div className="flex items-center gap-1">
                   {dayTasks.length > 0 && (
-                    <span className="rounded-full bg-[#f0eef5] px-1.5 py-0.5 text-[8px] font-bold text-[#858090]">
+                    <span className="rounded-full bg-background text-muted px-1.5 py-0.5 text-[8px] font-bold">
                       {dayTasks.length}
                     </span>
                   )}
                   <button
                     onClick={() => onAdd(dateKey)}
                     aria-label={`Add task on ${dateKey}`}
-                    className="grid size-5 place-items-center rounded-md text-[#8f8999] opacity-0 transition hover:bg-[#eeeaff] hover:text-[#6556db] group-hover/day:opacity-100 focus:opacity-100"
+                    className="grid size-5 place-items-center rounded-md text-muted opacity-0 transition hover:bg-secondary-soft hover:text-secondary group-hover/day:opacity-100 focus:opacity-100"
                   >
                     <Plus size={11} />
                   </button>
@@ -84,12 +84,12 @@ export function MonthView({
                   <TaskCard key={task.id} task={task} compact onDragStart={onDragStart} />
                 ))}
                 {dayTasks.length > 3 && (
-                  <p className="px-1 text-[9px] font-semibold text-[#8e8998]">+{dayTasks.length - 3} more</p>
+                  <p className="px-1 text-[9px] font-semibold text-muted">+{dayTasks.length - 3} more</p>
                 )}
                 {dayTasks.length === 0 && !outside && (
                   <button
                     onClick={() => onAdd(dateKey)}
-                    className="mt-4 hidden w-full rounded-lg border border-dashed border-[#e8e4ef] py-2 text-[9px] font-semibold text-[#b1acb8] transition hover:border-[#cfc8f5] hover:bg-[#faf9ff] hover:text-[#7568ce] group-hover/day:block"
+                    className="mt-4 hidden w-full rounded-lg border border-dashed border-border py-2 text-[9px] font-semibold text-muted transition hover:border-secondary hover:bg-secondary-soft hover:text-secondary group-hover/day:block"
                   >
                     Add a moment
                   </button>

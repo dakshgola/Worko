@@ -28,7 +28,7 @@ export function DashboardKanbanWidget({
 
         {activeTasksList.length === 0 ? (
           <div className="text-center py-8 text-caption text-muted space-y-2 font-semibold">
-            <CheckSquare size={32} className="mx-auto text-slate-350" />
+            <CheckSquare size={32} className="mx-auto text-muted/65" />
             <p>No active tasks in columns. Add one below!</p>
             <button onClick={() => setShowCreateTaskModal(true)} className="text-primary font-semibold hover:underline">
               Add a task
@@ -48,7 +48,7 @@ export function DashboardKanbanWidget({
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="px-2 py-0.5 bg-background text-muted text-caption rounded font-semibold border border-border">{task.dueDate}</span>
-                  <span className="px-2 py-0.5 bg-amber-50 text-amber-600 text-caption rounded font-bold uppercase">{task.priority}</span>
+                  <span className="px-2 py-0.5 bg-warning-soft text-warning text-caption rounded font-bold uppercase">{task.priority}</span>
                 </div>
               </div>
             ))}

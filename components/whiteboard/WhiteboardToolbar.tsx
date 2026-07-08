@@ -44,7 +44,7 @@ export function WhiteboardToolbar({
         type="text"
         value={activeBoard.name}
         onChange={(e) => handleUpdateName(e.target.value)}
-        className="text-h3 font-black text-foreground outline-none max-w-xs border-b border-transparent focus:border-slate-200 bg-transparent"
+        className="text-h3 font-black text-foreground outline-none max-w-xs border-b border-transparent focus:border-primary bg-transparent"
       />
 
       {/* Live Collaborators stack inside toolbar */}

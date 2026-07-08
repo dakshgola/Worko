@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { Note } from "@/db/schema";
+import { EmptyStateIllustration } from "@/components/ui/EmptyStateIllustration";
 import { Editor } from "@tiptap/react";
 import {
   Tooltip,
@@ -100,7 +101,7 @@ export function NoteEditor({
                       onClick={handleToggleFavorite}
                       className={`size-9.5 md:size-8.5 flex items-center justify-center rounded-xl border transition focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none shrink-0 ${
                         activeNote.isFavorite
-                          ? "border-yellow-100 bg-yellow-50/20 text-yellow-600"
+                          ? "border-yellow-100 bg-yellow-50/20 text-yellow-600 dark:border-yellow-500/30 dark:bg-yellow-500/15 dark:text-yellow-400"
                           : "border-border bg-surface text-muted hover:text-foreground"
                       }`}
                     >
@@ -117,7 +118,7 @@ export function NoteEditor({
                       onClick={handleTogglePin}
                       className={`size-9.5 md:size-8.5 flex items-center justify-center rounded-xl border transition focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none shrink-0 ${
                         activeNote.isPinned
-                          ? "border-amber-100 bg-amber-50/20 text-amber-600"
+                          ? "border-amber-100 bg-amber-50/20 text-amber-600 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-400"
                           : "border-border bg-surface text-muted hover:text-foreground"
                       }`}
                     >
@@ -158,7 +159,7 @@ export function NoteEditor({
 
           {/* Note Body */}
           <div className="flex-1 flex min-w-0 overflow-hidden">
-            <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 bg-surface prose max-w-none">
+            <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 bg-surface prose max-w-none dark:prose-invert">
               {/* Colors selector bar */}
               <div className="flex items-center gap-0.5 mb-2.5 flex-wrap">
                 {["#FF5A36", "#3e9b68", "#ef6688", "#e49a3a", "#3b82f6", "#aaa6b5"].map((cHex) => (
@@ -260,9 +261,7 @@ export function NoteEditor({
         </>
       ) : (
         <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4">
-          <div className="size-16 rounded-2xl bg-primary-soft text-primary flex items-center justify-center shadow-[var(--shadow-sm)] mb-2">
-            <StickyNote size={28} />
-          </div>
+          <EmptyStateIllustration icon={StickyNote} />
           <h4 className="text-h4 font-extrabold text-foreground">Select or create a note</h4>
           <p className="text-caption max-w-xs text-muted font-semibold leading-relaxed">
             Select a document from the left list, or create a brand new note to begin structuring your team knowledge base.
