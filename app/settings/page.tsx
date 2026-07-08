@@ -30,9 +30,11 @@ import { CategoriesSettings } from "@/components/settings/CategoriesSettings";
 import { SubscriptionSettings } from "@/components/settings/SubscriptionSettings";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useTheme } from "next-themes";
 
 export default function SettingsPage() {
   const { user } = useUser();
+  const { setTheme } = useTheme();
   const { signOut } = useClerk();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -115,6 +117,9 @@ export default function SettingsPage() {
       setSavingPrefs(true);
       setPreferences((prev: any) => ({ ...prev, [key]: val }));
       await saveUserPreferences({ [key]: val });
+      if (key === "theme") {
+        setTheme(val);
+      }
       toast.success("Preferences updated");
     } catch (e) {
       console.error(e);

@@ -2,6 +2,8 @@ import { ClerkProvider } from '@clerk/nextjs';
 import "./globals.css";
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { ThemeSync } from "@/components/ThemeSync";
 
 export const metadata: Metadata = {
   title: "Worko — Creative Workspace",
@@ -15,10 +17,18 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body>
-          {children}
-          <Toaster position="top-right" richColors />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <ThemeSync />
+            {children}
+            <Toaster position="top-right" richColors />
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
