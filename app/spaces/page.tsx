@@ -45,6 +45,7 @@ import {
   deletePage,
 } from "@/lib/spaces/actions";
 import { WorkspaceSidebar } from "@/components/WorkspaceSidebar";
+import { PageWrapper } from "@/components/PageWrapper";
 
 export default function SpacesPage() {
   const { user } = useUser();
@@ -209,12 +210,7 @@ export default function SpacesPage() {
       {/* Sidebar Navigation */}
       <WorkspaceSidebar active="Spaces" />
 
-      <motion.main
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.2 }}
-        className="flex-1 min-w-0 flex h-screen overflow-hidden"
-      >
+      <PageWrapper className="flex-1 min-w-0 flex h-screen overflow-hidden">
         {/* Spaces Folders sidebar */}
         <section className="w-60 border-r border-border bg-surface flex flex-col shrink-0">
           <div className="p-4 border-b border-border flex items-center justify-between">
@@ -343,19 +339,23 @@ export default function SpacesPage() {
               </div>
             </>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-400 space-y-3">
-              <PanelTop size={48} className="text-slate-300" />
-              <h4 className="text-body-sm font-bold text-slate-500">No active page selected</h4>
-              <p className="text-caption max-w-xs text-slate-400">Select an existing document under your spaces navigation or create a new spec document sheet.</p>
+            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4">
+              <div className="size-16 rounded-2xl bg-primary-soft text-primary flex items-center justify-center shadow-[var(--shadow-sm)] mb-2">
+                <PanelTop size={28} />
+              </div>
+              <h4 className="text-h4 font-extrabold text-foreground">Select or create a page</h4>
+              <p className="text-caption max-w-xs text-muted font-semibold leading-relaxed">
+                Select an existing document under your spaces navigation or create a new spec document sheet.
+              </p>
               {activeSpace && (
-                <button onClick={handleCreatePageInsideActiveSpace} className="btn-primary h-9.5 px-4">
-                  Create Page
+                <button onClick={handleCreatePageInsideActiveSpace} className="btn-primary h-10 px-5 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] transition-all">
+                  Create page
                 </button>
               )}
             </div>
           )}
         </section>
-      </motion.main>
+      </PageWrapper>
 
       {/* Create Space Modal */}
       <AnimatePresence>
@@ -372,7 +372,7 @@ export default function SpacesPage() {
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ duration: 0.15 }}
               onSubmit={handleCreateSpaceSubmit}
-              className="bg-surface rounded-2xl border border-border w-full max-w-sm p-6 shadow-2xl space-y-4"
+              className="glass rounded-2xl w-full max-w-sm p-6 shadow-[var(--shadow-float)] space-y-4"
             >
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h4 className="font-black text-sm text-foreground flex items-center gap-1.5">

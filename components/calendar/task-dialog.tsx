@@ -38,8 +38,8 @@ export function TaskDialog({
 
   return (
     <Dialog open={open} onOpenChange={(val) => { if (!val) onClose(); }}>
-      <DialogContent className="max-h-[92vh] w-full max-w-[660px] overflow-y-auto border border-white/80 bg-white p-0 shadow-[0_28px_80px_rgba(48,40,78,0.22)] sm:rounded-[24px]">
-        <div className="sticky top-0 z-10 flex items-center border-b border-[#ece9f1] bg-white/95 px-5 py-4 backdrop-blur">
+      <DialogContent className="max-h-[92vh] w-full max-w-[660px] overflow-y-auto p-0 sm:rounded-[24px]">
+        <div className="sticky top-0 z-10 flex items-center border-b border-border bg-surface/95 px-5 py-4 backdrop-blur-md">
           <div className="grid size-10 place-items-center rounded-[13px] bg-[#eeeaff] text-[#6454d4]"><CalendarDays size={18} /></div>
           <div className="ml-3">
             <DialogTitle className="text-base font-bold tracking-[-0.03em]">Create a new task</DialogTitle>

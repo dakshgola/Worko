@@ -13,6 +13,7 @@ import {
   Bot, PenTool, PanelTop, WandSparkles,
 } from "lucide-react";
 import { BoardModal } from "./board-modal";
+import { PageWrapper } from "@/components/PageWrapper";
 import { useKanbanStore } from "./store";
 import { TaskModal } from "./task-modal";
 import type { KanbanBoard, KanbanTask, Priority, TaskFormData } from "./types";
@@ -80,7 +81,7 @@ export function KanbanPage() {
   return (
     <div className="min-h-screen bg-background text-foreground flex">
       <WorkspaceSidebar active="Tasks" />
-      <main className="flex-grow min-w-0 min-h-screen pt-[64px] lg:pt-0">
+      <PageWrapper className="flex-grow min-w-0 min-h-screen pt-[64px] lg:pt-0">
         <header className="sticky top-[64px] lg:top-0 z-30 flex h-[68px] items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-xl lg:px-6">
           <div className="relative hidden max-w-[330px] flex-1 sm:block"><Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" /><input value={taskSearch} onChange={(e) => setTaskSearch(e.target.value)} placeholder="Search tasks and labels..." className="pl-9 input-cozy" /></div>
           <div className="ml-auto flex items-center gap-2">
@@ -130,7 +131,7 @@ export function KanbanPage() {
             </DndContext>
           </motion.div>
         </div>
-      </main>
+      </PageWrapper>
       <BoardModal open={boardModal !== null} board={boardModal === "edit" ? board : undefined} onClose={() => setBoardModal(null)} onSave={(data) => boardModal === "edit" ? store.updateBoard(board.id, data) : store.addBoard(data)} />
       <TaskModal open={!!taskModal} board={board} columnId={taskModal?.columnId ?? board.columns[0].id} task={taskModal?.task} onClose={() => setTaskModal(null)} onSave={(data: TaskFormData) => store.saveTask(board.id, data, taskModal?.task?.id)} />
     </div>
@@ -153,7 +154,18 @@ function Column({ board, column, tasks, onAdd, onEdit }: { board: KanbanBoard; c
   const style = { transform: CSS.Transform.toString(sortable.transform), transition: sortable.transition };
   return <div ref={(node) => { sortable.setNodeRef(node); droppable.setNodeRef(node); }} style={style} className={`min-h-[450px] rounded-[20px] border bg-background/80 p-3 transition ${droppable.isOver ? "border-primary ring-2 ring-primary-soft" : "border-border"}`}>
     <div className="mb-3 flex items-center gap-2 px-1"><button {...sortable.attributes} {...sortable.listeners} className="cursor-grab text-muted"><GripVertical size={14} /></button><span className="size-2 rounded-full" style={{ background: column.color }} /><input value={column.title} onChange={(e) => store.renameColumn(board.id, column.id, e.target.value)} className="min-w-0 flex-1 bg-transparent text-label-val font-bold text-foreground outline-none" /><span className="rounded-full bg-surface px-2 py-0.5 text-badge-val text-muted shadow-sm">{tasks.length}</span><button onClick={() => store.deleteColumn(board.id, column.id)} className="text-muted hover:text-primary"><Trash2 size={12} /></button></div>
-    <SortableContext items={tasks.map((task) => task.id)}><div className="space-y-2">{tasks.map((task) => <TaskCard key={task.id} task={task} board={board} onEdit={() => onEdit(task)} />)}</div></SortableContext>
+    <SortableContext items={tasks.map((task) => task.id)}>
+      <div className="space-y-2">
+        {tasks.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-8 border-2 border-dashed border-border/50 rounded-[16px] text-muted text-center p-3">
+            <span className="text-caption font-bold text-muted/90">No tasks here</span>
+            <span className="text-[10px] text-muted/70 mt-0.5 font-semibold">Drag tasks here or add below</span>
+          </div>
+        ) : (
+          tasks.map((task) => <TaskCard key={task.id} task={task} board={board} onEdit={() => onEdit(task)} />)
+        )}
+      </div>
+    </SortableContext>
     <button onClick={onAdd} className="mt-2 btn-outline w-full hover:border-primary border-dashed"><Plus size={12} /> Add task</button>
   </div>;
 }
@@ -163,7 +175,7 @@ function TaskCard({ task, board, onEdit }: { task: KanbanTask; board: KanbanBoar
   const sortable = useSortable({ id: task.id, data: { kind: "task", columnId: task.columnId } });
   const complete = task.checklist.filter((item) => item.completed).length;
   const progress = task.checklist.length ? Math.round(complete / task.checklist.length * 100) : 0;
-  return <article ref={sortable.setNodeRef} style={{ transform: CSS.Transform.toString(sortable.transform), transition: sortable.transition }} className={`group rounded-[16px] border border-border bg-surface p-3 shadow-sm transition hover:-translate-y-0.5 hover:border-primary hover:shadow-md ${sortable.isDragging ? "opacity-50" : ""}`}>
+  return <article ref={sortable.setNodeRef} style={{ transform: CSS.Transform.toString(sortable.transform), transition: sortable.transition }} className={`group rounded-[16px] border border-border bg-surface p-3 shadow-[var(--shadow-sm)] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:border-primary hover:shadow-[var(--shadow-md)] ${sortable.isDragging ? "opacity-50" : ""}`}>
     <div className="mb-2 flex items-start gap-2">
       <button {...sortable.attributes} {...sortable.listeners} className="mt-0.5 cursor-grab text-muted opacity-100 lg:opacity-0 lg:group-hover:opacity-100" aria-label="Drag task card"><GripVertical size={12} /></button>
       <button onClick={onEdit} className="min-w-0 flex-1 text-left text-body-sm font-bold text-foreground leading-4">{task.title}</button>

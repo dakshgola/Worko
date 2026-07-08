@@ -259,12 +259,16 @@ export function NoteEditor({
           </div>
         </>
       ) : (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-400 space-y-3">
-          <StickyNote size={48} className="text-slate-300" />
-          <h4 className="text-body-sm font-bold text-slate-500">No active notes selected</h4>
-          <p className="text-caption max-w-xs text-slate-400">Select an existing note or click the plus icon to start writing.</p>
-          <button onClick={handleCreateNote} className="btn-primary h-9.5 px-4">
-            Create a Note
+        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4">
+          <div className="size-16 rounded-2xl bg-primary-soft text-primary flex items-center justify-center shadow-[var(--shadow-sm)] mb-2">
+            <StickyNote size={28} />
+          </div>
+          <h4 className="text-h4 font-extrabold text-foreground">Select or create a note</h4>
+          <p className="text-caption max-w-xs text-muted font-semibold leading-relaxed">
+            Select a document from the left list, or create a brand new note to begin structuring your team knowledge base.
+          </p>
+          <button onClick={handleCreateNote} className="btn-primary h-10 px-5 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] transition-all">
+            Create note
           </button>
         </div>
       )}

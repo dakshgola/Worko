@@ -25,6 +25,7 @@ import { DashboardKanbanWidget } from "@/components/dashboard/DashboardKanbanWid
 import { DashboardData, DashboardTask } from "@/lib/dashboard/types";
 import { KanbanBoardDb, Notification } from "@/db/schema";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { PageWrapper } from "@/components/PageWrapper";
 
 import {
   listNotifications,
@@ -417,7 +418,7 @@ function DashboardView() {
       <WorkspaceSidebar active="Dashboard" />
 
       {/* Main panel */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+      <PageWrapper className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         
         {/* Top Header */}
         <header className="flex h-[68px] items-center gap-4 border-b border-border bg-background/80 px-6 backdrop-blur-xl shrink-0">
@@ -453,7 +454,7 @@ function DashboardView() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 8 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute right-0 top-11 w-72 bg-surface border border-border rounded-xl shadow-lg p-3 z-50 space-y-2"
+                    className="glass absolute right-0 top-11 w-72 rounded-xl shadow-[var(--shadow-float)] p-3 z-50 space-y-2"
                   >
                     <div className="flex items-center justify-between pb-2 border-b border-border text-body-sm font-bold">
                       <span>Notifications ({notifications.filter((n) => !n.read).length})</span>
@@ -461,7 +462,11 @@ function DashboardView() {
                     </div>
                     <div className="max-h-60 overflow-y-auto space-y-2">
                       {notifications.length === 0 ? (
-                        <div className="py-6 text-center text-caption font-semibold text-muted">0 new notices today.</div>
+                        <div className="py-6 text-center text-muted">
+                          <Bell size={20} className="mx-auto text-muted/50 mb-1.5" />
+                          <p className="text-[11px] font-bold">Inbox is empty</p>
+                          <p className="text-[9px] text-muted/75 mt-0.5">No new notices today</p>
+                        </div>
                       ) : (
                         notifications.map((notif) => {
                           const separatorIndex = notif.message.indexOf(": ");
@@ -566,7 +571,7 @@ function DashboardView() {
                 return (
                   <section key={widget.id} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Score widget */}
-                    <div className="bg-surface border border-border rounded-[24px] p-5 shadow-sm flex flex-col justify-between">
+                    <div className="bg-surface border border-border rounded-[24px] p-5 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] transition-all duration-150 ease-out hover:-translate-y-0.5 flex flex-col justify-between">
                       <div>
                         <h4 className="text-label-val text-primary uppercase tracking-wider block mb-1">Productivity score</h4>
                         <p className="text-caption text-muted">Weighted metrics track</p>
@@ -615,7 +620,7 @@ function DashboardView() {
                     </div>
 
                     {/* SVG Weekly Analytics */}
-                    <div className="lg:col-span-2 bg-surface border border-border rounded-[24px] p-5 shadow-sm flex flex-col justify-between">
+                    <div className="lg:col-span-2 bg-surface border border-border rounded-[24px] p-5 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] transition-all duration-150 ease-out hover:-translate-y-0.5 flex flex-col justify-between">
                       <div>
                         <h4 className="text-label-val text-primary uppercase tracking-wider block mb-1">Weekly Metrics</h4>
                         <p className="text-caption text-muted">Daily activities checklist</p>
@@ -666,7 +671,7 @@ function DashboardView() {
             }
           })}
         </motion.div>
-      </div>
+      </PageWrapper>
 
       {/* Widget Layout Settings Modal */}
       <Dialog open={showCustomizer} onOpenChange={(val) => { if (!val) setShowCustomizer(false); }}>

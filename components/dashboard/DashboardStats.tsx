@@ -21,7 +21,7 @@ export function DashboardStats({ loadingDb, metrics, generatedAppsCount }: Dashb
       ].map((st, i) => (
         <div
           key={i}
-          className="flex items-center gap-2.5 md:gap-4 bg-surface border border-border rounded-2xl p-3 md:p-4 shadow-sm"
+          className="flex items-center gap-2.5 md:gap-4 bg-surface border border-border rounded-2xl p-3 md:p-4 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] transition-all duration-150 ease-out hover:-translate-y-0.5"
         >
           <div className={`grid size-11 place-items-center rounded-xl shrink-0 ${st.color}`}>
             <st.icon size={18} strokeWidth={2.25} />

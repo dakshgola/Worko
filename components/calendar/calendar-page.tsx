@@ -29,6 +29,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { DraftTaskPanel } from "./draft-task-panel";
+import { PageWrapper } from "@/components/PageWrapper";
 import { formatMonth, toDateKey } from "./date-utils";
 import { MonthView } from "./month-view";
 import { TaskDialog } from "./task-dialog";
@@ -163,7 +164,7 @@ export function CalendarPage() {
     <div className="min-h-screen bg-background text-foreground flex">
       <WorkspaceSidebar active="Calendar" />
 
-      <main className="flex-grow min-w-0 min-h-screen pt-[64px] lg:pt-0">
+      <PageWrapper className="flex-grow min-w-0 min-h-screen pt-[64px] lg:pt-0">
         <header className="sticky top-[64px] lg:top-0 z-30 flex h-[68px] items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-xl lg:px-6">
           <div className="relative max-w-[330px] flex-1">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
@@ -255,7 +256,7 @@ export function CalendarPage() {
             </section>
           )}
         </motion.div>
-      </main>
+      </PageWrapper>
 
       <TaskDialog open={dialogOpen} initialDate={dialogDate} onClose={() => setDialogOpen(false)} onSave={saveTask} />
     </div>

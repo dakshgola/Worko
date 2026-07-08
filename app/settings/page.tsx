@@ -31,6 +31,7 @@ import { SubscriptionSettings } from "@/components/settings/SubscriptionSettings
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useTheme } from "next-themes";
+import { PageWrapper } from "@/components/PageWrapper";
 
 export default function SettingsPage() {
   const { user } = useUser();
@@ -167,7 +168,7 @@ export default function SettingsPage() {
       {/* Sidebar Navigation */}
       <WorkspaceSidebar active="Settings" />
 
-      <main className="flex-grow min-w-0 p-6 lg:p-10 space-y-8 overflow-y-auto max-h-screen pt-[88px] lg:pt-10">
+      <PageWrapper className="flex-grow min-w-0 p-6 lg:p-10 space-y-8 overflow-y-auto max-h-screen pt-[88px] lg:pt-10">
         <section className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="mb-1.5 text-overline text-muted block">Workspace Settings</p>
@@ -244,7 +245,7 @@ export default function SettingsPage() {
             </TabsContent>
           </section>
         </Tabs>
-      </main>
+      </PageWrapper>
 
       <Dialog open={showLogoutConfirm} onOpenChange={(val) => { if (!val) setShowLogoutConfirm(false); }}>
         <DialogContent className="bg-surface border border-border w-full max-w-sm p-6 shadow-2xl dark:border-border dark:bg-surface sm:rounded-2xl gap-4">

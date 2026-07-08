@@ -18,6 +18,7 @@ import {
   Menu,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { motion } from "framer-motion";
 
 interface WorkspaceSidebarProps {
   active: string;
@@ -112,17 +113,30 @@ export function WorkspaceSidebar({ active }: WorkspaceSidebarProps) {
                   <a
                     key={label}
                     href={href}
-                    className={`group relative flex h-9.5 w-full items-center gap-2.5 rounded-xl px-2 text-sidebar transition-all duration-200 ${
+                    className={`group relative flex h-9.5 w-full items-center gap-2.5 rounded-xl px-2 text-sidebar transition-all duration-200 z-0 ${
                       isActive
-                        ? "bg-surface text-primary shadow-sm border border-border"
-                        : "text-muted hover:translate-x-0.5 hover:bg-surface hover:text-foreground"
+                        ? "text-primary font-bold"
+                        : "text-muted hover:translate-x-0.5 hover:text-foreground"
                     } ${(collapsed && !isMobile) ? "justify-center px-0" : ""}`}
                   >
-                    {isActive && <span className="absolute left-0 h-4 w-0.5 rounded-full bg-primary" />}
-                    <span className={`grid size-6 shrink-0 place-items-center rounded-lg ${isActive ? "bg-primary-soft text-primary" : `${iconBg} ${color}`}`}>
+                    {isActive && (
+                      <motion.span
+                        layoutId="activeSidebarHighlight"
+                        className="absolute inset-0 rounded-xl bg-surface border border-border shadow-[var(--shadow-sm)] -z-10"
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                    {isActive && (
+                      <motion.span
+                        layoutId="activeSidebarIndicator"
+                        className="absolute left-0 h-4 w-0.5 rounded-full bg-primary"
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                    <span className={`grid size-6 shrink-0 place-items-center rounded-lg transition-colors duration-200 ${isActive ? "bg-primary-soft text-primary" : `${iconBg} ${color} group-hover:bg-primary-soft group-hover:text-primary`}`}>
                       <Icon size={13} />
                     </span>
-                    {(!collapsed || isMobile) && <span>{label}</span>}
+                    {(!collapsed || isMobile) && <span className="transition-transform duration-200 group-hover:translate-x-0.5">{label}</span>}
                   </a>
                 );
               })}
@@ -150,7 +164,7 @@ export function WorkspaceSidebar({ active }: WorkspaceSidebarProps) {
   return (
     <>
       {/* Mobile Top Header Bar */}
-      <header className="fixed top-0 left-0 right-0 z-40 flex h-[64px] items-center justify-between border-b border-border bg-background px-4 lg:hidden">
+      <header className="fixed top-0 left-0 right-0 z-40 flex h-[64px] items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur-xl lg:hidden">
         <div className="flex items-center gap-2.5">
           <div className="grid size-8 place-items-center rounded-lg bg-gradient-to-br from-[#FF5A36] to-[#ff7d5e] text-white">
             <Zap size={15} fill="currentColor" />

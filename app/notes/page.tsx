@@ -19,6 +19,7 @@ import { useVoiceDictation } from "@/hooks/useVoiceDictation";
 import { NotesList } from "@/components/notes/NotesList";
 import { NoteEditor } from "@/components/notes/NoteEditor";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { PageWrapper } from "@/components/PageWrapper";
 
 import { Note } from "@/db/schema";
 
@@ -277,7 +278,7 @@ export default function NotesPage() {
       <WorkspaceSidebar active="Notes" />
 
       {/* Workspace notes list & editor */}
-      <main className="flex-1 min-w-0 flex h-screen overflow-hidden pt-[64px] lg:pt-0">
+      <PageWrapper className="flex-1 min-w-0 flex h-screen overflow-hidden pt-[64px] lg:pt-0">
         <NotesList
           activeNote={activeNote}
           setActiveNote={setActiveNote}
@@ -310,7 +311,7 @@ export default function NotesPage() {
           handleAIRefine={handleAIRefine}
           handleCreateNote={handleCreateNote}
         />
-      </main>
+      </PageWrapper>
 
       <Dialog open={!!noteToTrash} onOpenChange={(open) => { if (!open) setNoteToTrash(null); }}>
         <DialogContent className="bg-surface border border-border w-full max-w-sm p-6 shadow-2xl dark:border-border dark:bg-surface sm:rounded-3xl gap-4">

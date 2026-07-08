@@ -22,8 +22,8 @@ export function TaskModal({ open, board, columnId, task, onClose, onSave }: { op
 
   return (
     <Dialog open={open} onOpenChange={(val) => { if (!val) onClose(); }}>
-      <DialogContent className="max-h-[94vh] w-full max-w-[720px] overflow-y-auto border border-white/80 bg-white p-0 shadow-[0_28px_80px_rgba(48,40,78,0.24)] dark:border-[#393349] dark:bg-[#211e29] sm:rounded-[24px]">
-        <div className="sticky top-0 z-10 flex items-center border-b border-[#ece9f1] bg-white/95 px-5 py-4 backdrop-blur dark:border-[#383242] dark:bg-[#211e29]/95">
+      <DialogContent className="max-h-[94vh] w-full max-w-[720px] overflow-y-auto p-0 sm:rounded-[24px]">
+        <div className="sticky top-0 z-10 flex items-center border-b border-border bg-surface/95 px-5 py-4 backdrop-blur-md">
           <span className="grid size-10 place-items-center rounded-[13px] bg-[#eeeaff] text-[#6454d4] dark:bg-[#352f4e]"><Check size={18} /></span>
           <div className="ml-3">
             <DialogTitle className="text-sm font-bold">{task ? "Edit task" : "Create a new task"}</DialogTitle>

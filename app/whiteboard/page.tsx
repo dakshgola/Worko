@@ -28,6 +28,7 @@ import {
   useMutation,
 } from "@/lib/liveblocks";
 import { WhiteboardCanvas } from "@/components/whiteboard/WhiteboardCanvas";
+import { PageWrapper } from "@/components/PageWrapper";
 import { WhiteboardToolbar } from "@/components/whiteboard/WhiteboardToolbar";
 import { WhiteboardAIGenerator } from "@/components/whiteboard/WhiteboardAIGenerator";
 
@@ -99,7 +100,7 @@ export default function WhiteboardPage() {
         {/* Sidebar Navigation */}
         <WorkspaceSidebar active="Whiteboard" />
 
-        <main className="flex-grow min-w-0 flex h-screen overflow-hidden pt-[64px] lg:pt-0">
+        <PageWrapper className="flex-grow min-w-0 flex h-screen overflow-hidden pt-[64px] lg:pt-0">
           {/* Left canvas selector panel */}
           <section className={`w-full lg:w-56 border-r border-border bg-surface flex flex-col shrink-0 ${activeBoard ? "hidden lg:flex" : "flex"}`}>
             <div className="p-4 border-b border-border flex items-center justify-between">
@@ -158,17 +159,21 @@ export default function WhiteboardPage() {
                 </ClientSideSuspense>
               </RoomProvider>
             ) : (
-              <div className="flex-grow flex flex-col items-center justify-center p-8 text-center text-slate-400 space-y-3">
-                <PenTool size={48} className="text-slate-300" />
-                <h4 className="text-body-sm font-bold text-slate-500">No active whiteboard chosen</h4>
-                <p className="text-caption max-w-xs text-slate-400">Initialize a creative canvas sheet to outline diagrams.</p>
-                <button onClick={handleCreateBoard} className="btn-primary h-9.5 px-4">
+              <div className="flex-grow flex flex-col items-center justify-center p-8 text-center space-y-4">
+                <div className="size-16 rounded-2xl bg-primary-soft text-primary flex items-center justify-center shadow-[var(--shadow-sm)] mb-2">
+                  <PenTool size={28} />
+                </div>
+                <h4 className="text-h4 font-extrabold text-foreground">Select or initialize a whiteboard</h4>
+                <p className="text-caption max-w-xs text-muted font-semibold leading-relaxed">
+                  Select a canvas from the list, or initialize a new collaborative visual sheet to diagram flows or mindmaps.
+                </p>
+                <button onClick={handleCreateBoard} className="btn-primary h-10 px-5 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] transition-all">
                   Initialize Whiteboard
                 </button>
               </div>
             )}
           </section>
-        </main>
+        </PageWrapper>
       </div>
     </LiveblocksProvider>
   );

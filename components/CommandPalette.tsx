@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Search, Loader2, StickyNote, Calendar, SquareKanban, Command, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { globalSearch } from "@/lib/search/actions";
+import { searchPaletteVariants } from "@/lib/motion";
 
 interface SearchResult {
   id: string;
@@ -122,11 +123,11 @@ export function CommandPalette() {
 
             {/* Modal Box */}
             <motion.div
-              initial={{ scale: 0.96, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.96, opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              className="bg-surface border border-border w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden z-10 flex flex-col max-h-[450px]"
+              variants={searchPaletteVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="glass w-full max-w-lg rounded-2xl shadow-[var(--shadow-float)] overflow-hidden z-10 flex flex-col max-h-[450px]"
             >
               {/* Search Input Bar */}
               <div className="relative flex items-center border-b border-border p-3 shrink-0">
@@ -164,8 +165,10 @@ export function CommandPalette() {
                     <p className="text-[10px] text-muted/80 font-semibold">Results match notes, boards, and scheduled calendar items</p>
                   </div>
                 ) : Object.keys(groupedResults).length === 0 && !loading ? (
-                  <div className="text-center py-10 text-caption font-bold text-muted">
-                    No matches found for "{query}"
+                  <div className="text-center py-10 space-y-2">
+                    <Search size={28} className="text-muted/60 mx-auto" />
+                    <p className="text-caption font-bold text-muted">No matches found for "{query}"</p>
+                    <p className="text-[10px] text-muted/80 font-semibold">Try searching for other keywords, notes or events</p>
                   </div>
                 ) : (
                   Object.entries(groupedResults).map(([groupName, items]) => (

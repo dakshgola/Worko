@@ -20,6 +20,7 @@ import { createNote } from "@/lib/notes/actions";
 import { ChatHistorySidebar } from "@/components/ai-assistant/ChatHistorySidebar";
 import { MessageThread } from "@/components/ai-assistant/MessageThread";
 import { InputComposer } from "@/components/ai-assistant/InputComposer";
+import { PageWrapper } from "@/components/PageWrapper";
 
 export default function AiAssistantPage() {
   const { user } = useUser();
@@ -290,7 +291,7 @@ export default function AiAssistantPage() {
       {/* Sidebar Navigation */}
       <WorkspaceSidebar active="AI Assistant" />
 
-      <main className="flex-grow min-w-0 flex h-screen overflow-hidden pt-[64px] lg:pt-0">
+      <PageWrapper className="flex-grow min-w-0 flex h-screen overflow-hidden pt-[64px] lg:pt-0">
         <ChatHistorySidebar
           chatsList={chatsList}
           activeChat={activeChat}
@@ -360,7 +361,7 @@ export default function AiAssistantPage() {
             stopVoiceRecording={stopVoiceRecording}
           />
         </section>
-      </main>
+      </PageWrapper>
     </div>
   );
 }

@@ -83,7 +83,10 @@ export function NotesList({
             <Loader2 size={13} className="animate-spin text-primary mr-1.5" /> Loading...
           </div>
         ) : filteredNotes.length === 0 ? (
-          <p className="text-caption font-semibold text-muted text-center py-6">No notes found.</p>
+          <div className="py-8 text-center text-muted">
+            <Search size={18} className="mx-auto text-muted/60 mb-1.5" />
+            <p className="text-[11px] font-bold">No matching notes</p>
+          </div>
         ) : (
           filteredNotes.map((note) => (
             <button
