@@ -70,35 +70,35 @@ export function NoteEditor({
       {activeNote ? (
         <>
           {/* Note Header toolbar */}
-          <div className="flex h-[64px] items-center gap-3 border-b border-border px-6 shrink-0 bg-surface/80 backdrop-blur-xl">
+          <div className="flex h-[64px] items-center gap-2 lg:gap-3 border-b border-border px-4 lg:px-6 shrink-0 bg-surface/80 backdrop-blur-xl">
             <button
               onClick={() => setActiveNote(null)}
-              className="mr-1.5 grid size-8.5 place-items-center rounded-xl border border-border bg-surface text-muted shadow-xs hover:bg-hover-overlay lg:hidden shrink-0"
+              className="mr-1 grid size-9.5 place-items-center rounded-xl border border-border bg-surface text-muted shadow-xs hover:bg-hover-overlay lg:hidden shrink-0"
               aria-label="Back to notes list"
             >
-              <ChevronLeft size={14} />
+              <ChevronLeft size={15} />
             </button>
             <input
               type="text"
               value={activeNote.title}
               onChange={(e) => handleUpdateTitle(e.target.value)}
-              className="text-h3 text-foreground outline-none border-b border-transparent focus:border-border flex-grow max-w-sm bg-transparent font-bold"
+              className="text-base sm:text-h4 lg:text-h3 text-foreground outline-none border-b border-transparent focus:border-border w-0 min-w-0 flex-grow max-w-sm bg-transparent font-bold"
             />
 
             {saving && (
-              <span className="text-caption text-muted font-semibold flex items-center animate-pulse gap-1">
+              <span className="text-caption text-muted font-semibold flex items-center animate-pulse gap-1 shrink-0">
                 <Clock size={11} /> Saving
               </span>
             )}
 
-            <div className="ml-auto flex items-center gap-2">
+            <div className="ml-auto flex items-center gap-1.5">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
                       aria-label="Toggle favorite"
                       onClick={handleToggleFavorite}
-                      className={`p-1.5 rounded-lg border transition focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
+                      className={`size-9.5 md:size-8.5 flex items-center justify-center rounded-xl border transition focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none shrink-0 ${
                         activeNote.isFavorite
                           ? "border-yellow-100 bg-yellow-50/20 text-yellow-600"
                           : "border-border bg-surface text-muted hover:text-foreground"
@@ -115,7 +115,7 @@ export function NoteEditor({
                     <button
                       aria-label="Toggle pin"
                       onClick={handleTogglePin}
-                      className={`p-1.5 rounded-lg border transition focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
+                      className={`size-9.5 md:size-8.5 flex items-center justify-center rounded-xl border transition focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none shrink-0 ${
                         activeNote.isPinned
                           ? "border-amber-100 bg-amber-50/20 text-amber-600"
                           : "border-border bg-surface text-muted hover:text-foreground"
@@ -132,7 +132,7 @@ export function NoteEditor({
                     <button
                       aria-label="Duplicate note"
                       onClick={handleDuplicateNote}
-                      className="btn-icon size-8 flex items-center justify-center text-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+                      className="size-9.5 md:size-8.5 border border-border bg-surface rounded-xl flex items-center justify-center text-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none shrink-0"
                     >
                       <Copy size={14} />
                     </button>
@@ -145,7 +145,7 @@ export function NoteEditor({
                     <button
                       aria-label="Delete note"
                       onClick={handleTrashNote}
-                      className="btn-icon size-8 flex items-center justify-center text-muted hover:text-danger focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+                      className="size-9.5 md:size-8.5 border border-border bg-surface rounded-xl flex items-center justify-center text-muted hover:text-danger focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none shrink-0"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -158,16 +158,23 @@ export function NoteEditor({
 
           {/* Note Body */}
           <div className="flex-1 flex min-w-0 overflow-hidden">
-            <div className="flex-1 overflow-y-auto px-8 py-6 bg-surface prose max-w-none">
+            <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 bg-surface prose max-w-none">
               {/* Colors selector bar */}
-              <div className="flex items-center gap-1.5 mb-4">
+              <div className="flex items-center gap-0.5 mb-2.5 flex-wrap">
                 {["#FF5A36", "#3e9b68", "#ef6688", "#e49a3a", "#3b82f6", "#aaa6b5"].map((cHex) => (
                   <button
                     key={cHex}
                     onClick={() => handleUpdateColor(cHex)}
-                    className={`size-4 rounded-full border border-white transition relative flex items-center justify-center shrink-0 ${activeNote.color === cHex ? "ring-2 ring-primary" : ""}`}
-                    style={{ backgroundColor: cHex }}
-                  />
+                    className="size-10 flex items-center justify-center rounded-full transition focus:outline-none shrink-0"
+                    aria-label={`Select color ${cHex}`}
+                  >
+                    <span
+                      className={`size-4.5 rounded-full border border-white transition shrink-0 ${
+                        activeNote.color === cHex ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""
+                      }`}
+                      style={{ backgroundColor: cHex }}
+                    />
+                  </button>
                 ))}
               </div>
 

@@ -46,9 +46,9 @@ export function InputComposer({
           <button
             onClick={() => handleSubmitPrompt(inputMsg)}
             disabled={isAiResponding || !inputMsg.trim()}
-            className="absolute right-2 grid size-7 place-items-center rounded-lg bg-primary text-white hover:bg-primary-hover transition"
+            className="absolute right-1.5 grid size-8.5 place-items-center rounded-[10px] bg-primary text-white hover:bg-primary-hover transition"
           >
-            <Send size={11} fill="currentColor" />
+            <Send size={12} fill="currentColor" />
           </button>
         </div>
       </div>

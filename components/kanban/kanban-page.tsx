@@ -114,7 +114,7 @@ export function KanbanPage() {
               </div>
             </section>
 
-            <section className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <section className="mb-5 grid gap-3 grid-cols-2 md:grid-cols-2 xl:grid-cols-4">
               <Stat icon={SquareKanban} value={stats.total} label="Total tasks" color="bg-primary-soft text-primary" />
               <Stat icon={Check} value={stats.complete} label="Completed" color="bg-success-soft text-success" />
               <Stat icon={CalendarDays} value={stats.overdue} label="Overdue" color="bg-danger-soft text-danger" />
@@ -165,7 +165,7 @@ function TaskCard({ task, board, onEdit }: { task: KanbanTask; board: KanbanBoar
   const progress = task.checklist.length ? Math.round(complete / task.checklist.length * 100) : 0;
   return <article ref={sortable.setNodeRef} style={{ transform: CSS.Transform.toString(sortable.transform), transition: sortable.transition }} className={`group rounded-[16px] border border-border bg-surface p-3 shadow-sm transition hover:-translate-y-0.5 hover:border-primary hover:shadow-md ${sortable.isDragging ? "opacity-50" : ""}`}>
     <div className="mb-2 flex items-start gap-2">
-      <button {...sortable.attributes} {...sortable.listeners} className="mt-0.5 cursor-grab text-muted opacity-0 group-hover:opacity-100" aria-label="Drag task card"><GripVertical size={12} /></button>
+      <button {...sortable.attributes} {...sortable.listeners} className="mt-0.5 cursor-grab text-muted opacity-100 lg:opacity-0 lg:group-hover:opacity-100" aria-label="Drag task card"><GripVertical size={12} /></button>
       <button onClick={onEdit} className="min-w-0 flex-1 text-left text-body-sm font-bold text-foreground leading-4">{task.title}</button>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

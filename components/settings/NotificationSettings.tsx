@@ -14,7 +14,7 @@ export function NotificationSettings({ preferences, handleTogglePreference }: No
         { key: "emailNotifications", label: "Email alerts for task deadliness" },
         { key: "pushNotifications", label: "Receive push notices for events schedules" },
       ].map((pref) => (
-        <label key={pref.key} className="flex items-center justify-between p-1 cursor-pointer text-muted font-semibold text-caption">
+        <label key={pref.key} className="flex items-center justify-between p-3 hover:bg-hover-overlay rounded-xl transition duration-150 cursor-pointer text-muted font-semibold text-caption">
           <span>{pref.label}</span>
           <input
             type="checkbox"

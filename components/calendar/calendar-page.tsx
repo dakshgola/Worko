@@ -190,7 +190,7 @@ export function CalendarPage() {
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
-          className="mx-auto max-w-[1600px] p-4 lg:p-6"
+          className="mx-auto max-w-[1600px] p-4 lg:p-6 w-full min-w-0"
         >
           <section className="mb-5 flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -210,7 +210,7 @@ export function CalendarPage() {
               Loading database events...
             </div>
           ) : (
-            <section className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_250px]">
+            <section className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_250px] gap-4 w-full min-w-0 overflow-hidden">
               <div className={`min-w-0 overflow-hidden rounded-[20px] border border-border bg-surface shadow-sm ${draggingId ? "ring-2 ring-primary" : ""}`}>
                 <div className="flex flex-wrap items-center gap-2 border-b border-border px-3 py-3 sm:px-4">
                   <button onClick={() => setCursor(new Date())} className="btn-outline h-8 px-3 text-btn">Today</button>

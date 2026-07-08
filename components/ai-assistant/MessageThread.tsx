@@ -31,7 +31,7 @@ export function MessageThread({
   handleSubmitPrompt,
 }: MessageThreadProps) {
   return (
-    <div className="flex-1 overflow-y-auto p-6 space-y-4">
+    <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
       {loadingHistory ? (
         <div className="flex items-center justify-center py-12 text-caption font-semibold text-muted">
           <Loader2 size={14} className="animate-spin mr-1 text-primary" /> Loading history...

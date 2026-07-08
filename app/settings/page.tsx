@@ -178,7 +178,7 @@ export default function SettingsPage() {
 
         <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as any)} className="space-y-8 w-full">
           {/* Settings Tab headers */}
-          <TabsList className="flex gap-2 border-b border-border pb-3 bg-transparent h-auto p-0 rounded-none w-full justify-start overflow-x-auto no-scrollbar">
+          <TabsList className="flex flex-nowrap whitespace-nowrap gap-2 border-b border-border pb-3 bg-transparent h-auto p-0 rounded-none w-full justify-start overflow-x-auto no-scrollbar">
             {[
               { id: "profile", label: "Profile Info", icon: User },
               { id: "preferences", label: "App Preferences", icon: SlidersHorizontal },

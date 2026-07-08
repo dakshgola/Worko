@@ -513,7 +513,7 @@ function DashboardView() {
               }
             }
           }}
-          className="flex-grow overflow-y-auto p-6 lg:p-10 space-y-8"
+          className="flex-grow overflow-y-auto p-4 md:p-6 lg:p-10 space-y-6 md:space-y-8"
         >
           {widgetsList.map((widget, widgetIndex) => {
             if (!widget.visible) return null;

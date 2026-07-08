@@ -83,11 +83,11 @@ export function WhiteboardToolbar({
                 <button
                   aria-label={t.label}
                   onClick={() => setTool(t.tool as "select" | "rectangle" | "circle" | "text")}
-                  className={`p-1.5 rounded-lg transition focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
+                  className={`size-10 md:size-8 flex items-center justify-center rounded-xl transition focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
                     tool === t.tool ? "bg-surface text-primary shadow-sm" : "text-muted hover:text-foreground"
                   }`}
                 >
-                  <t.icon size={14} />
+                  <t.icon size={15} />
                 </button>
               </TooltipTrigger>
               <TooltipContent>{t.label}</TooltipContent>
@@ -103,9 +103,9 @@ export function WhiteboardToolbar({
               <button
                 aria-label="Delete selected shape"
                 onClick={handleDeleteSelected}
-                className="p-1.5 rounded-lg border border-danger-soft text-danger hover:bg-danger-soft focus-visible:ring-2 focus-visible:ring-danger focus-visible:outline-none"
+                className="size-10 md:size-8 flex items-center justify-center rounded-xl border border-danger-soft text-danger hover:bg-danger-soft focus-visible:ring-2 focus-visible:ring-danger focus-visible:outline-none"
               >
-                <Trash2 size={14} />
+                <Trash2 size={15} />
               </button>
             </TooltipTrigger>
             <TooltipContent>Delete selected shape</TooltipContent>
