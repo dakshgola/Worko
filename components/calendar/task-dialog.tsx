@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BellRing, CalendarDays, Check, Clock3, Repeat2, X } from "lucide-react";
-import { categoryStyles, type TaskCategory, type TaskFormData, type TaskPriority } from "./types";
+import { BellRing, CalendarDays, Check, Clock3, Repeat2, Trash2, X } from "lucide-react";
+import { categoryStyles, type TaskCategory, type TaskFormData, type TaskPriority, type CalendarTask } from "./types";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const blankForm: TaskFormData = {
@@ -19,19 +19,40 @@ const blankForm: TaskFormData = {
 export function TaskDialog({
   open,
   initialDate,
+  task = null,
   onClose,
   onSave,
+  onDelete,
 }: {
   open: boolean;
   initialDate: string;
+  task?: CalendarTask | null;
   onClose: () => void;
   onSave: (data: TaskFormData, asDraft: boolean) => void;
+  onDelete?: (taskId: string) => void;
 }) {
   const [form, setForm] = useState<TaskFormData>(blankForm);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
-    if (open) setForm({ ...blankForm, date: initialDate });
-  }, [open, initialDate]);
+    if (open) {
+      setConfirmDelete(false);
+      if (task) {
+        setForm({
+          title: task.title,
+          description: task.description || "",
+          date: task.date || "",
+          time: task.time || "09:00",
+          category: task.category,
+          priority: task.priority,
+          notes: task.notes || "",
+          recurring: task.recurring || false,
+        });
+      } else {
+        setForm({ ...blankForm, date: initialDate });
+      }
+    }
+  }, [open, initialDate, task]);
 
   const update = <K extends keyof TaskFormData>(key: K, value: TaskFormData[K]) => setForm((current) => ({ ...current, [key]: value }));
   const canSave = form.title.trim().length > 0;
@@ -42,8 +63,10 @@ export function TaskDialog({
         <div className="sticky top-0 z-10 flex items-center border-b border-border bg-surface/95 px-5 py-4 backdrop-blur-md">
           <div className="grid size-10 place-items-center rounded-[13px] bg-secondary-soft text-secondary"><CalendarDays size={18} /></div>
           <div className="ml-3">
-            <DialogTitle className="text-base font-bold tracking-[-0.03em]">Create a new task</DialogTitle>
-            <DialogDescription className="mt-0.5 text-[10px] text-muted">Give your next move a calm place to land.</DialogDescription>
+            <DialogTitle className="text-base font-bold tracking-[-0.03em]">{task ? "Edit task" : "Create a new task"}</DialogTitle>
+            <DialogDescription className="mt-0.5 text-[10px] text-muted">
+              {task ? "Update your calendar details and plans." : "Give your next move a calm place to land."}
+            </DialogDescription>
           </div>
         </div>
 
@@ -114,9 +137,47 @@ export function TaskDialog({
         </div>
 
         <div className="sticky bottom-0 flex flex-wrap items-center gap-2 border-t border-border bg-surface/95 px-5 py-4 backdrop-blur">
-          <span className="mr-auto flex items-center gap-1.5 text-[9px] font-semibold text-muted"><BellRing size={11} /> We&apos;ll remind you at the chosen time</span>
-          <button disabled={!canSave} onClick={() => onSave(form, true)} className="h-9 rounded-xl border border-border bg-surface px-4 text-[10px] font-bold text-muted hover:bg-hover-overlay hover:text-foreground transition disabled:opacity-40">Save as draft</button>
-          <button disabled={!canSave || !form.date} onClick={() => onSave(form, false)} className="h-9 rounded-xl bg-gradient-to-r from-primary to-primary-hover px-4 text-[10px] font-bold text-white shadow-[0_6px_16px_rgba(255,90,54,0.15)] transition hover:-translate-y-0.5 disabled:opacity-40">Schedule task</button>
+          {task && onDelete ? (
+            <div className="mr-auto flex items-center gap-2">
+              {confirmDelete ? (
+                <>
+                  <span className="text-[10px] font-bold text-danger">Are you sure?</span>
+                  <button
+                    onClick={() => {
+                      onDelete(task.id);
+                      setConfirmDelete(false);
+                    }}
+                    className="h-9 rounded-xl bg-danger px-3 text-[10px] font-black text-white hover:bg-danger-hover transition"
+                  >
+                    Confirm Delete
+                  </button>
+                  <button
+                    onClick={() => setConfirmDelete(false)}
+                    className="h-9 rounded-xl border border-border bg-surface px-3 text-[10px] font-bold text-muted hover:bg-hover-overlay transition"
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => setConfirmDelete(true)}
+                  className="h-9 rounded-xl border border-danger/30 bg-danger-soft text-danger px-4 text-[10px] font-bold hover:bg-danger/10 hover:border-danger/55 transition flex items-center gap-1.5"
+                >
+                  <Trash2 size={12} /> Delete event
+                </button>
+              )}
+            </div>
+          ) : (
+            <span className="mr-auto flex items-center gap-1.5 text-[9px] font-semibold text-muted">
+              <BellRing size={11} /> We&apos;ll remind you at the chosen time
+            </span>
+          )}
+          <button disabled={!canSave} onClick={() => onSave(form, true)} className="h-9 rounded-xl border border-border bg-surface px-4 text-[10px] font-bold text-muted hover:bg-hover-overlay hover:text-foreground transition disabled:opacity-40">
+            Save as draft
+          </button>
+          <button disabled={!canSave || !form.date} onClick={() => onSave(form, false)} className="h-9 rounded-xl bg-gradient-to-r from-primary to-primary-hover px-4 text-[10px] font-bold text-white shadow-[0_6px_16px_rgba(255,90,54,0.15)] transition hover:-translate-y-0.5 disabled:opacity-40">
+            {task ? "Save changes" : "Schedule task"}
+          </button>
         </div>
       </DialogContent>
     </Dialog>

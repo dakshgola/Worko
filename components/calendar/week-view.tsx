@@ -11,12 +11,16 @@ export function WeekView({
   onAdd,
   onDropTask,
   onDragStart,
+  onEditTask,
+  onDeleteTask,
 }: {
   cursor: Date;
   tasks: CalendarTask[];
   onAdd: (date: string) => void;
   onDropTask: (taskId: string, date: string) => void;
   onDragStart: (taskId: string) => void;
+  onEditTask?: (task: CalendarTask) => void;
+  onDeleteTask?: (taskId: string) => void;
 }) {
   const days = weekDays(cursor);
   const today = new Date();
@@ -56,7 +60,15 @@ export function WeekView({
               <Plus size={11} /> Add task
             </button>
             <div className="space-y-2">
-              {dayTasks.map((task) => <TaskCard key={task.id} task={task} onDragStart={onDragStart} />)}
+              {dayTasks.map((task) => (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  onDragStart={onDragStart}
+                  onClick={() => onEditTask?.(task)}
+                  onDelete={() => onDeleteTask?.(task.id)}
+                />
+              ))}
               {dayTasks.length === 0 && (
                 <div className="rounded-xl bg-background/50 border border-dashed border-border px-2 py-8 text-center text-[9px] font-medium text-muted">A clear day</div>
               )}

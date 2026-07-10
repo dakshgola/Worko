@@ -13,12 +13,16 @@ export function MonthView({
   onAdd,
   onDropTask,
   onDragStart,
+  onEditTask,
+  onDeleteTask,
 }: {
   cursor: Date;
   tasks: CalendarTask[];
   onAdd: (date: string) => void;
   onDropTask: (taskId: string, date: string) => void;
   onDragStart: (taskId: string) => void;
+  onEditTask?: (task: CalendarTask) => void;
+  onDeleteTask?: (taskId: string) => void;
 }) {
   const days = monthDays(cursor);
   const today = new Date();
@@ -81,7 +85,14 @@ export function MonthView({
               </div>
               <div className="space-y-1">
                 {dayTasks.slice(0, 3).map((task) => (
-                  <TaskCard key={task.id} task={task} compact onDragStart={onDragStart} />
+                  <TaskCard
+                    key={task.id}
+                    task={task}
+                    compact
+                    onDragStart={onDragStart}
+                    onClick={() => onEditTask?.(task)}
+                    onDelete={() => onDeleteTask?.(task.id)}
+                  />
                 ))}
                 {dayTasks.length > 3 && (
                   <p className="px-1 text-[9px] font-semibold text-muted">+{dayTasks.length - 3} more</p>

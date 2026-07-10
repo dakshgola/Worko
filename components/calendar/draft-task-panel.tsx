@@ -8,10 +8,14 @@ export function DraftTaskPanel({
   tasks,
   onAdd,
   onDragStart,
+  onEditTask,
+  onDeleteTask,
 }: {
   tasks: CalendarTask[];
   onAdd: () => void;
   onDragStart: (taskId: string) => void;
+  onEditTask?: (task: CalendarTask) => void;
+  onDeleteTask?: (taskId: string) => void;
 }) {
   return (
     <aside className="flex min-h-0 flex-col rounded-[20px] border border-border bg-surface shadow-[var(--shadow-md)]">
@@ -26,7 +30,15 @@ export function DraftTaskPanel({
         </div>
       </div>
       <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-3">
-        {tasks.map((task) => <TaskCard key={task.id} task={task} onDragStart={onDragStart} />)}
+        {tasks.map((task) => (
+          <TaskCard
+            key={task.id}
+            task={task}
+            onDragStart={onDragStart}
+            onClick={() => onEditTask?.(task)}
+            onDelete={() => onDeleteTask?.(task.id)}
+          />
+        ))}
         {tasks.length === 0 && (
           <div className="grid place-items-center rounded-2xl border border-dashed border-border px-4 py-9 text-center">
             <Archive size={19} className="mb-2 text-muted/65" />

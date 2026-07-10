@@ -1,16 +1,20 @@
 "use client";
 
-import { Clock3, GripVertical, Repeat2 } from "lucide-react";
+import { Clock3, GripVertical, Repeat2, Trash2 } from "lucide-react";
 import { categoryStyles, type CalendarTask } from "./types";
 
 export function TaskCard({
   task,
   compact = false,
   onDragStart,
+  onClick,
+  onDelete,
 }: {
   task: CalendarTask;
   compact?: boolean;
   onDragStart: (taskId: string) => void;
+  onClick?: () => void;
+  onDelete?: () => void;
 }) {
   const style = categoryStyles[task.category];
 
@@ -22,9 +26,15 @@ export function TaskCard({
         event.dataTransfer.setData("text/task-id", task.id);
         onDragStart(task.id);
       }}
-      className={`group flex cursor-grab items-start gap-1.5 rounded-[9px] border px-2 py-1.5 text-left shadow-[0_2px_8px_rgba(54,48,89,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:cursor-grabbing ${style.chip}`}
+      onClick={(e) => {
+        if (onClick) {
+          e.stopPropagation();
+          onClick();
+        }
+      }}
+      className={`group flex cursor-pointer items-start gap-1.5 rounded-[9px] border px-2 py-1.5 text-left shadow-[0_2px_8px_rgba(54,48,89,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${style.chip}`}
     >
-      <GripVertical size={11} className="mt-0.5 shrink-0 opacity-0 transition-opacity group-hover:opacity-50" />
+      <GripVertical size={11} className="mt-0.5 shrink-0 opacity-0 transition-opacity group-hover:opacity-50 cursor-grab" />
       <span className="min-w-0 flex-1">
         <span className="block truncate text-[10px] font-bold leading-4">{task.title}</span>
         {!compact && task.time && (
@@ -34,7 +44,18 @@ export function TaskCard({
         )}
       </span>
       {task.recurring && <Repeat2 size={10} className="mt-0.5 shrink-0 opacity-60" />}
+      {onDelete && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+          aria-label={`Delete event ${task.title}`}
+          className="mt-0.5 shrink-0 opacity-0 group-hover:opacity-70 hover:opacity-100 hover:text-danger text-muted transition-all duration-150"
+        >
+          <Trash2 size={11} />
+        </button>
+      )}
     </div>
   );
 }
-

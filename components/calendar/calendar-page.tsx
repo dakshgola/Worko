@@ -45,6 +45,7 @@ export function CalendarPage() {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogDate, setDialogDate] = useState(toDateKey(new Date()));
+  const [editingTask, setEditingTask] = useState<CalendarTask | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   
@@ -85,8 +86,14 @@ export function CalendarPage() {
     return tasks.filter((t) => t.title.toLowerCase().includes(searchVal.toLowerCase()));
   }, [tasks, searchVal]);
 
-  const openDialog = (date = "") => {
-    setDialogDate(date);
+  const openDialog = (dateOrTask: string | CalendarTask = "") => {
+    if (typeof dateOrTask === "string") {
+      setEditingTask(null);
+      setDialogDate(dateOrTask);
+    } else {
+      setEditingTask(dateOrTask);
+      setDialogDate(dateOrTask.date || "");
+    }
     setDialogOpen(true);
   };
 
@@ -114,36 +121,71 @@ export function CalendarPage() {
 
   const saveTask = async (data: TaskFormData, asDraft: boolean) => {
     try {
-      const newEv = await createEvent({
-        title: data.title,
-        description: data.description,
-        date: asDraft ? undefined : data.date,
-        time: data.time,
-        category: data.category,
-        priority: data.priority,
-        notes: data.notes,
-        recurring: data.recurring,
-      });
+      const dateVal = asDraft ? null : data.date;
+      if (editingTask) {
+        await updateEvent(editingTask.id, {
+          title: data.title,
+          description: data.description,
+          date: dateVal,
+          time: data.time,
+          category: data.category,
+          priority: data.priority,
+          notes: data.notes,
+          recurring: data.recurring,
+        });
 
-      setTasks((current) => [
-        ...current,
-        {
-          id: newEv.id,
-          title: newEv.title,
-          description: newEv.description || "",
-          date: newEv.date,
-          time: newEv.time || "09:00",
-          category: newEv.category as TaskCategory,
-          priority: newEv.priority as TaskPriority,
-          notes: newEv.notes || "",
-          recurring: newEv.recurring,
-        },
-      ]);
-      setDialogOpen(false);
-      toast.success("Event created successfully");
+        setTasks((current) =>
+          current.map((t) =>
+            t.id === editingTask.id
+              ? {
+                  ...t,
+                  title: data.title,
+                  description: data.description || "",
+                  date: dateVal,
+                  time: data.time || "09:00",
+                  category: data.category,
+                  priority: data.priority,
+                  notes: data.notes || "",
+                  recurring: data.recurring,
+                }
+              : t
+          )
+        );
+        setDialogOpen(false);
+        setEditingTask(null);
+        toast.success("Event updated successfully");
+      } else {
+        const newEv = await createEvent({
+          title: data.title,
+          description: data.description,
+          date: asDraft ? undefined : data.date,
+          time: data.time,
+          category: data.category,
+          priority: data.priority,
+          notes: data.notes,
+          recurring: data.recurring,
+        });
+
+        setTasks((current) => [
+          ...current,
+          {
+            id: newEv.id,
+            title: newEv.title,
+            description: newEv.description || "",
+            date: newEv.date,
+            time: newEv.time || "09:00",
+            category: newEv.category as TaskCategory,
+            priority: newEv.priority as TaskPriority,
+            notes: newEv.notes || "",
+            recurring: newEv.recurring,
+          },
+        ]);
+        setDialogOpen(false);
+        toast.success("Event created successfully");
+      }
     } catch (e) {
       console.error(e);
-      toast.error("Failed to create event");
+      toast.error(editingTask ? "Failed to update event" : "Failed to create event");
     }
   };
 
@@ -157,6 +199,19 @@ export function CalendarPage() {
         console.error(e);
         toast.error("Failed to delete event");
       }
+    }
+  };
+
+  const handleDeleteDirect = async (id: string) => {
+    try {
+      await deleteEvent(id);
+      setTasks((current) => current.filter((t) => t.id !== id));
+      setDialogOpen(false);
+      setEditingTask(null);
+      toast.success("Event deleted");
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to delete event");
     }
   };
 
@@ -227,14 +282,36 @@ export function CalendarPage() {
                 </div>
                 <div className="overflow-x-auto">
                   {view === "month" ? (
-                    <MonthView cursor={cursor} tasks={filteredTasks} onAdd={openDialog} onDropTask={dropTask} onDragStart={setDraggingId} />
+                    <MonthView
+                      cursor={cursor}
+                      tasks={filteredTasks}
+                      onAdd={openDialog}
+                      onDropTask={dropTask}
+                      onDragStart={setDraggingId}
+                      onEditTask={openDialog}
+                      onDeleteTask={handleRemoveEvent}
+                    />
                   ) : (
-                    <WeekView cursor={cursor} tasks={filteredTasks} onAdd={openDialog} onDropTask={dropTask} onDragStart={setDraggingId} />
+                    <WeekView
+                      cursor={cursor}
+                      tasks={filteredTasks}
+                      onAdd={openDialog}
+                      onDropTask={dropTask}
+                      onDragStart={setDraggingId}
+                      onEditTask={openDialog}
+                      onDeleteTask={handleRemoveEvent}
+                    />
                   )}
                 </div>
               </div>
               <div className="space-y-4">
-                <DraftTaskPanel tasks={drafts} onAdd={() => openDialog("")} onDragStart={setDraggingId} />
+                <DraftTaskPanel
+                  tasks={drafts}
+                  onAdd={() => openDialog("")}
+                  onDragStart={setDraggingId}
+                  onEditTask={openDialog}
+                  onDeleteTask={handleRemoveEvent}
+                />
                 
                 {/* Draft deletes */}
                 {drafts.length > 0 && (
@@ -258,7 +335,17 @@ export function CalendarPage() {
         </motion.div>
       </PageWrapper>
 
-      <TaskDialog open={dialogOpen} initialDate={dialogDate} onClose={() => setDialogOpen(false)} onSave={saveTask} />
+      <TaskDialog
+        open={dialogOpen}
+        initialDate={dialogDate}
+        task={editingTask}
+        onClose={() => {
+          setDialogOpen(false);
+          setEditingTask(null);
+        }}
+        onSave={saveTask}
+        onDelete={handleDeleteDirect}
+      />
     </div>
   );
 }
