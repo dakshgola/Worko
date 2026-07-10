@@ -51,25 +51,25 @@ export function WorkspaceSidebar({ active }: WorkspaceSidebarProps) {
     {
       label: "Overview",
       items: [
-        { label: "Dashboard", icon: LayoutDashboard, href: "/", color: "text-indigo-600", iconBg: "bg-indigo-50" },
-        { label: "AI Assistant", icon: Bot, href: "/ai-assistant", color: "text-amber-600", iconBg: "bg-amber-50" },
-        { label: "Calendar", icon: CalendarDays, href: "/calendar", color: "text-sky-600", iconBg: "bg-sky-50" },
+        { label: "Dashboard", icon: LayoutDashboard, href: "/", color: "text-secondary", iconBg: "bg-secondary-soft" },
+        { label: "AI Assistant", icon: Bot, href: "/ai-assistant", color: "text-ai-accent", iconBg: "bg-ai-accent-soft" },
+        { label: "Calendar", icon: CalendarDays, href: "/calendar", color: "text-primary", iconBg: "bg-primary-soft" },
       ],
     },
     {
       label: "Workspace",
       items: [
-        { label: "Tasks", icon: SquareKanban, href: "/kanban", color: "text-emerald-600", iconBg: "bg-emerald-50" },
-        { label: "Notes", icon: StickyNote, href: "/notes", color: "text-orange-600", iconBg: "bg-orange-50" },
-        { label: "Whiteboard", icon: PenTool, href: "/whiteboard", color: "text-pink-600", iconBg: "bg-pink-50" },
-        { label: "Spaces", icon: PanelTop, href: "/spaces", color: "text-violet-600", iconBg: "bg-violet-50" },
+        { label: "Tasks", icon: SquareKanban, href: "/kanban", color: "text-success", iconBg: "bg-success-soft" },
+        { label: "Notes", icon: StickyNote, href: "/notes", color: "text-warning", iconBg: "bg-warning-soft" },
+        { label: "Whiteboard", icon: PenTool, href: "/whiteboard", color: "text-accent", iconBg: "bg-accent-soft" },
+        { label: "Spaces", icon: PanelTop, href: "/spaces", color: "text-secondary", iconBg: "bg-secondary-soft" },
       ],
     },
     {
       label: "Build",
       items: [
-        { label: "AI Builder", icon: WandSparkles, href: "/ai-template-builder", color: "text-rose-600", iconBg: "bg-rose-50" },
-        { label: "Settings", icon: Settings, href: "/settings", color: "text-slate-600", iconBg: "bg-slate-50" },
+        { label: "AI Builder", icon: WandSparkles, href: "/ai-template-builder", color: "text-ai-accent", iconBg: "bg-ai-accent-soft" },
+        { label: "Settings", icon: Settings, href: "/settings", color: "text-muted", iconBg: "bg-hover-overlay" },
       ],
     },
   ];

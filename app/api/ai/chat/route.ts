@@ -33,7 +33,7 @@ export async function POST(request: Request) {
       apiKey === "null";
 
     if (isApiKeyPlaceholder) {
-      const simulatedText = `[Simulated Response to: "${prompt}"]\n\nI can help you organize tasks, build layout templates, summarize note blocks, or schedule calendar events. Since the Gemini API key is missing in your config, I am responding in demo mode!`;
+      const simulatedText = `[Simulated Response to: "${prompt}"]\n\nHello! I am Worko's general-purpose productivity assistant. Since the Gemini API key is missing in your configuration, I am responding in demo mode! I can help you brainstorm ideas, draft content, explain concepts, or schedule meetings and events. How can I help you today?`;
       return createSimulatedStream(simulatedText);
     }
 
@@ -51,6 +51,13 @@ export async function POST(request: Request) {
             })),
             { role: "user", parts: [{ text: prompt }] },
           ],
+          systemInstruction: {
+            parts: [
+              {
+                text: "You are a warm, natural, and conversational productivity assistant for Worko. You can engage in open-ended conversations, answer general knowledge questions, brainstorm ideas, draft and refine text, and explain concepts naturally. Keep a friendly, natural tone, avoiding bureaucratic or robotic canned responses. Meeting-scheduling is one capability you can help with when the user explicitly asks for it (e.g. 'schedule a meeting with the team'). You remember user information and context (like the user's name if they mention it) within the current conversation thread, but you do not have persistent memory across different threads. Be honest about this limitation if asked."
+              }
+            ]
+          }
         }),
       }
     );
@@ -67,7 +74,7 @@ export async function POST(request: Request) {
         errText.toLowerCase().includes("api key")
       ) {
         console.warn("Invalid or unauthorized API key. Falling back to Demo Mode simulated response.");
-        const simulatedText = `[Simulated Response to: "${prompt}"]\n\nI can help you organize tasks, build layout templates, summarize note blocks, or schedule calendar events. Since the Gemini API key is invalid or unauthorized in your config, I am responding in demo mode!`;
+        const simulatedText = `[Simulated Response to: "${prompt}"]\n\nHello! I am Worko's general-purpose productivity assistant. Since the Gemini API key is invalid or unauthorized in your configuration, I am responding in demo mode! I can help you brainstorm ideas, draft content, explain concepts, or schedule meetings and events. How can I help you today?`;
         return createSimulatedStream(simulatedText);
       }
 

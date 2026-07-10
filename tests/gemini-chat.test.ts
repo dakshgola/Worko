@@ -111,4 +111,59 @@ describe("Gemini Chat API Route Handler Tests", () => {
     }
     expect(text).toContain("This is a real response from Gemini model");
   });
+
+  it("should include systemInstruction and pass full history to Gemini in multi-turn conversation", async () => {
+    vi.mocked(currentUser).mockResolvedValue({ id: "user_123" } as any);
+    process.env.GEMINI_API_KEY = "dummy-api-key";
+
+    const mockResponseData = {
+      candidates: [
+        {
+          content: {
+            parts: [{ text: "Hi Daksh, I can help you schedule that meeting." }],
+          },
+        },
+      ],
+    };
+
+    let fetchBody: any = null;
+    vi.mocked(global.fetch).mockImplementation(async (url, init) => {
+      fetchBody = JSON.parse(init?.body as string);
+      return {
+        ok: true,
+        json: async () => mockResponseData,
+      } as any;
+    });
+
+    const req = new Request("http://localhost/api/ai/chat", {
+      method: "POST",
+      body: JSON.stringify({
+        messages: [
+          { role: "user", content: "My name is Daksh." },
+          { role: "assistant", content: "Nice to meet you, Daksh! How can I help you today?" },
+          { role: "user", content: "Can you help me schedule a meeting?" }
+        ]
+      }),
+    });
+
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+
+    // Verify fetch was called with the correct request body format
+    expect(fetchBody).not.toBeNull();
+    
+    // Verify system instruction is set
+    expect(fetchBody.systemInstruction).toBeDefined();
+    expect(fetchBody.systemInstruction.parts[0].text).toContain("productivity assistant for Worko");
+    expect(fetchBody.systemInstruction.parts[0].text).toContain("conversational");
+    
+    // Verify contents has full history mapped correctly
+    expect(fetchBody.contents).toHaveLength(3);
+    expect(fetchBody.contents[0].role).toBe("user");
+    expect(fetchBody.contents[0].parts[0].text).toBe("My name is Daksh.");
+    expect(fetchBody.contents[1].role).toBe("model");
+    expect(fetchBody.contents[1].parts[0].text).toBe("Nice to meet you, Daksh! How can I help you today?");
+    expect(fetchBody.contents[2].role).toBe("user");
+    expect(fetchBody.contents[2].parts[0].text).toBe("Can you help me schedule a meeting?");
+  });
 });
