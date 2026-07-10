@@ -17,6 +17,52 @@ interface MessageThreadProps {
   handleSubmitPrompt: (msg: string) => void;
 }
 
+function formatMessageContent(content: string) {
+  if (!content) return "";
+  
+  const lines = content.split("\n");
+  
+  return lines.map((line, index) => {
+    const isBullet = line.trim().startsWith("* ") || line.trim().startsWith("- ");
+    let cleanLine = line;
+    if (isBullet) {
+      cleanLine = line.trim().replace(/^[\*\-]\s+/, "");
+    }
+    
+    const parts = cleanLine.split(/\*\*([^*]+)\*\*/g);
+    const parsedLine = parts.map((part, idx) => {
+      if (idx % 2 === 1) {
+        return <strong key={idx} className="font-extrabold text-foreground">{part}</strong>;
+      }
+      const italicParts = part.split(/\*([^*]+)\*/g);
+      return italicParts.map((ip, iidx) => {
+        if (iidx % 2 === 1) {
+          return <em key={iidx} className="italic">{ip}</em>;
+        }
+        return ip;
+      });
+    });
+    
+    if (isBullet) {
+      return (
+        <li key={index} className="ml-4 list-disc my-1 text-body-sm leading-relaxed">
+          {parsedLine}
+        </li>
+      );
+    }
+    
+    if (!line.trim()) {
+      return <div key={index} className="h-2" />;
+    }
+    
+    return (
+      <p key={index} className="my-1.5 text-body-sm leading-relaxed">
+        {parsedLine}
+      </p>
+    );
+  });
+}
+
 export function MessageThread({
   messages,
   loadingHistory,
@@ -68,7 +114,7 @@ export function MessageThread({
               <div className={`p-3.5 rounded-2xl text-body-sm leading-relaxed font-semibold ${
                 m.role === "user" ? "bg-primary-soft text-foreground border border-primary/20" : "bg-surface border border-border text-foreground"
               }`}>
-                {m.content}
+                {formatMessageContent(m.content)}
               </div>
             </div>
           ))}
@@ -77,7 +123,7 @@ export function MessageThread({
             <div className="flex gap-3.5 items-start">
               <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-ai-accent-soft text-ai-accent text-badge-val font-bold">AI</span>
               <div className="p-3.5 rounded-2xl text-body-sm leading-relaxed bg-surface border border-border text-foreground font-semibold ai-thinking-glow border-ai-accent/35">
-                {streamingResponse}
+                {formatMessageContent(streamingResponse)}
               </div>
             </div>
           )}
