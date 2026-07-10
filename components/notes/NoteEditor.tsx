@@ -262,9 +262,9 @@ export function NoteEditor({
       ) : (
         <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4">
           <EmptyStateIllustration icon={StickyNote} />
-          <h4 className="text-h4 font-extrabold text-foreground">Select or create a note</h4>
+          <h4 className="text-h4 font-extrabold text-foreground">Create your first note</h4>
           <p className="text-caption max-w-xs text-muted font-semibold leading-relaxed">
-            Select a document from the left list, or create a brand new note to begin structuring your team knowledge base.
+            Create a blank note to start writing.
           </p>
           <button onClick={handleCreateNote} className="btn-primary h-10 px-5 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] transition-all">
             Create note

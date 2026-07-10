@@ -454,23 +454,46 @@ export function WhiteboardCanvas({
           if (!presence?.cursor) return null;
           const name = info?.name || presence.name || "Guest";
           const avatar = info?.avatar || presence.avatar || "";
+          
+          // Generate a premium collaborator-specific color
+          const colorsList = ["#FF5A36", "#6C5CE7", "#ef6688", "#e49a3a", "#3b82f6"];
+          const colHex = colorsList[connectionId % colorsList.length];
+
           return (
-            <g key={connectionId} style={{ pointerEvents: "none" }} className="z-50 select-none">
+            <g key={connectionId} style={{ pointerEvents: "none" }} className="z-50 select-none animate-in fade-in zoom-in-95 duration-200">
               <path
                 d="M0,0 L0,16 L4,12 L8,20 L11,19 L7,11 L13,11 Z"
-                fill="var(--secondary)"
+                fill={colHex}
                 stroke="white"
-                strokeWidth={1}
+                strokeWidth={1.5}
                 transform={`translate(${presence.cursor.x}, ${presence.cursor.y})`}
+                className="drop-shadow-sm"
               />
               <foreignObject
                 x={presence.cursor.x + 12}
                 y={presence.cursor.y + 12}
-                width={150}
-                height={32}
+                width={160}
+                height={36}
               >
-                <div className="flex items-center gap-1.5 bg-surface/95 border border-border px-2 py-0.5.5 rounded-full shadow-[var(--shadow-md)] text-[9px] font-bold text-foreground transition-all duration-200 animate-fade-in">
-                  {avatar && <img src={avatar} alt={name} className="size-4.5 rounded-full object-cover border border-white" />}
+                <div 
+                  className="flex items-center gap-1.5 bg-surface/95 border px-2 py-1 rounded-full shadow-md text-[10px] font-extrabold text-foreground transition-all duration-300"
+                  style={{ borderColor: colHex }}
+                >
+                  {avatar ? (
+                    <img 
+                      src={avatar} 
+                      alt={name} 
+                      className="size-4.5 rounded-full object-cover border"
+                      style={{ borderColor: colHex }}
+                    />
+                  ) : (
+                    <span 
+                      className="size-4.5 rounded-full text-[8px] font-black text-white flex items-center justify-center uppercase shrink-0"
+                      style={{ backgroundColor: colHex }}
+                    >
+                      {name.substring(0, 2)}
+                    </span>
+                  )}
                   <span className="truncate max-w-[100px]">{name}</span>
                 </div>
               </foreignObject>

@@ -66,7 +66,7 @@ export function MessageThread({
                 {m.role === "user" ? "US" : "AI"}
               </span>
               <div className={`p-3.5 rounded-2xl text-body-sm leading-relaxed font-semibold ${
-                m.role === "user" ? "bg-primary text-white" : "bg-surface border border-border text-foreground"
+                m.role === "user" ? "bg-primary-soft text-foreground border border-primary/20" : "bg-surface border border-border text-foreground"
               }`}>
                 {m.content}
               </div>

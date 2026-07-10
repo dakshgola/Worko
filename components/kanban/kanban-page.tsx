@@ -76,7 +76,25 @@ export function KanbanPage() {
     }
   };
 
-  if (!board) return <div className="grid min-h-screen place-items-center bg-background"><button onClick={() => setBoardModal("new")} className="btn-primary">Create your first board</button><BoardModal open={boardModal === "new"} onClose={() => setBoardModal(null)} onSave={store.addBoard} /></div>;
+  if (!board) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-background text-center p-8">
+        <div className="max-w-md mx-auto space-y-4 flex flex-col items-center animate-in fade-in zoom-in-95 duration-200">
+          <div className="size-16 rounded-2xl bg-primary-soft text-primary flex items-center justify-center shadow-[var(--shadow-sm)] mb-2">
+            <SquareKanban size={28} />
+          </div>
+          <h4 className="text-h4 font-extrabold text-foreground">Create your first task board</h4>
+          <p className="text-caption max-w-xs text-muted font-semibold leading-relaxed">
+            Create a task board to organize workflows.
+          </p>
+          <button onClick={() => setBoardModal("new")} className="btn-primary h-10 px-5 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] transition-all">
+            Create board
+          </button>
+        </div>
+        <BoardModal open={boardModal === "new"} onClose={() => setBoardModal(null)} onSave={store.addBoard} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground flex">

@@ -164,12 +164,12 @@ export default function WhiteboardPage() {
                 <div className="size-16 rounded-2xl bg-primary-soft text-primary flex items-center justify-center shadow-[var(--shadow-sm)] mb-2">
                   <PenTool size={28} />
                 </div>
-                <h4 className="text-h4 font-extrabold text-foreground">Select or initialize a whiteboard</h4>
+                <h4 className="text-h4 font-extrabold text-foreground">Create your first whiteboard</h4>
                 <p className="text-caption max-w-xs text-muted font-semibold leading-relaxed">
-                  Select a canvas from the list, or initialize a new collaborative visual sheet to diagram flows or mindmaps.
+                  Create a collaborative canvas to diagram ideas.
                 </p>
                 <button onClick={handleCreateBoard} className="btn-primary h-10 px-5 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] transition-all">
-                  Initialize Whiteboard
+                  Create whiteboard
                 </button>
               </div>
             )}

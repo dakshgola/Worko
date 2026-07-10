@@ -42,8 +42,8 @@ export function DraftTaskPanel({
         {tasks.length === 0 && (
           <div className="grid place-items-center rounded-2xl border border-dashed border-border px-4 py-9 text-center">
             <Archive size={19} className="mb-2 text-muted/65" />
-            <p className="text-[11px] font-bold text-foreground">Your drafts are clear</p>
-            <p className="mt-1 text-[9px] leading-4 text-muted">Save an idea here when it is not ready for a date.</p>
+            <p className="text-[11px] font-bold text-foreground">No draft tasks</p>
+            <p className="mt-1 text-[9px] leading-4 text-muted">Create a draft task below to save an idea.</p>
           </div>
         )}
       </div>
