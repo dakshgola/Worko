@@ -7,8 +7,8 @@ interface WhiteboardCanvasProps {
   elements: Element[];
   selectedId: string | null;
   setSelectedId: (id: string | null) => void;
-  tool: "select" | "rectangle" | "circle" | "text";
-  setTool: (t: "select" | "rectangle" | "circle" | "text") => void;
+  tool: "select" | "pen" | "rectangle" | "circle" | "line" | "eraser" | "text";
+  setTool: (t: "select" | "pen" | "rectangle" | "circle" | "line" | "eraser" | "text") => void;
   drawingColor: string;
   isDrawing: boolean;
   setIsDrawing: (b: boolean) => void;
@@ -68,13 +68,18 @@ export function WhiteboardCanvas({
     const coords = getCoordinates(e);
 
     if (tool === "select") {
-      const hit = [...elements].reverse().find(
-        (el) =>
-          coords.x >= el.x &&
-          coords.x <= el.x + el.width &&
-          coords.y >= el.y &&
-          coords.y <= el.y + el.height
-      );
+      const hit = [...elements].reverse().find((el) => {
+        const minX = Math.min(el.x, el.x + el.width);
+        const maxX = Math.max(el.x, el.x + el.width);
+        const minY = Math.min(el.y, el.y + el.height);
+        const maxY = Math.max(el.y, el.y + el.height);
+        return (
+          coords.x >= minX &&
+          coords.x <= maxX &&
+          coords.y >= minY &&
+          coords.y <= maxY
+        );
+      });
 
       if (hit) {
         setSelectedId(hit.id);
@@ -89,10 +94,42 @@ export function WhiteboardCanvas({
       return;
     }
 
+    if (tool === "eraser") {
+      setIsDrawing(true);
+      const hit = elements.find((el) => {
+        const minX = Math.min(el.x, el.x + el.width);
+        const maxX = Math.max(el.x, el.x + el.width);
+        const minY = Math.min(el.y, el.y + el.height);
+        const maxY = Math.max(el.y, el.y + el.height);
+        return (
+          coords.x >= minX &&
+          coords.x <= maxX &&
+          coords.y >= minY &&
+          coords.y <= maxY
+        );
+      });
+      if (hit) {
+        deleteElementMutation(hit.id);
+      }
+      return;
+    }
+
     setIsDrawing(true);
     setStartPos(coords);
 
-    if (tool === "text") {
+    if (tool === "pen") {
+      setTempElement({
+        id: "temp",
+        type: "path",
+        x: coords.x,
+        y: coords.y,
+        width: 1,
+        height: 1,
+        color: drawingColor,
+        points: [{ x: 0, y: 0 }],
+        absolutePoints: [coords],
+      } as any);
+    } else if (tool === "text") {
       const textVal = prompt("Enter shape label:");
       if (textVal) {
         const newEl = {
@@ -126,10 +163,52 @@ export function WhiteboardCanvas({
 
     if (!isDrawing) return;
 
+    if (tool === "eraser") {
+      const hit = elements.find((el) => {
+        const minX = Math.min(el.x, el.x + el.width);
+        const maxX = Math.max(el.x, el.x + el.width);
+        const minY = Math.min(el.y, el.y + el.height);
+        const maxY = Math.max(el.y, el.y + el.height);
+        return (
+          coords.x >= minX &&
+          coords.x <= maxX &&
+          coords.y >= minY &&
+          coords.y <= maxY
+        );
+      });
+      if (hit) {
+        deleteElementMutation(hit.id);
+      }
+      return;
+    }
+
     const width = coords.x - startPos.x;
     const height = coords.y - startPos.y;
 
-    if (tool === "rectangle") {
+    if (tool === "pen") {
+      const newAbsPoints = [...(tempElement?.absolutePoints || [startPos]), coords];
+      const minX = Math.min(...newAbsPoints.map((p) => p.x));
+      const maxX = Math.max(...newAbsPoints.map((p) => p.x));
+      const minY = Math.min(...newAbsPoints.map((p) => p.y));
+      const maxY = Math.max(...newAbsPoints.map((p) => p.y));
+
+      const relativePoints = newAbsPoints.map((p) => ({
+        x: p.x - minX,
+        y: p.y - minY,
+      }));
+
+      setTempElement({
+        id: "temp",
+        type: "path",
+        x: minX,
+        y: minY,
+        width: Math.max(maxX - minX, 1),
+        height: Math.max(maxY - minY, 1),
+        color: drawingColor,
+        points: relativePoints,
+        absolutePoints: newAbsPoints,
+      } as any);
+    } else if (tool === "rectangle") {
       setTempElement({
         id: "temp",
         type: "rectangle",
@@ -143,17 +222,34 @@ export function WhiteboardCanvas({
       setTempElement({
         id: "temp",
         type: "circle",
-        x: startPos.x,
-        y: startPos.y,
+        x: width < 0 ? coords.x : startPos.x,
+        y: height < 0 ? coords.y : startPos.y,
         width: Math.abs(width),
         height: Math.abs(height),
+        color: drawingColor,
+      });
+    } else if (tool === "line") {
+      setTempElement({
+        id: "temp",
+        type: "line",
+        x: startPos.x,
+        y: startPos.y,
+        width: width,
+        height: height,
         color: drawingColor,
       });
     }
   };
 
   const handleMouseUp = () => {
-    if (!isDrawing || !tempElement) {
+    if (!isDrawing) return;
+
+    if (tool === "eraser") {
+      setIsDrawing(false);
+      return;
+    }
+
+    if (!tempElement) {
       setIsDrawing(false);
       setTempElement(null);
       return;
@@ -164,10 +260,11 @@ export function WhiteboardCanvas({
       id: "el_" + crypto.randomUUID(),
     };
 
+    delete (newEl as any).absolutePoints;
+
     saveCanvasElementsMutation([...elements, newEl]);
     setIsDrawing(false);
     setTempElement(null);
-    setTool("select");
   };
 
   const handleMouseLeave = () => {
@@ -183,6 +280,22 @@ export function WhiteboardCanvas({
         onMouseLeave={handleMouseLeave}
         className="w-full h-full bg-surface text-foreground select-none cursor-crosshair"
       >
+        <defs>
+          {drawingColorList.map((color) => (
+            <marker
+              key={color}
+              id={`arrow-${color.replace("#", "")}`}
+              viewBox="0 0 10 10"
+              refX="6"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 0 L 10 5 L 0 10 z" fill={color} />
+            </marker>
+          ))}
+        </defs>
         {elements.map((el) => {
           const isSelected = el.id === selectedId;
           if (el.type === "rectangle") {
@@ -256,6 +369,34 @@ export function WhiteboardCanvas({
                 {el.text}
               </text>
             );
+          } else if (el.type === "line") {
+            return (
+              <line
+                key={el.id}
+                x1={el.x}
+                y1={el.y}
+                x2={el.x + el.width}
+                y2={el.y + el.height}
+                stroke={el.color}
+                strokeWidth={isSelected ? 4 : 2}
+                markerEnd={`url(#arrow-${el.color.replace("#", "")})`}
+              />
+            );
+          } else if (el.type === "path") {
+            const pointsString = el.points
+              ? el.points.map((p: any) => `${el.x + p.x},${el.y + p.y}`).join(" ")
+              : "";
+            return (
+              <polyline
+                key={el.id}
+                points={pointsString}
+                fill="none"
+                stroke={el.color}
+                strokeWidth={isSelected ? 4 : 2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            );
           }
           return null;
         })}
@@ -283,6 +424,28 @@ export function WhiteboardCanvas({
             stroke={tempElement.color}
             strokeWidth={2}
             strokeDasharray="4 4"
+          />
+        )}
+        {tempElement && tempElement.type === "line" && (
+          <line
+            x1={tempElement.x}
+            y1={tempElement.y}
+            x2={tempElement.x + tempElement.width}
+            y2={tempElement.y + tempElement.height}
+            stroke={tempElement.color}
+            strokeWidth={2}
+            strokeDasharray="4 4"
+            markerEnd={`url(#arrow-${tempElement.color.replace("#", "")})`}
+          />
+        )}
+        {tempElement && tempElement.type === "path" && tempElement.points && (
+          <polyline
+            points={tempElement.points.map((p: any) => `${tempElement.x + p.x},${tempElement.y + p.y}`).join(" ")}
+            fill="none"
+            stroke={tempElement.color}
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         )}
 

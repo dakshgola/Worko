@@ -36,13 +36,14 @@ import { Whiteboard } from "@/db/schema";
 
 export type Element = {
   id: string;
-  type: "rectangle" | "circle" | "line" | "text";
+  type: "rectangle" | "circle" | "line" | "text" | "path";
   x: number;
   y: number;
   width: number;
   height: number;
   text?: string;
   color: string;
+  points?: { x: number; y: number }[];
   [key: string]: any;
 };
 
@@ -195,7 +196,7 @@ function WhiteboardMultiplayerCanvas({ activeBoard, setActiveBoard, boards, setB
   }, [canvasElements]);
 
   // SVG drawing states
-  const [tool, setTool] = useState<"select" | "rectangle" | "circle" | "text">("select");
+  const [tool, setTool] = useState<"select" | "pen" | "rectangle" | "circle" | "line" | "eraser" | "text">("select");
   const [drawingColor, setDrawingColor] = useState("#FF5A36");
   const [isDrawing, setIsDrawing] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { ChevronLeft, Trash2, MousePointer, Square, Circle, Type } from "lucide-react";
+import { ChevronLeft, Trash2, MousePointer, Square, Circle, Type, Pencil, ArrowUpRight, Eraser } from "lucide-react";
 
 import { Whiteboard } from "@/db/schema";
 import {
@@ -15,8 +15,8 @@ interface WhiteboardToolbarProps {
   setActiveBoard: (b: Whiteboard | null) => void;
   handleUpdateName: (name: string) => void;
   others: readonly any[];
-  tool: "select" | "rectangle" | "circle" | "text";
-  setTool: (t: "select" | "rectangle" | "circle" | "text") => void;
+  tool: "select" | "pen" | "rectangle" | "circle" | "line" | "eraser" | "text";
+  setTool: (t: "select" | "pen" | "rectangle" | "circle" | "line" | "eraser" | "text") => void;
   selectedId: string | null;
   handleDeleteSelected: () => void;
 }
@@ -74,15 +74,18 @@ export function WhiteboardToolbar({
         <TooltipProvider>
           {[
             { tool: "select", icon: MousePointer, label: "Select element" },
+            { tool: "pen", icon: Pencil, label: "Freehand pen" },
             { tool: "rectangle", icon: Square, label: "Draw rectangle" },
             { tool: "circle", icon: Circle, label: "Draw circle" },
+            { tool: "line", icon: ArrowUpRight, label: "Draw line/arrow" },
+            { tool: "eraser", icon: Eraser, label: "Eraser" },
             { tool: "text", icon: Type, label: "Insert text label" },
           ].map((t) => (
             <Tooltip key={t.tool}>
               <TooltipTrigger asChild>
                 <button
                   aria-label={t.label}
-                  onClick={() => setTool(t.tool as "select" | "rectangle" | "circle" | "text")}
+                  onClick={() => setTool(t.tool as any)}
                   className={`size-10 md:size-8 flex items-center justify-center rounded-xl transition focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
                     tool === t.tool ? "bg-surface text-primary shadow-sm" : "text-muted hover:text-foreground"
                   }`}
