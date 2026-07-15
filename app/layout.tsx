@@ -19,18 +19,18 @@ export default function RootLayout({
     <ClerkProvider
       appearance={{
         variables: {
-          colorPrimary: '#FF5A36',
+          colorPrimary: '#EC4899',
         },
         elements: {
-          card: 'bg-surface border border-border shadow-md',
-          headerTitle: 'text-foreground font-bold',
-          headerSubtitle: 'text-muted',
-          socialButtonsBlockButton: 'bg-background hover:bg-hover-overlay border border-border text-foreground',
-          formButtonPrimary: 'btn-primary bg-[#FF5A36] hover:bg-[#E04825] text-white',
-          formFieldLabel: 'text-foreground font-semibold',
-          formFieldInput: 'input-cozy bg-background text-foreground border-border',
-          footerActionText: 'text-muted',
-          footerActionLink: 'text-primary hover:text-primary-hover font-bold',
+          card: 'border-[var(--border-thick)] border-black dark:border-white shadow-brutal-md rounded-card bg-brutal-white font-display',
+          headerTitle: 'text-foreground font-display font-extrabold text-xl',
+          headerSubtitle: 'text-muted font-sans font-medium',
+          socialButtonsBlockButton: 'bg-brutal-white hover:bg-hover-overlay border-[var(--border-thick)] border-black dark:border-white text-foreground shadow-brutal-sm font-display font-bold transition-all',
+          formButtonPrimary: 'btn-primary bg-brutal-pink text-black font-display font-bold shadow-brutal-sm hover:shadow-brutal-md rounded-pill transition-all',
+          formFieldLabel: 'text-foreground font-display font-bold',
+          formFieldInput: 'border-[var(--border-thick)] border-black dark:border-white bg-brutal-white text-foreground focus:border-brutal-pink focus:ring-0 focus-visible:outline-none transition-all',
+          footerActionText: 'text-muted font-semibold',
+          footerActionLink: 'text-brutal-pink hover:underline font-display font-bold',
         }
       }}
     >

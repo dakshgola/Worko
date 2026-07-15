@@ -1493,10 +1493,201 @@ input[type="checkbox"]:focus-visible {
   scrollbar-width: none;  /* Firefox */
 }
 
-/* Glass frosted utility class */
+/* Glass frosted utility class - overridden for Neubrutalist style */
 .glass {
-  background-color: color-mix(in srgb, var(--surface) 70%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+  background-color: var(--brutal-white) !important;
+  border: var(--border-thick) !important;
+  border-color: var(--brutal-black) !important;
+  box-shadow: var(--shadow-brutal-lg) !important;
+  border-radius: var(--radius-card) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ==========================================================
+   NEUBRUTALIST OVERRIDES & THEME SYSTEM Overwrites
+   ========================================================== */
+
+/* 1. Global Buttons Styling Override */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--brutal-pink) !important;
+  color: #000000 !important;
+  border: var(--border-thick) !important;
+  border-color: var(--brutal-black) !important;
+  border-radius: var(--radius-pill) !important;
+  font-family: var(--font-display) !important;
+  font-weight: 700 !important;
+  box-shadow: var(--shadow-brutal-sm) !important;
+  transition: transform 100ms ease, box-shadow 100ms ease !important;
+  outline: none;
+}
+.btn-primary:hover:not(:disabled) {
+  transform: translate(-1.5px, -1.5px) !important;
+  box-shadow: var(--shadow-brutal-md) !important;
+  background-color: var(--brutal-pink) !important;
+}
+.btn-primary:active:not(:disabled) {
+  transform: translate(0, 0) !important;
+  box-shadow: var(--shadow-brutal-sm) !important;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--brutal-yellow) !important;
+  color: #000000 !important;
+  border: var(--border-thick) !important;
+  border-color: var(--brutal-black) !important;
+  border-radius: var(--radius-pill) !important;
+  font-family: var(--font-display) !important;
+  font-weight: 700 !important;
+  box-shadow: var(--shadow-brutal-sm) !important;
+  transition: transform 100ms ease, box-shadow 100ms ease !important;
+  outline: none;
+}
+.btn-secondary:hover:not(:disabled) {
+  transform: translate(-1.5px, -1.5px) !important;
+  box-shadow: var(--shadow-brutal-md) !important;
+}
+.btn-secondary:active:not(:disabled) {
+  transform: translate(0, 0) !important;
+  box-shadow: var(--shadow-brutal-sm) !important;
+}
+
+/* 2. Global Cards Styling Override */
+.bg-surface, [class*="bg-surface"], .bg-card, [class*="bg-card"] {
+  &:not(.ProseMirror) {
+    background-color: var(--brutal-white) !important;
+    border: var(--border-thick) !important;
+    border-color: var(--brutal-black) !important;
+    box-shadow: var(--shadow-brutal-md) !important;
+    border-radius: var(--radius-card) !important;
+    transition: transform 200ms ease, box-shadow 200ms ease !important;
+  }
+}
+.bg-surface:hover:not(.ProseMirror), [class*="bg-surface"]:hover:not(.ProseMirror), .bg-card:hover:not(.ProseMirror), [class*="bg-card"]:hover:not(.ProseMirror) {
+  &:not(aside):not(nav):not(section):not(form):not(.ProseMirror) {
+    transform: translate(-2px, -2px) !important;
+    box-shadow: var(--shadow-brutal-lg) !important;
+  }
+}
+
+/* 3. Global Dialogs & Frosted Glass Override */
+[role="dialog"], [class*="DialogContent"], [class*="SheetContent"] {
+  background-color: var(--brutal-bg) !important;
+  border: var(--border-thick) !important;
+  border-color: var(--brutal-black) !important;
+  box-shadow: var(--shadow-brutal-lg) !important;
+  border-radius: var(--radius-card) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* 4. Chat Bubbles (AI Assistant) */
+.bg-primary-soft.text-foreground.border.border-primary\/20 {
+  background-color: var(--brutal-pink) !important;
+  color: #000000 !important;
+  border: var(--border-thick) !important;
+  border-color: var(--brutal-black) !important;
+  box-shadow: var(--shadow-brutal-sm) !important;
+  border-radius: var(--radius-card) !important;
+}
+.bg-surface.border.border-border.text-foreground {
+  background-color: var(--brutal-yellow) !important;
+  color: #000000 !important;
+  border: var(--border-thick) !important;
+  border-color: var(--brutal-black) !important;
+  box-shadow: var(--shadow-brutal-sm) !important;
+  border-radius: var(--radius-card) !important;
+}
+
+/* 5. Tabs */
+[role="tablist"], .bg-muted {
+  background-color: var(--brutal-bg) !important;
+  border: var(--border-thick) !important;
+  border-color: var(--brutal-black) !important;
+  border-radius: var(--radius-pill) !important;
+  padding: 4px !important;
+}
+[role="tab"] {
+  font-family: var(--font-display) !important;
+  font-weight: 700 !important;
+  border-radius: var(--radius-pill) !important;
+  transition: all 100ms ease !important;
+}
+[role="tab"][data-state="active"], [role="tab"][aria-selected="true"] {
+  background-color: var(--brutal-pink) !important;
+  color: #000000 !important;
+  border: var(--border-thick) !important;
+  border-color: var(--brutal-black) !important;
+  box-shadow: var(--shadow-brutal-sm) !important;
+}
+
+/* 6. Form Inputs & Textareas */
+input[type="text"], input[type="email"], input[type="password"], textarea, select {
+  border: var(--border-thick) !important;
+  border-color: var(--brutal-black) !important;
+  border-radius: var(--radius-sm) !important;
+  background-color: var(--brutal-white) !important;
+  color: var(--foreground) !important;
+  outline: none !important;
+  transition: border-color 150ms ease !important;
+}
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
+  border-color: var(--brutal-pink) !important;
+  box-shadow: none !important;
+}
+
+/* 7. Quick Actions Grid Buttons */
+.grid-cols-8 button {
+  border: var(--border-thick) !important;
+  border-color: var(--brutal-black) !important;
+  box-shadow: var(--shadow-brutal-sm) !important;
+  border-radius: var(--radius-card) !important;
+  transition: transform 150ms ease, box-shadow 150ms ease !important;
+}
+.grid-cols-8 button:hover {
+  transform: translate(-1.5px, -1.5px) !important;
+  box-shadow: var(--shadow-brutal-md) !important;
+}
+
+/* 8. Kanban Columns */
+.min-h-\[450px\] {
+  border: var(--border-thick) !important;
+  border-color: var(--brutal-black) !important;
+  background-color: var(--brutal-white) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: var(--shadow-brutal-sm) !important;
+}
+
+/* 9. Calendar Task Cards */
+.border-secondary\/30, .border-success\/30, .border-accent\/30, .border-warning\/30 {
+  border: var(--border-thick) !important;
+  border-color: var(--brutal-black) !important;
+  border-radius: var(--radius-pill) !important;
+  box-shadow: var(--shadow-brutal-sm) !important;
+  color: #000000 !important;
+  transition: transform 150ms ease, box-shadow 150ms ease !important;
+}
+.border-secondary\/30:hover, .border-success\/30:hover, .border-accent\/30:hover, .border-warning\/30:hover {
+  transform: translate(-1.5px, -1.5px) !important;
+  box-shadow: var(--shadow-brutal-md) !important;
+}
+
+/* 10. Note Editor Header Buttons */
+.h-\[64px\] button:not(.btn-primary) {
+  border: var(--border-thick) !important;
+  border-color: var(--brutal-black) !important;
+  border-radius: var(--radius-sm) !important;
+  background-color: var(--brutal-white) !important;
+  box-shadow: var(--shadow-brutal-sm) !important;
+  transition: transform 100ms ease, box-shadow 100ms ease !important;
+}
+.h-\[64px\] button:not(.btn-primary):hover {
+  transform: translate(-1px, -1px) !important;
+  box-shadow: var(--shadow-brutal-md) !important;
 }

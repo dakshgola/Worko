@@ -31,13 +31,13 @@ export function Hero() {
         <div className="flex justify-center gap-3.5 pt-2">
           <a
             href="/sign-up"
-            className="h-11 px-7 rounded-xl bg-primary hover:bg-primary-hover text-btn text-white shadow-lg flex items-center justify-center hover:-translate-y-0.5 transition duration-200"
+            className="btn-primary h-11 px-7 rounded-pill text-black shadow-brutal-sm hover:shadow-brutal-md hover:-translate-x-[2px] hover:-translate-y-[2px] transition-all flex items-center justify-center"
           >
             Get Started Free <ArrowRight size={14} className="ml-1" />
           </a>
           <a
             href="#showcase"
-            className="h-11 px-7 rounded-xl bg-surface border border-border text-btn text-muted flex items-center justify-center gap-1.5 hover:bg-hover-overlay transition duration-200"
+            className="btn-outline h-11 px-7 rounded-pill text-foreground shadow-brutal-sm hover:shadow-brutal-md hover:-translate-x-[2px] hover:-translate-y-[2px] transition-all flex items-center justify-center gap-1.5"
           >
             <Play size={11} fill="currentColor" /> Live Showcase
           </a>
