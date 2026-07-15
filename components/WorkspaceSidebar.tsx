@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { motion } from "framer-motion";
+import { IconChip } from "@/components/ui/icon-chip";
 
 interface WorkspaceSidebarProps {
   active: string;
@@ -51,46 +52,46 @@ export function WorkspaceSidebar({ active }: WorkspaceSidebarProps) {
     {
       label: "Overview",
       items: [
-        { label: "Dashboard", icon: LayoutDashboard, href: "/", color: "text-secondary", iconBg: "bg-secondary-soft" },
-        { label: "AI Assistant", icon: Bot, href: "/ai-assistant", color: "text-ai-accent", iconBg: "bg-ai-accent-soft" },
-        { label: "Calendar", icon: CalendarDays, href: "/calendar", color: "text-primary", iconBg: "bg-primary-soft" },
+        { label: "Dashboard", icon: LayoutDashboard, href: "/", chipColor: "pink" as const },
+        { label: "AI Assistant", icon: Bot, href: "/ai-assistant", chipColor: "yellow" as const },
+        { label: "Calendar", icon: CalendarDays, href: "/calendar", chipColor: "mint" as const },
       ],
     },
     {
       label: "Workspace",
       items: [
-        { label: "Tasks", icon: SquareKanban, href: "/kanban", color: "text-success", iconBg: "bg-success-soft" },
-        { label: "Notes", icon: StickyNote, href: "/notes", color: "text-warning", iconBg: "bg-warning-soft" },
-        { label: "Whiteboard", icon: PenTool, href: "/whiteboard", color: "text-accent", iconBg: "bg-accent-soft" },
-        { label: "Spaces", icon: PanelTop, href: "/spaces", color: "text-secondary", iconBg: "bg-secondary-soft" },
+        { label: "Tasks", icon: SquareKanban, href: "/kanban", chipColor: "pink" as const },
+        { label: "Notes", icon: StickyNote, href: "/notes", chipColor: "orange" as const },
+        { label: "Whiteboard", icon: PenTool, href: "/whiteboard", chipColor: "mint" as const },
+        { label: "Spaces", icon: PanelTop, href: "/spaces", chipColor: "yellow" as const },
       ],
     },
     {
       label: "Build",
       items: [
-        { label: "AI Builder", icon: WandSparkles, href: "/ai-template-builder", color: "text-ai-accent", iconBg: "bg-ai-accent-soft" },
-        { label: "Settings", icon: Settings, href: "/settings", color: "text-muted", iconBg: "bg-hover-overlay" },
+        { label: "AI Builder", icon: WandSparkles, href: "/ai-template-builder", chipColor: "yellow" as const },
+        { label: "Settings", icon: Settings, href: "/settings", chipColor: "black" as const },
       ],
     },
   ];
 
   if (!isLoaded) {
     return (
-      <aside className="w-[224px] border-r border-border bg-background shrink-0 hidden lg:block" />
+      <aside className="w-[224px] border-r-[var(--border-thick)] border-black dark:border-white bg-brutal-bg shrink-0 hidden lg:block" />
     );
   }
 
   const sidebarContent = (isMobile: boolean = false) => (
     <>
-      <div className="flex h-[64px] items-center border-b border-border px-3.5">
+      <div className="flex h-[64px] items-center border-b-[var(--border-thick)] border-black dark:border-white px-3.5">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="grid size-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[#FF5A36] to-[#ff7d5e] text-white shadow-sm ring-1 ring-white/30">
+          <IconChip color="orange" variant="square" className="size-9 border-black dark:border-white">
             <Zap size={16} fill="currentColor" />
-          </div>
+          </IconChip>
           {(!collapsed || isMobile) && (
             <div className="min-w-0">
-              <p className="truncate text-h4 text-foreground">Worko</p>
-              <p className="truncate text-overline text-muted">
+              <p className="truncate text-h4 font-display font-bold text-foreground">Worko</p>
+              <p className="truncate text-overline text-muted font-semibold">
                 Workspace
               </p>
             </div>
@@ -102,40 +103,46 @@ export function WorkspaceSidebar({ active }: WorkspaceSidebarProps) {
         {sections.map((section) => (
           <div key={section.label}>
             {(!collapsed || isMobile) && (
-              <p className="mb-1.5 px-2.5 text-overline text-muted block">
+              <p className="mb-1.5 px-2.5 text-overline text-muted font-bold block">
                 {section.label}
               </p>
             )}
-            <div className="space-y-0.5">
-              {section.items.map(({ label, icon: Icon, href, color, iconBg }) => {
+            <div className="space-y-1">
+              {section.items.map(({ label, icon: Icon, href, chipColor }) => {
                 const isActive = active.toLowerCase() === label.toLowerCase();
                 return (
                   <a
                     key={label}
                     href={href}
-                    className={`group relative flex h-9.5 w-full items-center gap-2.5 rounded-xl px-2 text-sidebar transition-all duration-200 z-0 ${
+                    className={`group relative flex h-9.5 w-full items-center gap-2.5 rounded-xl px-2 text-sidebar font-display font-semibold transition-all duration-200 z-0 ${
                       isActive
-                        ? "text-primary font-bold"
+                        ? "text-foreground font-bold"
                         : "text-muted hover:translate-x-0.5 hover:text-foreground"
                     } ${(collapsed && !isMobile) ? "justify-center px-0" : ""}`}
                   >
                     {isActive && (
                       <motion.span
                         layoutId="activeSidebarHighlight"
-                        className="absolute inset-0 rounded-xl bg-surface border border-border shadow-[var(--shadow-sm)] -z-10"
+                        className="absolute inset-0 rounded-xl bg-brutal-white border-[var(--border-thick)] border-black dark:border-white shadow-brutal-sm -z-10"
                         transition={{ type: "spring", stiffness: 380, damping: 30 }}
                       />
                     )}
                     {isActive && (
                       <motion.span
                         layoutId="activeSidebarIndicator"
-                        className="absolute left-0 h-4 w-0.5 rounded-full bg-primary"
+                        className="absolute left-1.5 h-4 w-1 rounded-full bg-brutal-pink border border-black dark:border-white"
                         transition={{ type: "spring", stiffness: 380, damping: 30 }}
                       />
                     )}
-                    <span className={`grid size-6 shrink-0 place-items-center rounded-lg transition-colors duration-200 ${isActive ? "bg-primary-soft text-primary" : `${iconBg} ${color} group-hover:bg-primary-soft group-hover:text-primary`}`}>
-                      <Icon size={13} />
-                    </span>
+                    <IconChip
+                      color={chipColor}
+                      variant="square"
+                      className={`size-7 p-1 border-[1.5px] border-black dark:border-white shadow-none group-hover:scale-105 transition-transform duration-100 ${
+                        isActive ? "ring-2 ring-brutal-pink ring-offset-2" : ""
+                      }`}
+                    >
+                      <Icon size={14} />
+                    </IconChip>
                     {(!collapsed || isMobile) && <span className="transition-transform duration-200 group-hover:translate-x-0.5">{label}</span>}
                   </a>
                 );
@@ -146,14 +153,14 @@ export function WorkspaceSidebar({ active }: WorkspaceSidebarProps) {
       </nav>
 
       <div className="border-t border-border p-2.5">
-        <div className="flex items-center gap-2.5 rounded-xl border border-border bg-surface p-1.5 shadow-sm">
-          <div className="grid size-8 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[#ffad72] to-[#ef6688] text-[10px] font-bold text-white uppercase">
+        <div className="flex items-center gap-2.5 rounded-xl border-[var(--border-thick)] border-black dark:border-white bg-brutal-white p-1.5 shadow-brutal-sm">
+          <IconChip color="yellow" variant="square" className="size-8 text-[10px] font-bold border-[1.5px] border-black dark:border-white shadow-none">
             {user?.firstName ? user.firstName.substring(0, 2) : "DG"}
-          </div>
+          </IconChip>
           {(!collapsed || isMobile) && (
             <div className="min-w-0 flex-1">
-              <p className="truncate text-label-val text-foreground">{user?.fullName || "Daksh Gola"}</p>
-              <p className="truncate text-caption text-muted uppercase tracking-wider font-semibold">Workspace</p>
+              <p className="truncate text-label-val font-bold text-foreground">{user?.fullName || "Daksh Gola"}</p>
+              <p className="truncate text-caption text-muted uppercase tracking-wider font-bold">Workspace</p>
             </div>
           )}
         </div>
@@ -164,23 +171,23 @@ export function WorkspaceSidebar({ active }: WorkspaceSidebarProps) {
   return (
     <>
       {/* Mobile Top Header Bar */}
-      <header className="fixed top-0 left-0 right-0 z-40 flex h-[64px] items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur-xl lg:hidden">
+      <header className="fixed top-0 left-0 right-0 z-40 flex h-[64px] items-center justify-between border-b-[var(--border-thick)] border-black dark:border-white bg-brutal-bg px-4 backdrop-blur-xl lg:hidden">
         <div className="flex items-center gap-2.5">
-          <div className="grid size-8 place-items-center rounded-lg bg-gradient-to-br from-[#FF5A36] to-[#ff7d5e] text-white">
+          <IconChip color="orange" variant="square" className="size-8 border-[1.5px] border-black dark:border-white shadow-none">
             <Zap size={15} fill="currentColor" />
-          </div>
-          <span className="text-[13px] font-extrabold text-foreground tracking-tight">Worko</span>
+          </IconChip>
+          <span className="text-[13px] font-display font-extrabold text-foreground tracking-tight">Worko</span>
         </div>
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger asChild>
             <button
-              className="grid size-9 place-items-center rounded-xl border border-border bg-surface text-muted shadow-xs hover:bg-surface/80 transition"
+              className="grid size-9 place-items-center rounded-xl border-[var(--border-thick)] border-black dark:border-white bg-brutal-pink text-black shadow-brutal-sm hover:shadow-brutal-md active:scale-95 transition-all"
               aria-label="Open navigation menu"
             >
               <Menu size={16} />
             </button>
           </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-[240px] border-r border-border bg-background">
+          <SheetContent side="left" className="p-0 w-[240px] border-r-[var(--border-thick)] border-black dark:border-white bg-brutal-bg">
             <div className="flex h-full flex-col">
               {sidebarContent(true)}
             </div>
@@ -190,7 +197,7 @@ export function WorkspaceSidebar({ active }: WorkspaceSidebarProps) {
 
       {/* Desktop Sidebar (aside) */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 hidden lg:flex flex-col border-r border-border bg-background transition-all duration-300 ${
+        className={`fixed inset-y-0 left-0 z-40 hidden lg:flex flex-col border-r-[var(--border-thick)] border-black dark:border-white bg-brutal-bg transition-all duration-300 ${
           collapsed ? "w-[68px]" : "w-[224px]"
         }`}
       >
@@ -198,7 +205,7 @@ export function WorkspaceSidebar({ active }: WorkspaceSidebarProps) {
 
         <button
           onClick={toggleCollapse}
-          className="absolute -right-3 top-[78px] grid size-6 place-items-center rounded-full border border-border bg-surface text-muted shadow-sm hover:scale-105"
+          className="absolute -right-3 top-[78px] grid size-6 place-items-center rounded-full border-[var(--border-thick)] border-black dark:border-white bg-brutal-yellow text-black shadow-brutal-sm hover:scale-105 active:scale-95 transition-all"
           aria-label="Toggle navigation collapse"
         >
           {collapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
