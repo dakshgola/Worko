@@ -48,7 +48,7 @@ export default function SignInPage() {
               colorBorder: "var(--border)",
               borderRadius: "16px",
               fontFamily: "var(--font-sans)",
-            },
+            } as any,
             elements: {
               card: "border border-border shadow-xl rounded-2xl bg-surface",
               headerTitle: "text-h3 font-black text-foreground",
