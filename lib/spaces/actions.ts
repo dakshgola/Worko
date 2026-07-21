@@ -5,6 +5,7 @@ import { spaces, pages } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { currentUser } from "@clerk/nextjs/server";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { createSpaceSchema, updateSpaceSchema, createPageSchema, updatePageSchema } from "@/lib/validation";
 
 export async function listSpaces() {
   const user = await currentUser();
@@ -20,6 +21,11 @@ export async function listSpaces() {
 export async function createSpace(data: { name: string; description?: string; color?: string }) {
   const user = await currentUser();
   if (!user) throw new Error("Unauthorized");
+
+  const parsed = createSpaceSchema.safeParse(data);
+  if (!parsed.success) {
+    throw new Error(parsed.error.issues[0]?.message || "Invalid space data");
+  }
 
   const ratelimit = await checkRateLimit(user.id, "db_write");
   if (!ratelimit.success) throw new Error("Too many requests, please wait a moment");
@@ -42,6 +48,11 @@ export async function createSpace(data: { name: string; description?: string; co
 export async function updateSpace(spaceId: string, data: Partial<Omit<typeof spaces.$inferInsert, "id" | "ownerId">>) {
   const user = await currentUser();
   if (!user) throw new Error("Unauthorized");
+
+  const parsed = updateSpaceSchema.safeParse(data);
+  if (!parsed.success) {
+    throw new Error(parsed.error.issues[0]?.message || "Invalid space data");
+  }
 
   await db
     .update(spaces)
@@ -88,6 +99,11 @@ export async function createPage(spaceId: string, title?: string, template?: str
   const user = await currentUser();
   if (!user) throw new Error("Unauthorized");
 
+  const parsed = createPageSchema.safeParse({ title, template });
+  if (!parsed.success) {
+    throw new Error(parsed.error.issues[0]?.message || "Invalid page data");
+  }
+
   const ratelimit = await checkRateLimit(user.id, "db_write");
   if (!ratelimit.success) throw new Error("Too many requests, please wait a moment");
 
@@ -122,6 +138,11 @@ export async function createPage(spaceId: string, title?: string, template?: str
 export async function updatePage(pageId: string, data: Partial<Omit<typeof pages.$inferInsert, "id" | "createdBy">>) {
   const user = await currentUser();
   if (!user) throw new Error("Unauthorized");
+
+  const parsed = updatePageSchema.safeParse(data);
+  if (!parsed.success) {
+    throw new Error(parsed.error.issues[0]?.message || "Invalid page data");
+  }
 
   const result = await db
     .update(pages)

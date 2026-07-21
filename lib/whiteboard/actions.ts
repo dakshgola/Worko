@@ -5,6 +5,7 @@ import { whiteboards } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { currentUser } from "@clerk/nextjs/server";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { createWhiteboardSchema, updateWhiteboardElementsSchema, updateWhiteboardMetadataSchema, generateAIDiagramSchema } from "@/lib/validation";
 
 export async function listWhiteboards() {
   try {
@@ -26,6 +27,11 @@ export async function createWhiteboard(name?: string) {
   try {
     const user = await currentUser();
     if (!user) throw new Error("Unauthorized");
+
+    const parsed = createWhiteboardSchema.safeParse({ name });
+    if (!parsed.success) {
+      throw new Error(parsed.error.issues[0]?.message || "Invalid whiteboard name");
+    }
 
     const ratelimit = await checkRateLimit(user.id, "db_write");
     if (!ratelimit.success) throw new Error("Too many requests, please wait a moment");
@@ -57,6 +63,11 @@ export async function updateWhiteboardElements(boardId: string, elementsJson: st
     const user = await currentUser();
     if (!user) throw new Error("Unauthorized");
 
+    const parsed = updateWhiteboardElementsSchema.safeParse(elementsJson);
+    if (!parsed.success) {
+      throw new Error(parsed.error.issues[0]?.message || "Invalid whiteboard elements");
+    }
+
     await db
       .update(whiteboards)
       .set({
@@ -79,6 +90,11 @@ export async function updateWhiteboardMetadata(
   try {
     const user = await currentUser();
     if (!user) throw new Error("Unauthorized");
+
+    const parsed = updateWhiteboardMetadataSchema.safeParse(data);
+    if (!parsed.success) {
+      throw new Error(parsed.error.issues[0]?.message || "Invalid whiteboard metadata");
+    }
 
     const updateData: any = { ...data, updatedAt: new Date() };
     if (data.isTrashed === true) {
@@ -119,6 +135,11 @@ export async function generateAIDiagram(prompt: string): Promise<string> {
   try {
     const user = await currentUser();
     if (!user) throw new Error("Unauthorized");
+
+    const parsed = generateAIDiagramSchema.safeParse(prompt);
+    if (!parsed.success) {
+      throw new Error(parsed.error.issues[0]?.message || "Invalid prompt");
+    }
 
     const ratelimit = await checkRateLimit(user.id, "ai");
     if (!ratelimit.success) throw new Error("Too many requests, please wait a moment");

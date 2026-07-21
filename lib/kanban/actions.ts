@@ -4,11 +4,17 @@ import { db } from "@/db";
 import { kanbanBoards, kanbanTasks } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { currentUser } from "@clerk/nextjs/server";
+import { syncKanbanSchema } from "@/lib/validation";
 
 export async function syncKanbanData(boards: any[]) {
   try {
     const user = await currentUser();
     if (!user) throw new Error("Unauthorized");
+
+    const parsed = syncKanbanSchema.safeParse(boards);
+    if (!parsed.success) {
+      throw new Error(parsed.error.issues[0]?.message || "Invalid Kanban data structure");
+    }
 
     // Delete previous boards and tasks for this user
     await db.delete(kanbanBoards).where(eq(kanbanBoards.userId, user.id));

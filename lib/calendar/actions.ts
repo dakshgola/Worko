@@ -5,6 +5,7 @@ import { calendarEvents, notifications } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { currentUser } from "@clerk/nextjs/server";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { createEventSchema, updateEventSchema } from "@/lib/validation";
 
 export async function listEvents() {
   try {
@@ -35,6 +36,11 @@ export async function createEvent(data: {
   try {
     const user = await currentUser();
     if (!user) throw new Error("Unauthorized");
+
+    const parsed = createEventSchema.safeParse(data);
+    if (!parsed.success) {
+      throw new Error(parsed.error.issues[0]?.message || "Invalid event data");
+    }
 
     const ratelimit = await checkRateLimit(user.id, "db_write");
     if (!ratelimit.success) throw new Error("Too many requests, please wait a moment");
@@ -79,6 +85,11 @@ export async function updateEvent(
   try {
     const user = await currentUser();
     if (!user) throw new Error("Unauthorized");
+
+    const parsed = updateEventSchema.safeParse(data);
+    if (!parsed.success) {
+      throw new Error(parsed.error.issues[0]?.message || "Invalid event data");
+    }
 
     await db
       .update(calendarEvents)

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { aiChatSchema } from "@/lib/validation";
 
 export async function POST(request: Request) {
   try {
@@ -23,6 +24,14 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
+    const parsed = aiChatSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.issues[0]?.message || "Invalid input data" },
+        { status: 400 }
+      );
+    }
+
     let prompt = body.prompt;
     let history = body.history;
 

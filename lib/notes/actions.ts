@@ -5,6 +5,7 @@ import { notes } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { currentUser } from "@clerk/nextjs/server";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { createNoteSchema, updateNoteMetadataSchema, updateNoteContentSchema, refineTextSchema } from "@/lib/validation";
 
 export async function listNotes() {
   try {
@@ -46,6 +47,13 @@ export async function createNote(data?: { title?: string; color?: string }) {
     const ratelimit = await checkRateLimit(user.id, "db_write");
     if (!ratelimit.success) throw new Error("Too many requests, please wait a moment");
 
+    if (data) {
+      const parsed = createNoteSchema.safeParse(data);
+      if (!parsed.success) {
+        throw new Error(parsed.error.issues[0]?.message || "Invalid note data");
+      }
+    }
+
     const newNoteId = "note_" + crypto.randomUUID();
     const newNote = {
       id: newNoteId,
@@ -79,6 +87,11 @@ export async function updateNoteMetadata(
     const user = await currentUser();
     if (!user) throw new Error("Unauthorized");
 
+    const parsed = updateNoteMetadataSchema.safeParse(data);
+    if (!parsed.success) {
+      throw new Error(parsed.error.issues[0]?.message || "Invalid note metadata");
+    }
+
     const updateData: any = { ...data, updatedAt: new Date() };
     if (data.isTrashed === true) {
       updateData.trashedAt = new Date();
@@ -102,6 +115,11 @@ export async function updateNoteContent(noteId: string, content: string, plainTe
   try {
     const user = await currentUser();
     if (!user) throw new Error("Unauthorized");
+
+    const parsed = updateNoteContentSchema.safeParse({ content, plainText, wordCount });
+    if (!parsed.success) {
+      throw new Error(parsed.error.issues[0]?.message || "Invalid note content");
+    }
 
     await db
       .update(notes)
@@ -196,6 +214,11 @@ export async function refineSelectedText(text: string, instruction: string): Pro
   try {
     const user = await currentUser();
     if (!user) throw new Error("Unauthorized");
+
+    const parsed = refineTextSchema.safeParse({ text, instruction });
+    if (!parsed.success) {
+      throw new Error(parsed.error.issues[0]?.message || "Invalid input data");
+    }
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
