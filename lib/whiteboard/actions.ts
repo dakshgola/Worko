@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { whiteboards } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { currentUser } from "@clerk/nextjs/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function listWhiteboards() {
   try {
@@ -25,6 +26,9 @@ export async function createWhiteboard(name?: string) {
   try {
     const user = await currentUser();
     if (!user) throw new Error("Unauthorized");
+
+    const ratelimit = await checkRateLimit(user.id, "db_write");
+    if (!ratelimit.success) throw new Error("Too many requests, please wait a moment");
 
     const newId = "wb_" + crypto.randomUUID();
     const newBoard = {
@@ -115,6 +119,9 @@ export async function generateAIDiagram(prompt: string): Promise<string> {
   try {
     const user = await currentUser();
     if (!user) throw new Error("Unauthorized");
+
+    const ratelimit = await checkRateLimit(user.id, "ai");
+    if (!ratelimit.success) throw new Error("Too many requests, please wait a moment");
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {

@@ -85,7 +85,7 @@ export default function WhiteboardPage() {
       toast.success("Whiteboard created successfully");
     } catch (e) {
       console.error(e);
-      toast.error("Failed to create whiteboard");
+      toast.error(e instanceof Error ? e.message : "Failed to create whiteboard");
     } finally {
       setCreating(false);
     }

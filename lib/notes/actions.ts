@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { notes } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { currentUser } from "@clerk/nextjs/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function listNotes() {
   try {
@@ -41,6 +42,9 @@ export async function createNote(data?: { title?: string; color?: string }) {
   try {
     const user = await currentUser();
     if (!user) throw new Error("Unauthorized");
+
+    const ratelimit = await checkRateLimit(user.id, "db_write");
+    if (!ratelimit.success) throw new Error("Too many requests, please wait a moment");
 
     const newNoteId = "note_" + crypto.randomUUID();
     const newNote = {

@@ -5,6 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import {
   LayoutDashboard,
   Bot,
@@ -162,8 +163,10 @@ export default function SpacesPage() {
       setShowSpaceModal(false);
       setNewSpaceForm({ name: "", description: "", color: "Purple" });
       await fetchPages(space.id);
+      toast.success("Space created successfully");
     } catch (err) {
       console.error(err);
+      toast.error(err instanceof Error ? err.message : "Failed to create space");
     }
   };
 
@@ -174,8 +177,10 @@ export default function SpacesPage() {
       const page = await createPage(activeSpace.id, "Draft Specification Document", "Blank Page");
       setPagesList((prev) => [page, ...prev]);
       setActivePage(page);
+      toast.success("Page created successfully");
     } catch (err) {
       console.error(err);
+      toast.error(err instanceof Error ? err.message : "Failed to create page");
     } finally {
       setLoadingPages(false);
     }

@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { spaces, pages } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { currentUser } from "@clerk/nextjs/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function listSpaces() {
   const user = await currentUser();
@@ -19,6 +20,9 @@ export async function listSpaces() {
 export async function createSpace(data: { name: string; description?: string; color?: string }) {
   const user = await currentUser();
   if (!user) throw new Error("Unauthorized");
+
+  const ratelimit = await checkRateLimit(user.id, "db_write");
+  if (!ratelimit.success) throw new Error("Too many requests, please wait a moment");
 
   const newSpaceId = "space_" + crypto.randomUUID();
   const newSpace = {
@@ -83,6 +87,9 @@ export async function listPages(spaceId: string) {
 export async function createPage(spaceId: string, title?: string, template?: string) {
   const user = await currentUser();
   if (!user) throw new Error("Unauthorized");
+
+  const ratelimit = await checkRateLimit(user.id, "db_write");
+  if (!ratelimit.success) throw new Error("Too many requests, please wait a moment");
 
   // Verify ownership of the space
   const space = await db

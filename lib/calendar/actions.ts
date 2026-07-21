@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { calendarEvents, notifications } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { currentUser } from "@clerk/nextjs/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function listEvents() {
   try {
@@ -34,6 +35,9 @@ export async function createEvent(data: {
   try {
     const user = await currentUser();
     if (!user) throw new Error("Unauthorized");
+
+    const ratelimit = await checkRateLimit(user.id, "db_write");
+    if (!ratelimit.success) throw new Error("Too many requests, please wait a moment");
 
     const newEventId = "event_" + crypto.randomUUID();
     const newEvent = {

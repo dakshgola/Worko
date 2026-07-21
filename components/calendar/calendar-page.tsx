@@ -185,7 +185,7 @@ export function CalendarPage() {
       }
     } catch (e) {
       console.error(e);
-      toast.error(editingTask ? "Failed to update event" : "Failed to create event");
+      toast.error(e instanceof Error ? e.message : (editingTask ? "Failed to update event" : "Failed to create event"));
     }
   };
 

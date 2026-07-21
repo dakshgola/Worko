@@ -162,7 +162,7 @@ export default function NotesPage() {
       toast.success("Note created successfully");
     } catch (e) {
       console.error(e);
-      toast.error("Failed to create note");
+      toast.error(e instanceof Error ? e.message : "Failed to create note");
     } finally {
       setCreating(false);
     }
