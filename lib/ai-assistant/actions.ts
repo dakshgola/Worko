@@ -36,6 +36,17 @@ export async function getChatMessages(chatId: string) {
   const user = await currentUser();
   if (!user) throw new Error("Unauthorized");
 
+  // Verify ownership of the chat
+  const chat = await db
+    .select()
+    .from(chats)
+    .where(and(eq(chats.id, chatId), eq(chats.userId, user.id)))
+    .limit(1);
+
+  if (chat.length === 0) {
+    return [];
+  }
+
   return db
     .select()
     .from(messages)
@@ -46,6 +57,17 @@ export async function getChatMessages(chatId: string) {
 export async function saveMessage(chatId: string, role: string, content: string) {
   const user = await currentUser();
   if (!user) throw new Error("Unauthorized");
+
+  // Verify ownership of the chat
+  const chat = await db
+    .select()
+    .from(chats)
+    .where(and(eq(chats.id, chatId), eq(chats.userId, user.id)))
+    .limit(1);
+
+  if (chat.length === 0) {
+    throw new Error("Chat not found or unauthorized");
+  }
 
   const newMessageId = "msg_" + crypto.randomUUID();
   const newMessage = {
@@ -69,6 +91,17 @@ export async function saveMessage(chatId: string, role: string, content: string)
 export async function deleteChat(chatId: string) {
   const user = await currentUser();
   if (!user) throw new Error("Unauthorized");
+
+  // Verify ownership of the chat
+  const chat = await db
+    .select()
+    .from(chats)
+    .where(and(eq(chats.id, chatId), eq(chats.userId, user.id)))
+    .limit(1);
+
+  if (chat.length === 0) {
+    throw new Error("Chat not found or unauthorized");
+  }
 
   await db.delete(messages).where(eq(messages.chatId, chatId));
   await db.delete(chats).where(and(eq(chats.id, chatId), eq(chats.userId, user.id)));

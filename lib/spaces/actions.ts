@@ -62,6 +62,17 @@ export async function listPages(spaceId: string) {
   const user = await currentUser();
   if (!user) throw new Error("Unauthorized");
 
+  // Verify ownership of the space
+  const space = await db
+    .select()
+    .from(spaces)
+    .where(and(eq(spaces.id, spaceId), eq(spaces.ownerId, user.id)))
+    .limit(1);
+
+  if (space.length === 0) {
+    return [];
+  }
+
   return db
     .select()
     .from(pages)
@@ -72,6 +83,17 @@ export async function listPages(spaceId: string) {
 export async function createPage(spaceId: string, title?: string, template?: string) {
   const user = await currentUser();
   if (!user) throw new Error("Unauthorized");
+
+  // Verify ownership of the space
+  const space = await db
+    .select()
+    .from(spaces)
+    .where(and(eq(spaces.id, spaceId), eq(spaces.ownerId, user.id)))
+    .limit(1);
+
+  if (space.length === 0) {
+    throw new Error("Space not found or unauthorized");
+  }
 
   const newPageId = "page_" + crypto.randomUUID();
   const newPage = {
@@ -94,10 +116,15 @@ export async function updatePage(pageId: string, data: Partial<Omit<typeof pages
   const user = await currentUser();
   if (!user) throw new Error("Unauthorized");
 
-  await db
+  const result = await db
     .update(pages)
     .set({ ...data, updatedBy: user.id, updatedAt: new Date() })
-    .where(eq(pages.id, pageId));
+    .where(and(eq(pages.id, pageId), eq(pages.createdBy, user.id)))
+    .returning();
+
+  if (!result || result.length === 0) {
+    throw new Error("Page not found or unauthorized");
+  }
 
   return { success: true };
 }
@@ -106,9 +133,14 @@ export async function deletePage(pageId: string) {
   const user = await currentUser();
   if (!user) throw new Error("Unauthorized");
 
-  await db
+  const result = await db
     .delete(pages)
-    .where(eq(pages.id, pageId));
+    .where(and(eq(pages.id, pageId), eq(pages.createdBy, user.id)))
+    .returning();
+
+  if (!result || result.length === 0) {
+    throw new Error("Page not found or unauthorized");
+  }
 
   return { success: true };
 }

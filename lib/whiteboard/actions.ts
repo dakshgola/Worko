@@ -113,6 +113,9 @@ export async function deleteWhiteboardForever(boardId: string) {
 
 export async function generateAIDiagram(prompt: string): Promise<string> {
   try {
+    const user = await currentUser();
+    if (!user) throw new Error("Unauthorized");
+
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return JSON.stringify({

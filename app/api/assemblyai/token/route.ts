@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
+import { currentUser } from "@clerk/nextjs/server";
 
 export async function POST() {
   try {
+    const user = await currentUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const apiKey = process.env.ASSEMBLYAI_API_KEY;
     if (!apiKey) {
       return NextResponse.json({ error: "AssemblyAI API key is missing" }, { status: 500 });

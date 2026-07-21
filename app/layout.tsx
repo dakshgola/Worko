@@ -16,24 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider
-      appearance={{
-        variables: {
-          colorPrimary: '#FF5A36',
-        },
-        elements: {
-          card: 'bg-surface border border-border shadow-md',
-          headerTitle: 'text-foreground font-bold',
-          headerSubtitle: 'text-muted',
-          socialButtonsBlockButton: 'bg-background hover:bg-hover-overlay border border-border text-foreground',
-          formButtonPrimary: 'btn-primary bg-[#FF5A36] hover:bg-[#E04825] text-white',
-          formFieldLabel: 'text-foreground font-semibold',
-          formFieldInput: 'input-cozy bg-background text-foreground border-border',
-          footerActionText: 'text-muted',
-          footerActionLink: 'text-primary hover:text-primary-hover font-bold',
-        }
-      }}
-    >
+    <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body>
           <ThemeProvider

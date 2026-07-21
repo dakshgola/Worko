@@ -190,6 +190,9 @@ export async function deleteNoteForever(noteId: string) {
 
 export async function refineSelectedText(text: string, instruction: string): Promise<string> {
   try {
+    const user = await currentUser();
+    if (!user) throw new Error("Unauthorized");
+
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return `[Simulated refinement of: "${instruction}"]\n${text}`;
