@@ -1,4 +1,4 @@
-# Worko — Enterprise Collaborative & AI-Native Workspace
+# Worko — AI-Native Collaborative Productivity Workspace
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.2-black?logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react)](https://react.dev/)
@@ -13,9 +13,9 @@
 [![Framer Motion](https://img.shields.io/badge/Framer_Motion-12.4-F107A3?logo=framer)](https://www.framer.com/motion/)
 [![Vitest](https://img.shields.io/badge/Testing-Vitest-yellow?logo=vitest)](https://vitest.dev/)
 
-Worko is a high-performance, AI-native collaborative productivity workspace. It consolidates nested document wikis, kanban boards, shared team calendars, and collaborative vector whiteboards into a single unified workspace. The platform features real-time multiplayer cursor synchronization, live voice notes transcription, and context-aware generative AI agents.
+Worko is an AI-native collaborative productivity workspace. It consolidates nested document wikis, kanban boards, shared team calendars, and collaborative vector whiteboards into a single unified workspace. The platform features real-time multiplayer cursor synchronization, live voice notes transcription, and context-aware generative AI agents.
 
-Designed with a premium visual design system and clean responsive layouts, it is optimized for high-performance solo builders and small agile teams.
+Designed with a unified visual identity and clean responsive layouts, it is optimized for developers, solo builders, and creators.
 
 ---
 
@@ -70,6 +70,32 @@ graph TD
 
 ---
 
+## 🔒 Security Implementation
+
+To ensure safe, robust operations, the following security layers have been implemented:
+- **Session Verification**: Route-level Clerk protection on all API paths and Server Actions.
+- **Authorization Scoping (IDOR Prevention)**: All database queries inside Server Actions are scoped explicitly by the authenticated user's ID (`userId` or `ownerId` check) to prevent unauthorized access.
+- **Rate Limiting**: Implemented a hybrid sliding-window rate limiter checking for local maps and Upstash Redis configurations, protecting expensive Gemini AI chat and AssemblyAI socket token requests.
+- **Input Validation**: Enforces Zod schemas on incoming payloads for Server Actions and API endpoints, rejecting malformed structures before writing to the database.
+- **Strict Security Headers**: Applied HTTP security controls (Strict-Transport-Security, X-Frame-Options: DENY, X-Content-Type-Options: nosniff, Referrer-Policy, and restricted Permissions-Policy).
+
+---
+
+## ⚠️ Known Limitations
+
+As a solo-built portfolio project, the following are known functional constraints:
+- **Workspace Sharing & Invitation Flows**: The collaborative whiteboard features real-time multiplayer synchronization (cursors, shapes, and coordinates) within the logged-in Clerk user's context (e.g. across multiple tabs or browsers signed into the same account). A multi-user workspace invitation and access control system is not currently implemented.
+- **AI Assistant Capabilities**: The assistant handles general productivity questions, refines document content, and generates diagrams, while maintaining session-specific memory (multi-turn conversation payload containing `user` and `model` roles).
+- **Self-Hosted Database Migrations**: Local development settings require running schema push commands manually via Drizzle CLI rather than automated production migrations.
+
+---
+
+## 🎨 UI & Design Tokens
+
+A detailed specification of Worko's cozy design tokens, including color palettes, typography styling, gaps, and UI interaction guidelines, can be found in the [Design System Documentation](docs/design-system.md).
+
+---
+
 ## ⚙️ Tech Stack & Integrations
 
 | Layer | Technologies |
@@ -101,12 +127,12 @@ Worko maintains a high quality floor using an automated test and build pipeline:
 
 ## 🛠️ Local Installation & Development
 
-### 3. Install Dependencies
+### 1. Install Dependencies
 ```bash
 npm install
 ```
 
-### 4. Configure Environment Variables
+### 2. Configure Environment Variables
 Create a `.env` file in the root directory:
 ```env
 NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -126,13 +152,13 @@ GEMINI_API_KEY=your_google_gemini_key
 ASSEMBLYAI_API_KEY=your_assemblyai_key
 ```
 
-### 5. Run Database Migrations
+### 3. Run Database Migrations
 Push your schema tables to Neon PostgreSQL:
 ```bash
 npm run db:push
 ```
 
-### 6. Start the Development Server
+### 4. Start the Development Server
 ```bash
 npm run dev
 ```
